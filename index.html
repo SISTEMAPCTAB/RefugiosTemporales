@@ -3299,6 +3299,132 @@ header.top .brand .brand-copy small{
 .capacity-answer-feedback.show{display:block}.capacity-answer-feedback.correct{background:#eef7f2;border:1px solid #77a48f;color:#285b46}.capacity-answer-feedback.incorrect{background:#fff7e8;border:1px solid #c9a253;color:#6f5219}
 .capacity-calc-activity label.capacity-correct{border-color:#4c7a68!important;background:#eef7f2!important}.capacity-calc-activity label.capacity-incorrect{border-color:#c9a253!important;background:#fff8ea!important}
 .capacity-calc-activity .formula-result.revealed b{color:#285b46}
+
+/* v76 · Portada simplificada y Marco legal articulado */
+.cover-v33-actions{grid-template-columns:repeat(5,minmax(0,1fr))}
+.marco-legal-intro,.marco-legal-use,.marco-legal-note{margin-bottom:14px}
+.marco-legal-grid{margin:0 0 14px}
+.marco-legal-grid .card h3{margin:2px 0 8px;color:var(--vino)}
+.marco-legal-grid .eyebrow{color:var(--dorado);font-weight:900}
+.marco-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.marco-flow span{display:block;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.marco-flow b,.marco-flow small{display:block}.marco-flow small{margin-top:4px;color:var(--muted)}
+@media(max-width:980px){.cover-v33-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.cover-v33-actions a:last-child{grid-column:1/-1}}
+@media(max-width:760px){.cover-v33-actions{grid-template-columns:1fr}.cover-v33-actions a:last-child{grid-column:auto}.marco-legal-grid,.marco-flow{grid-template-columns:1fr!important}}
+
+/* v77 · Menú de módulos optimizado para tablet y sin controles redundantes */
+.module-menu-grid a{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr) 34px!important;
+  grid-template-rows:auto auto!important;
+  column-gap:10px!important;
+  row-gap:4px!important;
+  align-items:center!important;
+  min-height:82px!important;
+  padding:13px 14px!important;
+}
+.module-menu-grid a > span:first-child{
+  grid-column:1!important;
+  grid-row:1 / 3!important;
+  width:36px!important;
+  height:36px!important;
+  border-radius:11px!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:19px!important;
+  background:#efe9e2!important;
+}
+.module-menu-grid a > b{
+  grid-column:2!important;
+  grid-row:1!important;
+  align-self:end!important;
+  min-width:0!important;
+  font-size:14px!important;
+  line-height:1.22!important;
+  overflow-wrap:anywhere!important;
+}
+.module-menu-grid a > small{
+  grid-column:2!important;
+  grid-row:2!important;
+  align-self:start!important;
+  min-width:0!important;
+  font-size:11px!important;
+  line-height:1.3!important;
+  overflow-wrap:anywhere!important;
+}
+.module-menu-grid a > .route-check{
+  grid-column:3!important;
+  grid-row:1 / 3!important;
+  justify-self:end!important;
+  align-self:center!important;
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  border-radius:10px!important;
+  font-size:14px!important;
+  background:#f2ede7!important;
+}
+@media (min-width:701px) and (max-width:1180px){
+  .module-menu-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  .menu-group{padding:16px!important}
+  .module-menu-grid a{
+    min-height:88px!important;
+    padding:14px 15px!important;
+  }
+  .module-menu-grid a > b{font-size:15px!important}
+  .module-menu-grid a > small{font-size:11.5px!important}
+}
+@media (max-width:700px){
+  .module-menu-grid{grid-template-columns:1fr!important}
+  .module-menu-grid a{min-height:78px!important}
+}
+
+/* v78 · Revisión preventiva de navegación en tablet/móvil */
+@media (min-width:701px) and (max-width:1180px){
+  .module-menu-grid a,
+  .moregrid a,
+  .training-route a,
+  .guidegrid a,
+  .rolegrid a{
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .module-menu-grid a b,
+  .module-menu-grid a small,
+  .moregrid a,
+  .training-route a,
+  .guidegrid a,
+  .rolegrid a{
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+  }
+  .section-head,
+  .module-menu-page>.section-head{
+    min-width:0!important;
+  }
+  .section-head > div,
+  .module-menu-page>.section-head > div{
+    min-width:0!important;
+  }
+}
+@media (max-width:700px){
+  .section-head,
+  .module-menu-page>.section-head{
+    grid-template-columns:1fr!important;
+  }
+  .section-toggle{
+    justify-self:start!important;
+  }
+  .moregrid,
+  .guidegrid,
+  .rolegrid{
+    grid-template-columns:1fr!important;
+  }
+}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -3394,7 +3520,7 @@ header.top .brand .brand-copy small{
 <a href="#consulta"><span class="ico">📖</span><span><b>Consultar guía</b><small>Aprender paso a paso</small></span></a>
 <a href="#capacitacion"><span class="ico">🎓</span><span><b>Modo capacitación</b><small>Escenarios y ejercicios</small></span></a>
 <a href="#verificacion"><span class="ico">✓</span><span><b>Iniciar verificación</b><small>Operación real del Refugio Temporal</small></span></a>
-<a href="#mis-refugios"><span class="ico">🏘️</span><span><b>Mis Refugios</b><small>Expedientes, verificaciones y PDF</small></span></a></div>
+<a href="#mis-refugios"><span class="ico">🏘️</span><span><b>Mis Refugios</b><small>Expedientes, verificaciones y PDF</small></span></a><a href="#marco"><span class="ico">📄</span><span><b>Marco legal y documentos</b><small>Fundamento, artículos y referencias aplicables</small></span></a></div>
 <div class="cover-v33-intro">
 <div class="cover-v33-welcome">
 <h2>Bienvenido</h2>
@@ -3407,12 +3533,6 @@ header.top .brand .brand-copy small{
 <div class="cover-v33-note"><b>Importante.</b> Esta herramienta es de apoyo para preparación, capacitación y operación. No sustituye dictámenes técnicos ni las determinaciones de la autoridad competente.</div>
 </div>
 <div class="cover-v33-route"><h2>Ruta operativa <span style="font-weight:500">(17 módulos)</span></h2><div class="cover-v33-route-grid route-simple-icons"><a aria-label="Módulo 1: Preparación" class="cover-v33-step route-simple-step" href="#preparacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M9 3h6M9 5h6M7 5h10a2 2 0 0 1 2 2v13H5V7a2 2 0 0 1 2-2Z"></path><path d="M8 10h8M8 14h5M8 18h6"></path></svg></span><span class="n">1</span><b>Preparación</b></a><a aria-label="Módulo 2: Verificación" class="cover-v33-step route-simple-step" href="#verificacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></span><span class="n">2</span><b>Verificación</b></a><a aria-label="Módulo 3: Acciones correctivas" class="cover-v33-step route-simple-step" href="#acciones"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18l3 3 6.7-6.7a4 4 0 0 0 5-5l-3 3-3-3 3-3Z"></path></svg></span><span class="n">3</span><b>Acciones correctivas</b></a><a aria-label="Módulo 4: Revisión preactivación" class="cover-v33-step route-simple-step" href="#rapida"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><rect height="16" rx="2" width="14" x="5" y="4"></rect><path d="M9 4V2h6v2M8 9l2 2 4-4M8 15h8"></path></svg></span><span class="n">4</span><b>Revisión preactivación</b></a><a aria-label="Módulo 5: Activación" class="cover-v33-step route-simple-step" href="#activacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v10M8 7a7 7 0 1 0 8 0"></path></svg></span><span class="n">5</span><b>Activación</b></a><a aria-label="Módulo 6: Tablero operativo" class="cover-v33-step route-simple-step" href="#operacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"></path></svg></span><span class="n">6</span><b>Tablero operativo</b></a><a aria-label="Módulo 7: Población" class="cover-v33-step route-simple-step" href="#poblacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c0-4 2.5-6 6-6s6 2 6 6M14 15c3.5-.5 6 1.5 6 5"></path></svg></span><span class="n">7</span><b>Población</b></a><a aria-label="Módulo 8: Entradas / salidas" class="cover-v33-step route-simple-step" href="#movimientos"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 8h13M14 5l3 3-3 3M20 16H7M10 13l-3 3 3 3"></path></svg></span><span class="n">8</span><b>Entradas / salidas</b></a><a aria-label="Módulo 9: Salud" class="cover-v33-step route-simple-step" href="#salud"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.4-7 10-7 10Z"></path><path d="M9 12h6M12 9v6"></path></svg></span><span class="n">9</span><b>Salud</b></a><a aria-label="Módulo 10: Alimentación" class="cover-v33-step route-simple-step" href="#alimentacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M6 3v8M4 3v5c0 2 4 2 4 0V3M6 11v10M15 3c3 3 3 7 0 10v8"></path></svg></span><span class="n">10</span><b>Alimentación</b></a><a aria-label="Módulo 11: Agua" class="cover-v33-step route-simple-step" href="#agua"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3s6 7 6 12a6 6 0 1 1-12 0c0-5 6-12 6-12Z"></path></svg></span><span class="n">11</span><b>Agua</b></a><a aria-label="Módulo 12: Inventario" class="cover-v33-step route-simple-step" href="#inventario"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4Z"></path><path d="M3 7v10l9 4 9-4V7M12 11v10"></path></svg></span><span class="n">12</span><b>Inventario</b></a><a aria-label="Módulo 13: Incidencias" class="cover-v33-step route-simple-step" href="#incidencias"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3Z"></path><path d="M12 9v5M12 17h.01"></path></svg></span><span class="n">13</span><b>Incidencias</b></a><a aria-label="Módulo 14: Entrega de turno" class="cover-v33-step route-simple-step" href="#turno"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M7 7h11M15 4l3 3-3 3M17 17H6M9 14l-3 3 3 3"></path><circle cx="5" cy="7" r="2"></circle><circle cx="19" cy="17" r="2"></circle></svg></span><span class="n">14</span><b>Entrega de turno</b></a><a aria-label="Módulo 15: Reporte diario" class="cover-v33-step route-simple-step" href="#reporte"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M6 3h9l4 4v14H6Z"></path><path d="M15 3v5h5M9 12h6M9 16h6"></path></svg></span><span class="n">15</span><b>Reporte diario</b></a><a aria-label="Módulo 16: Desactivación" class="cover-v33-step route-simple-step" href="#desactivacion"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v9M7 6a8 8 0 1 0 10 0"></path></svg></span><span class="n">16</span><b>Desactivación</b></a><a aria-label="Módulo 17: Informe final" class="cover-v33-step route-simple-step" href="#informe-final"><span class="route-simple-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M5 3h10l4 4v14H5Z"></path><path d="M15 3v5h5M8 13l2 2 4-4M8 18h8"></path></svg></span><span class="n">17</span><b>Informe final</b></a></div></div>
-<div class="cover-v33-quick">
-<a href="#fuentes"><span class="qico">📄</span><b>Marco legal y documentos</b></a>
-<a href="#consulta"><span class="qico">❓</span><b>Consulta y aprendizaje</b></a>
-<a href="#incidencias"><span class="qico">⚠️</span><b>Incidencias</b></a>
-<a href="#menu"><span class="qico">☰</span><b>Menú de módulos</b></a>
-</div>
 </div>
 <div class="save-survey-row"><div aria-label="Estado de guardado local" class="save-status-compact only-js" id="saveStatusCompact">
 <span class="save-status-dot"></span>
@@ -3550,7 +3670,51 @@ header.top .brand .brand-copy small{
 </div><div class="notice" id="storageReliabilityNote">
 <b>Conservación de datos por dispositivo.</b>
 <p>La guía usa IndexedDB y mantiene una copia de respaldo en almacenamiento local cuando el navegador lo permite. En GitHub Pages y como PWA instalada, los datos permanecen asociados a ese navegador y dispositivo. Al abrir directamente un archivo local, la permanencia depende de las políticas del navegador; para operación en emergencia se recomienda la PWA instalada.</p>
-</div></div></section><section class="section collapsible" id="marco"><div class="section-head"><div><div class="eyebrow">Fundamento</div><h2>Marco de aplicación</h2><p>La herramienta se concentra exclusivamente en Refugios Temporales y diferencia el fundamento normativo estatal, los criterios técnicos nacionales y las funciones digitales de apoyo.</p></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div><div class="reference-context">Fundamento de consulta · Esta sección no forma parte del avance de la ruta operativa.</div><div class="card"><h3>Refugio Temporal</h3><p>Para efectos de esta guía se utiliza la definición de la Ley de Protección Civil del Estado de Tabasco: instalación física habilitada para brindar temporalmente protección y bienestar a personas que no tienen posibilidad inmediata de acceder a una habitación segura ante un riesgo inminente, emergencia o desastre.</p><div class="notice"><b>Alcance.</b> La aplicación apoya el registro y la toma de decisiones operativas. No emite dictámenes estructurales, sanitarios ni de seguridad y no sustituye las determinaciones de la autoridad competente.</div></div><div class="reference-nav"><a href="#menu">← Volver al menú</a></div></section>
+</div></div></section><section class="section collapsible" id="marco"><div class="section-head"><div><div class="eyebrow">Fundamento</div><h2>Marco de aplicación</h2><p>La herramienta se concentra exclusivamente en Refugios Temporales y diferencia el fundamento normativo estatal, los criterios técnicos nacionales y las funciones digitales de apoyo.</p></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div>
+<div class="card marco-legal-intro">
+<h3>Marco legal y documentos de referencia</h3>
+<p>Este apartado concentra el fundamento que orienta la preparación, activación, operación y desactivación de los Refugios Temporales. La consulta normativa debe acompañar la toma de decisiones y el registro de evidencias, sin sustituir las atribuciones ni los dictámenes de las autoridades competentes.</p>
+</div>
+<div class="grid2 marco-legal-grid">
+<div class="card">
+<div class="eyebrow">LEY ESTATAL</div>
+<h3>Ley de Protección Civil del Estado de Tabasco</h3>
+<p><b>Artículo 2, fracción XLVIII.</b> Define el Refugio Temporal como la instalación física habilitada para brindar temporalmente protección y bienestar a personas sin posibilidad inmediata de acceder a una habitación segura ante riesgo inminente, emergencia, siniestro o desastre.</p>
+<p><b>Aplicación en la guía:</b> sustenta el uso del término “Refugio Temporal” y el enfoque de protección temporal de la población.</p>
+</div>
+<div class="card">
+<div class="eyebrow">REGLAMENTO ESTATAL</div>
+<h3>Reglamento de la Ley de Protección Civil del Estado de Tabasco</h3>
+<p><b>Artículo 50.</b> Ubica el auxilio como el conjunto de acciones destinadas a rescatar y salvaguardar la integridad física de las personas, sus bienes y el medio ambiente, así como coordinar la atención de emergencias.</p>
+<p><b>Aplicación en la guía:</b> vincula la operación del Refugio Temporal con las acciones de auxilio durante una emergencia o desastre.</p>
+</div>
+<div class="card">
+<div class="eyebrow">COORDINACIÓN Y AUXILIO</div>
+<h3>Previsiones del Subprograma de Auxilio</h3>
+<p><b>Artículo 51.</b> Considera acciones de alertamiento, evaluación de daños, seguridad, búsqueda, salvamento y asistencia, salud, aprovisionamiento, comunicación y coordinación interinstitucional.</p>
+<p>Su fracción V contempla las actividades de quienes participan en rescate, atención prehospitalaria, bomberos y administración de refugios durante siniestros o desastres.</p>
+</div>
+<div class="card">
+<div class="eyebrow">REFERENCIA TÉCNICA</div>
+<h3>Guía para la Gestión de Refugios Temporales en México</h3>
+<p>Se utiliza como referencia técnica nacional para condiciones mínimas del inmueble, organización, recepción de población, habitabilidad, agua, saneamiento, alimentación, accesibilidad, operación diaria, incidencias, desactivación e instrumentos de registro.</p>
+<p><b>Aplicación en la guía:</b> aporta criterios operativos y formatos de apoyo; no sustituye la normativa estatal ni las determinaciones de la autoridad competente.</p>
+</div>
+</div>
+<div class="card marco-legal-use">
+<h3>Cómo se articula con la operación</h3>
+<div class="marco-flow">
+<span><b>1 · Fundamento</b><small>Qué dispone la normativa.</small></span>
+<span><b>2 · Criterio técnico</b><small>Cómo se traduce en condiciones y procedimientos.</small></span>
+<span><b>3 · Acción operativa</b><small>Qué debe verificar, registrar o coordinar el responsable.</small></span>
+<span><b>4 · Evidencia</b><small>Qué dato, formato o seguimiento debe conservarse.</small></span>
+</div>
+</div>
+<div class="card marco-legal-note">
+<h3>Documentos a mantener actualizados</h3>
+<p>Ley y Reglamento aplicables; guía técnica vigente; directorios de responsables; formatos de registro y seguimiento; inventarios; verificaciones del inmueble; croquis y rutas; bitácoras de incidencias; entregas de turno; y documentación de desactivación e informe final.</p>
+</div>
+<div class="reference-context">Fundamento de consulta · Esta sección no forma parte del avance de la ruta operativa.</div><div class="card"><h3>Refugio Temporal</h3><p>Para efectos de esta guía se utiliza la definición de la Ley de Protección Civil del Estado de Tabasco: instalación física habilitada para brindar temporalmente protección y bienestar a personas que no tienen posibilidad inmediata de acceder a una habitación segura ante un riesgo inminente, emergencia o desastre.</p><div class="notice"><b>Alcance.</b> La aplicación apoya el registro y la toma de decisiones operativas. No emite dictámenes estructurales, sanitarios ni de seguridad y no sustituye las determinaciones de la autoridad competente.</div></div></section>
 <section class="section collapsible" id="preparacion"><div class="section-head"><div><div class="eyebrow">01 · Preparación</div><h2>Expediente del Refugio Temporal</h2><p>Registrar el inmueble, sus responsables, capacidad, ubicación, servicios y antecedentes antes de cualquier activación.</p></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div><div class="step-context" data-route-module="preparacion"><div class="step-context-top"><span class="step-phase">Ruta operativa · Preparación</span><span class="step-number">Paso 1 de 4</span></div><div class="step-current"><b>Ahora:</b> Expediente del Refugio Temporal</div><div class="step-next"><b>Después:</b> Verificación integral del inmueble</div><div class="step-state" data-step-state="preparacion">Pendiente</div></div>
 <div class="module-purpose" data-v32-purpose="1">
 <div class="purpose-title">Objetivo del paso</div>
@@ -4775,7 +4939,7 @@ header.top .brand .brand-copy small{
 <div class="role"><h4>Seguridad / vigilancia</h4><p>Control de acceso, coordinación con seguridad, extintores, botiquines, procedimiento de evacuación, simulación y reporte de incidentes.</p></div>
 <div class="role"><h4>Servicios / mantenimiento</h4><p>Verificar servicios básicos, limpieza, orden, materiales, inventario, reparaciones menores y necesidades de apoyo.</p></div>
 <div class="role"><h4>Logística / suministros</h4><p>Recepción y control de insumos, almacenamiento, caducidades, entradas/salidas y comunicación de necesidades.</p></div>
-</div><div class="reference-nav"><a href="#menu">← Volver al menú</a></div></section>
+</div></section>
 <section class="section training collapsible" id="capacitacion">
 <div class="section-head"><div><div class="eyebrow">Modo capacitación</div><h2>Practicar sin perderse</h2><p>Elija un escenario. Cada escenario tiene una ruta guiada con instrucciones, propósito, actividad y resultado esperado.</p></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div>
 <div class="orientation"><div class="where">Dónde estoy</div><div><strong>Capacitación → Selección de escenario</strong><p>Primero elija un escenario. Después avance con los botones “Siguiente paso” y “Anterior”. No necesita entrar a los módulos reales para completar la práctica.</p></div></div>
@@ -4824,7 +4988,7 @@ header.top .brand .brand-copy small{
 <section class="section training collapsible" id="cap-c4"><div class="section-head"><div><div class="eyebrow">Capacitación · Activación simulada</div><h2>Paso 4 · Registrar incidencia</h2></div><a class="section-toggle" href="#capacitacion">Escenarios</a></div><div class="orientation"><div class="where">Paso 4 de 7</div><div><strong>Objetivo: convertir un problema en seguimiento</strong><p>Durante el turno se presenta una falla parcial de iluminación.</p></div></div><div class="practice-focus"><h3>¿Qué información debe quedar?</h3><div class="micro-check"><label><input type="checkbox"/> Hora de detección.</label><label><input type="checkbox"/> Área afectada.</label><label><input type="checkbox"/> Responsable de seguimiento.</label><label><input type="checkbox"/> Acción realizada o apoyo solicitado.</label><label><input type="checkbox"/> Estado: pendiente, en atención o resuelta.</label></div><details class="answer-box"><summary>Reforzar</summary><p>Todos estos datos permiten dar trazabilidad a la incidencia y evitar que el siguiente turno pierda el seguimiento.</p></details><div class="expected"><b>Resultado esperado</b>Incidencia SIM-RT-TAB registrada con responsable y estado de seguimiento.</div></div><div class="training-nav"><a href="#cap-c3">← Anterior</a><a href="#capacitacion">Salir</a><a class="next" href="#cap-c5">Siguiente paso →</a></div></section>
 <section class="section training collapsible" id="cap-c5"><div class="section-head"><div><div class="eyebrow">Capacitación · Activación simulada</div><h2>Paso 5 · Calcular agua</h2></div><a class="section-toggle" href="#capacitacion">Escenarios</a></div><div class="orientation"><div class="where">Paso 5 de 7</div><div><strong>Objetivo: estimar el agua para beber de referencia</strong><p>Use 2 litros por persona por día.</p></div></div><div class="practice-focus"><h3>Reto de cálculo</h3><p class="goal">43 personas × 2 litros × 2 días = ?</p><label><input name="capC1" type="radio"/> 86 litros</label><br/><label><input name="capC1" type="radio"/> 172 litros</label><br/><label><input name="capC1" type="radio"/> 258 litros</label><details class="answer-box"><summary>Contrastar cálculo</summary><p><b>172 litros.</b> 43 × 2 × 2 = 172. Este parámetro corresponde al agua para beber y no representa todas las necesidades de agua del refugio.</p></details><div class="expected"><b>Resultado esperado</b>Necesidad de referencia para dos días: 172 litros de agua para beber.</div></div><div class="training-nav"><a href="#cap-c4">← Anterior</a><a href="#capacitacion">Salir</a><a class="next" href="#cap-c6">Siguiente paso →</a></div></section>
 <section class="section training collapsible" id="cap-c6"><div class="section-head"><div><div class="eyebrow">Capacitación · Activación simulada</div><h2>Paso 6 · Entrega de turno</h2></div><a class="section-toggle" href="#capacitacion">Escenarios</a></div><div class="orientation"><div class="where">Paso 6 de 7</div><div><strong>Objetivo: que el siguiente turno reciba una situación clara</strong><p>La entrega debe incluir población, servicios, necesidades e incidencias pendientes.</p></div></div><div class="practice-focus"><h3>¿Qué no debe omitirse?</h3><div class="instruction">En este escenario deben transferirse al menos: 43 personas presentes, dos seguimientos de salud, estado del agua y la incidencia de iluminación.</div><label><input name="capCstep6" type="radio"/> Entregar sólo el nombre del responsable.</label><br/><label><input name="capCstep6" type="radio"/> Entregar situación de población, salud, servicios, inventario e incidencias.</label><details class="answer-box"><summary>Contrastar respuesta</summary><p>La segunda opción. La entrega de turno debe permitir continuidad operativa y dejar claros los asuntos pendientes.</p></details><div class="expected"><b>Resultado esperado</b>El turno entrante puede continuar la operación sin reconstruir la información desde cero.</div></div><div class="training-nav"><a href="#cap-c5">← Anterior</a><a href="#capacitacion">Salir</a><a class="next" href="#cap-c7">Siguiente paso →</a></div></section>
-<section class="section training collapsible" id="cap-c7"><div class="section-head"><div><div class="eyebrow">Capacitación · Activación simulada</div><h2>Paso 7 · Reporte diario</h2></div><a class="section-toggle" href="#capacitacion">Escenarios</a></div><div class="orientation"><div class="where">Paso 7 de 7</div><div><strong>Objetivo: cerrar el ejercicio integrando la información</strong><p>El reporte debe consolidar población, necesidades, incidencias y situación operativa.</p></div></div><div class="practice-focus"><h3>Resumen esperado del escenario</h3><div class="micro-check"><label><input type="checkbox"/> 12 familias.</label><label><input type="checkbox"/> 43 personas presentes.</label><label><input type="checkbox"/> 2 personas con seguimiento de salud.</label><label><input type="checkbox"/> Requerimiento de agua para dos días: 172 L.</label><label><input type="checkbox"/> Incidencia de iluminación con estado actualizado.</label></div><div class="expected"><b>Resultado esperado</b>El usuario puede explicar la secuencia completa desde la revisión inmediata hasta el reporte del turno.</div></div><div class="training-progress"><b>Escenario C completado</b><small>La práctica terminó. Puede repetir otro escenario o pasar a los módulos operativos reales desde el Menú.</small></div><div class="training-nav"><a href="#cap-c6">← Anterior</a><a href="#capacitacion">Elegir otro escenario</a><a class="next" href="#menu">Ir al Menú general →</a></div></section><section class="section collapsible" id="fuentes"><div class="section-head"><div><div class="eyebrow">Fuentes</div><h2>Referencias de consulta</h2></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div><div class="reference-context">Fuentes y referencias · Esta sección no forma parte del avance de la ruta operativa.</div><div class="card"><p><b>Base técnica:</b> Guía para la Gestión de Refugios Temporales en México, Coordinación Nacional de Protección Civil, revisión julio de 2026.</p><p><b>Marco estatal:</b> Ley de Protección Civil del Estado de Tabasco y disposiciones aplicables. La guía se concentra exclusivamente en la gestión y operación de <b>Refugios Temporales</b>.</p><p><b>Herramientas de apoyo:</b> listas de verificación, acciones correctivas, tablero, cálculos, seguimiento de incidencias, cambio de turno, respaldo local y capacitación apoyan la preparación y operación del Refugio Temporal.</p></div><div class="reference-nav"><a href="#menu">← Volver al menú</a></div></section>
+<section class="section training collapsible" id="cap-c7"><div class="section-head"><div><div class="eyebrow">Capacitación · Activación simulada</div><h2>Paso 7 · Reporte diario</h2></div><a class="section-toggle" href="#capacitacion">Escenarios</a></div><div class="orientation"><div class="where">Paso 7 de 7</div><div><strong>Objetivo: cerrar el ejercicio integrando la información</strong><p>El reporte debe consolidar población, necesidades, incidencias y situación operativa.</p></div></div><div class="practice-focus"><h3>Resumen esperado del escenario</h3><div class="micro-check"><label><input type="checkbox"/> 12 familias.</label><label><input type="checkbox"/> 43 personas presentes.</label><label><input type="checkbox"/> 2 personas con seguimiento de salud.</label><label><input type="checkbox"/> Requerimiento de agua para dos días: 172 L.</label><label><input type="checkbox"/> Incidencia de iluminación con estado actualizado.</label></div><div class="expected"><b>Resultado esperado</b>El usuario puede explicar la secuencia completa desde la revisión inmediata hasta el reporte del turno.</div></div><div class="training-progress"><b>Escenario C completado</b><small>La práctica terminó. Puede repetir otro escenario o pasar a los módulos operativos reales desde el Menú.</small></div><div class="training-nav"><a href="#cap-c6">← Anterior</a><a href="#capacitacion">Elegir otro escenario</a><a class="next" href="#menu">Ir al Menú general →</a></div></section><section class="section collapsible" id="fuentes"><div class="section-head"><div><div class="eyebrow">Fuentes</div><h2>Referencias de consulta</h2></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div><div class="reference-context">Fuentes y referencias · Esta sección no forma parte del avance de la ruta operativa.</div><div class="card"><p><b>Base técnica:</b> Guía para la Gestión de Refugios Temporales en México, Coordinación Nacional de Protección Civil, revisión julio de 2026.</p><p><b>Marco estatal:</b> Ley de Protección Civil del Estado de Tabasco y disposiciones aplicables. La guía se concentra exclusivamente en la gestión y operación de <b>Refugios Temporales</b>.</p><p><b>Herramientas de apoyo:</b> listas de verificación, acciones correctivas, tablero, cálculos, seguimiento de incidencias, cambio de turno, respaldo local y capacitación apoyan la preparación y operación del Refugio Temporal.</p></div></section>
 <section class="section more-menu collapsible" id="mas"><div class="section-head"><div><div class="eyebrow">NAVEGACIÓN</div><h2>Más herramientas</h2><p>Acceso directo a los módulos operativos y de consulta.</p></div><a class="section-toggle module-menu-link" href="#menu">Menú</a></div><div class="moregrid"><a href="#poblacion">👥 Población</a><a href="#movimientos">🚪 Entradas y salidas</a><a href="#salud">❤️ Salud</a><a href="#alimentacion">🍲 Alimentación</a><a href="#agua">💧 Agua</a><a href="#inventario">📦 Inventario</a><a href="#incidencias">⚠️ Incidencias</a><a href="#turno">🔄 Turno</a><a href="#desactivacion">🔒 Cierre</a><a href="#consulta">📖 Consulta</a><a href="#funciones">👤 Funciones</a><a href="#fuentes">⚖️ Fuentes</a></div></section>
 <div aria-label="Navegación permanente" class="subnav"><a href="#portada"><span>⌂</span><b>Inicio</b></a><a href="#menu"><span>☰</span><b>Menú</b></a><a href="#consulta"><span>▤</span><b>Consultar</b></a></div>
 <div class="foot">Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales en el Estado de Tabasco · IPCET · 2026</div>
