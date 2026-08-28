@@ -3425,6 +3425,40 @@ header.top .brand .brand-copy small{
     grid-template-columns:1fr!important;
   }
 }
+
+/* v79 · Pantallas independientes: evitar contenido continuo en tablet/móvil */
+body:has(.module-menu-page:target) #portada,
+body:has(.section.collapsible:target) #portada,
+body:has(.guide-lesson:target) #portada{
+  display:none!important;
+}
+
+/* Cuando se abre Menú o cualquier módulo, mostrar únicamente la pantalla solicitada,
+   manteniendo cabecera superior, navegación inferior y pie institucional. */
+body:has(.module-menu-page:target) main#contenido > section:not(.module-menu-page:target),
+body:has(.section.collapsible:target) main#contenido > section:not(.section.collapsible:target){
+  display:none!important;
+}
+body:has(.module-menu-page:target) .module-menu-page:target,
+body:has(.section.collapsible:target) .section.collapsible:target{
+  display:block!important;
+}
+
+/* Espaciado limpio bajo cabecera sticky en tablet */
+@media (min-width:701px) and (max-width:1180px){
+  .module-menu-page:target,
+  .section.collapsible:target{
+    margin-top:14px!important;
+  }
+}
+
+/* En móvil/tablet la pantalla activa no hereda márgenes de portada */
+@media (max-width:1180px){
+  body:has(.module-menu-page:target) main#contenido,
+  body:has(.section.collapsible:target) main#contenido{
+    padding-top:0!important;
+  }
+}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
