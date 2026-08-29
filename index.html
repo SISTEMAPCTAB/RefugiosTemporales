@@ -3589,6 +3589,22 @@ body:has(.section.collapsible:target) .section.collapsible:target{
     width:100%!important;
   }
 }
+
+/* v82 · Accesos principales sin etiqueta ABRIR */
+.cover-v33-actions > a::before,
+.cover-v33-actions > a::after,
+.cover-v33-actions > a .cover-v33-action-open,
+.cover-v33-actions > a .open,
+.cover-v33-actions > a [class*="open"]{
+  content:none!important;
+  display:none!important;
+}
+.cover-v33-actions > a{
+  padding-right:18px!important;
+}
+.cover-v33-actions > a > span:not(.ico){
+  padding-right:0!important;
+}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
