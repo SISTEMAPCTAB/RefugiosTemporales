@@ -3624,6 +3624,44 @@ body:has(.section.collapsible:target) .section.collapsible:target{
 a[href],button,[role="button"]{
   cursor:pointer;
 }
+
+/* v86 · Historial seguro de recuperación */
+.history-safe-card{margin:22px 0 8px;padding:20px;border:1px solid #d9cdbd;border-left:5px solid #7d1735;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(70,45,30,.06)}
+.history-safe-head{display:flex;gap:16px;align-items:flex-start;justify-content:space-between}
+.history-safe-head h3{margin:3px 0 6px;color:#72142f;font-size:1.15rem}
+.history-safe-head p{margin:0;color:#5d5a57;line-height:1.5}
+.history-safe-badge{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:#f4eadc;color:#76561c;font-weight:800;font-size:.78rem}
+.history-safe-status{margin:14px 0;padding:11px 13px;border-radius:12px;background:#f8f5f1;color:#514d49;font-size:.92rem}
+.history-safe-actions{display:flex;gap:10px;flex-wrap:wrap}
+.history-safe-actions button{border:0;border-radius:12px;padding:11px 14px;background:#7d1735;color:white;font-weight:800;cursor:pointer}
+.history-safe-actions button.secondary{background:#f1e9df;color:#6b1830;border:1px solid #d8c9b7}
+.history-safe-list{margin-top:14px;border-top:1px solid #e4d9cb;padding-top:12px}
+.history-safe-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eee6dd}
+.history-safe-item small{display:block;color:#77706a;margin-top:2px}
+.history-safe-item button{border:1px solid #cdbda9;background:#fff;color:#6d1830;border-radius:10px;padding:8px 10px;font-weight:800}
+.history-safe-note{margin-top:13px;color:#5f5a55;font-size:.86rem;line-height:1.45}
+@media(max-width:700px){.history-safe-head{display:block}.history-safe-badge{display:inline-block;margin-top:10px}.history-safe-item{grid-template-columns:1fr}.history-safe-item button{width:100%}}
+
+    /* v87 · claridad de datos locales e importación protegida */
+    .local-data-clarity{margin:14px 0 18px;padding:14px 16px;border-radius:14px;background:#f8f4ed;border:1px solid #dfd2c0;color:#4e4944;line-height:1.45}
+    .local-data-clarity>b{display:block;color:#741733;margin-bottom:3px}.local-data-clarity span{display:block}
+    .local-data-clarity small{display:block;margin-top:8px;padding-top:8px;border-top:1px solid #e3d7c8;color:#665f58}
+    .import-safe-dialog{border:0;border-radius:18px;padding:0;max-width:520px;width:calc(100% - 30px);box-shadow:0 18px 60px rgba(0,0,0,.25)}
+    .import-safe-dialog::backdrop{background:rgba(35,24,27,.55)}.import-safe-dialog .inner{padding:20px}
+    .import-safe-dialog h3{margin:0 0 8px;color:#741733}.import-safe-dialog p{color:#5d5752;line-height:1.45}
+    .import-safe-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.import-safe-actions button{flex:1;min-width:130px;border:0;border-radius:11px;padding:11px 12px;font-weight:800}
+    .import-safe-actions .keep{background:#741733;color:#fff}.import-safe-actions .cancel{background:#eee7df;color:#5f2638}
+    
+/* v88 · identificación local y sello documental */
+.identity-local-card{margin:16px 0 20px;padding:18px;border:1px solid #d9cbbb;border-left:5px solid #741733;border-radius:16px;background:#fff}
+.identity-local-card h3{margin:4px 0 7px;color:#741733}.identity-local-note{color:#57514d;line-height:1.45}
+.identity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.identity-grid label{font-weight:800;color:#554e49;font-size:.86rem}.identity-grid input,.identity-grid select{display:block;width:100%;box-sizing:border-box;margin-top:5px;padding:11px;border:1px solid #d4c8ba;border-radius:10px;background:#fff;font:inherit}
+.identity-actions{display:flex;gap:10px;flex-wrap:wrap}.identity-actions button{border:0;border-radius:11px;padding:10px 13px;background:#741733;color:#fff;font-weight:800}.identity-actions .secondary{background:#eee7df;color:#642039}
+.identity-status{margin:12px 0 5px;padding:10px 12px;border-radius:10px;background:#f7f3ee;color:#5d5650}.identity-local-card small{color:#746c65}
+.report-seal{margin-top:18px;border:1px solid #cabba8;border-radius:14px;padding:14px;display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:16px;align-items:center}
+.report-seal-qr{width:150px;height:150px;image-rendering:pixelated;background:#fff}
+@media(max-width:700px){.identity-grid{grid-template-columns:1fr}.report-seal{grid-template-columns:1fr}.report-seal-qr{width:140px;height:140px}}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -3780,6 +3818,27 @@ a[href],button,[role="button"]{
 </div>
 <a aria-label="Abrir menú de módulos" class="section-toggle module-menu-link" href="#menu">Módulos</a>
 </div>
+<div class="local-data-clarity" id="localDataClarity">
+<b>Tus expedientes se guardan en este dispositivo.</b>
+<span>Funcionan con o sin internet y no se envían automáticamente a ningún servidor.</span>
+<small><b>Exportar</b> crea una copia que puedes guardar o compartir. <b>Importar</b> incorpora esa copia a este dispositivo.</small>
+</div>
+<div class="identity-local-card" id="identityLocalCard">
+<div class="eyebrow">IDENTIFICACIÓN LOCAL</div>
+<h3>Perfil del responsable</h3>
+<p class="identity-local-note"><b>Se configura una sola vez en este dispositivo.</b> Los datos se almacenan localmente, se utilizan para identificar al responsable de los expedientes y no se envían automáticamente a ningún servidor.</p>
+<div class="identity-grid">
+<label>Nombre completo<input autocomplete="name" id="profileFullName" placeholder="Nombre completo"/></label>
+<label>Cargo<input id="profileRole" placeholder="Cargo"/></label>
+<label>Área de adscripción<input id="profileArea" placeholder="Área de adscripción"/></label>
+<label>Institución<input id="profileInstitution" placeholder="Institución"/></label>
+<label>Tipo de identificación<select id="profileIdType"><option value="institucional">ID institucional</option><option value="ine">INE</option></select></label>
+<label>Número o referencia<input autocomplete="off" id="profileIdNumber" placeholder="Número de empleado, folio o últimos 4–6 caracteres"/></label>
+</div>
+<div class="identity-actions"><button id="saveIdentityProfileBtn" type="button">Guardar identificación</button><button class="secondary" id="editIdentityProfileBtn" type="button">Actualizar datos</button></div>
+<div class="identity-status" id="identityProfileStatus">Aún no se ha configurado el perfil en este dispositivo.</div>
+<small>Para INE se recomienda registrar únicamente los últimos 4–6 caracteres de referencia. No capture CURP, domicilio ni fotografía.</small>
+</div>
 <div class="refuge-manager-intro">
 <div>
 <b>Trabajo local y sin conexión</b>
@@ -3843,6 +3902,39 @@ a[href],button,[role="button"]{
 <div class="pdf-note">
 <b>PDF institucional IPCET</b>
 <p>El botón “Generar PDF” prepara un reporte institucional de la verificación y abre la función de impresión del dispositivo. En PC, Android, iPad y iPhone puede guardarse o compartirse como PDF.</p>
+</div>
+<div class="history-safe-card" id="refugeHistoryCard">
+<div class="history-safe-head">
+<div>
+<div class="eyebrow">PROTECCIÓN DE DATOS</div>
+<h3>Historial de recuperación</h3>
+<p>Guarda copias de recuperación del expediente activo sin sustituir el expediente principal. Úselo únicamente si necesita volver a un estado anterior.</p>
+</div>
+<span class="history-safe-badge">Automático</span>
+</div>
+<div class="history-safe-status" id="historySafeStatus">El historial se crea automáticamente al continuar trabajando en un expediente.</div>
+<div class="history-safe-actions">
+<button id="createRecoveryPointBtn" type="button">Crear punto de recuperación</button>
+<button class="secondary" id="viewRecoveryHistoryBtn" type="button">Ver historial</button>
+</div>
+<div class="history-safe-list" hidden="" id="recoveryHistoryList"></div>
+<div class="history-safe-note"><b>Importante:</b> restaurar una copia no borra el estado actual: antes de restaurar, la guía crea automáticamente una copia de seguridad del expediente tal como está.</div>
+</div>
+<dialog class="import-safe-dialog" id="importConflictDialog">
+<div class="inner">
+<div class="eyebrow">IMPORTACIÓN PROTEGIDA</div>
+<h3>Este expediente ya existe</h3>
+<p id="importConflictText">Para evitar pérdida de información, la guía no sobrescribirá automáticamente el expediente guardado en este dispositivo.</p>
+<div class="import-safe-actions">
+<button class="keep" id="importKeepBothBtn" type="button">Conservar ambos</button>
+<button class="cancel" id="importCancelConflictBtn" type="button">Cancelar este expediente</button>
+</div>
+</div>
+</dialog>
+<div class="history-safe-card" id="deletedRefugesCard">
+<div class="history-safe-head"><div><div class="eyebrow">PROTECCIÓN CONTRA BORRADO ACCIDENTAL</div><h3>Papelera de expedientes</h3><p>Eliminar un expediente no lo destruye: se conserva localmente para poder recuperarlo.</p></div><span class="history-safe-badge">Recuperable</span></div>
+<div class="history-safe-actions"><button class="secondary" id="showDeletedRefugesBtn" type="button">Ver papelera</button></div>
+<div class="history-safe-list" hidden="" id="deletedRefugeList"></div>
 </div>
 </section><section class="section collapsible" id="datos-dispositivo"><div class="section-head">
 <div>
@@ -5198,18 +5290,37 @@ const KEY='rt_tabasco_v9';
 const DB_NAME='rt_tabasco_local_v9';
 const STORE='app';
 const REFUGE_STORE='refugios';
-const REFUGE_FALLBACK_KEY='rt_tabasco_refugios_v1';
+const REFUGE_FALLBACK_KEY='rt_tabasco_refugios_v1'; const REFUGE_FALLBACK_BACKUP_KEY='rt_tabasco_refugios_v1_backup'; const STATE_BACKUP_KEY='rt_tabasco_v9_backup';
 let state={people:[],actions:[],incidents:[],inventory:[],moves:[],health:[],meals:[],shifts:[],active:false,activation:null,formData:{},lastSaved:null,activeRefugeId:null};
 const $=id=>document.getElementById(id); const qsa=s=>Array.from(document.querySelectorAll(s));
 let storageMode='IndexedDB';
 function openDB(){return new Promise((resolve,reject)=>{try{const req=indexedDB.open(DB_NAME,2);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE);if(!db.objectStoreNames.contains(REFUGE_STORE))db.createObjectStore(REFUGE_STORE,{keyPath:'id'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)}catch(e){reject(e)}})}
 async function storageGet(){
-  try{const db=await openDB();return await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(KEY);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)})}
-  catch(e){storageMode='Almacenamiento local';try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){return null}}
+  try{
+    const db=await openDB();
+    const val=await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(KEY);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)});
+    if(val)return val;
+  }catch(e){storageMode='Almacenamiento local'}
+  for(const k of [KEY,STATE_BACKUP_KEY]){
+    try{const raw=localStorage.getItem(k);if(raw){const v=JSON.parse(raw);if(v&&typeof v==='object')return v}}catch(e){}
+  }
+  return null;
 }
 async function storagePut(value){
-  try{const db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(value,KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});try{localStorage.setItem(KEY,JSON.stringify(value))}catch(_){}}
-  catch(e){storageMode='Almacenamiento local';localStorage.setItem(KEY,JSON.stringify(value))}
+  const serialized=JSON.stringify(value);
+  let idbOK=false, localOK=false;
+  try{
+    const db=await openDB();
+    await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(value,KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+    idbOK=true;
+  }catch(e){storageMode='Almacenamiento local'}
+  try{
+    const previous=localStorage.getItem(KEY);
+    if(previous) localStorage.setItem(STATE_BACKUP_KEY,previous);
+    localStorage.setItem(KEY,serialized);
+    localOK=true;
+  }catch(e){}
+  if(!idbOK&&!localOK)throw new Error('No hay almacenamiento persistente disponible');
 }
 async function storageClear(){
   try{
@@ -5222,59 +5333,102 @@ async function storageClear(){
       tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
     });
   }catch(e){}
-  try{localStorage.removeItem(KEY);localStorage.removeItem(REFUGE_FALLBACK_KEY)}catch(e){}
+  try{localStorage.removeItem(KEY);localStorage.removeItem(STATE_BACKUP_KEY);localStorage.removeItem(REFUGE_FALLBACK_KEY);localStorage.removeItem(REFUGE_FALLBACK_BACKUP_KEY)}catch(e){}
 }
 
 
+function fnv1a(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193)}return (h>>>0).toString(16).padStart(8,'0')}
+function withRecordIntegrity(rec){
+  const c=JSON.parse(JSON.stringify(rec||{}));delete c._checksum;c._checksum=fnv1a(JSON.stringify(c));return c;
+}
+function validRecord(rec){
+  if(!rec||typeof rec!=='object'||!rec.id)return false;
+  if(!rec._checksum)return true; const c=JSON.parse(JSON.stringify(rec));const got=c._checksum;delete c._checksum;return got===fnv1a(JSON.stringify(c));
+}
 function readRefugeFallback(){
-  try{
-    const x=JSON.parse(localStorage.getItem(REFUGE_FALLBACK_KEY)||'[]');
-    return Array.isArray(x)?x:[];
-  }catch(e){return []}
+  for(const k of [REFUGE_FALLBACK_KEY,REFUGE_FALLBACK_BACKUP_KEY]){
+    try{
+      const x=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(x)){const good=x.filter(validRecord);if(good.length||x.length===0)return good}
+    }catch(e){}
+  }
+  return [];
 }
 function writeRefugeFallback(records){
-  try{localStorage.setItem(REFUGE_FALLBACK_KEY,JSON.stringify(Array.isArray(records)?records:[]));return true}catch(e){return false}
+  try{
+    const safe=(Array.isArray(records)?records:[]).map(withRecordIntegrity);
+    const previous=localStorage.getItem(REFUGE_FALLBACK_KEY);
+    if(previous)localStorage.setItem(REFUGE_FALLBACK_BACKUP_KEY,previous);
+    localStorage.setItem(REFUGE_FALLBACK_KEY,JSON.stringify(safe));return true
+  }catch(e){return false}
 }
-async function mirrorRefugesToFallback(records){
-  if(Array.isArray(records)&&records.length)writeRefugeFallback(records);
-}
+function recordTime(r){return Date.parse(r?.updatedAt||r?.deletedAt||r?.createdAt||0)||0}
+function chooseNewest(a,b){if(!a)return b;if(!b)return a;return recordTime(b)>=recordTime(a)?b:a}
+async function mirrorRefugesToFallback(records){if(Array.isArray(records))writeRefugeFallback(records)}
 async function refugeGet(id){
+  let idbRec=null,idbWorked=false;
   try{
     const db=await openDB();
-    const rec=await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readonly');const r=tx.objectStore(REFUGE_STORE).get(id);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)});
-    if(rec){
-      const fb=readRefugeFallback(), i=fb.findIndex(x=>x.id===rec.id);
-      if(i>=0)fb[i]=rec;else fb.push(rec);writeRefugeFallback(fb);
-    }
-    return rec||readRefugeFallback().find(x=>x.id===id)||null;
-  }catch(e){storageMode='Almacenamiento local';return readRefugeFallback().find(x=>x.id===id)||null}
+    idbRec=await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readonly');const r=tx.objectStore(REFUGE_STORE).get(id);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)});
+    idbWorked=true;
+  }catch(e){storageMode='Almacenamiento local'}
+  if(idbRec&&!validRecord(idbRec))idbRec=null;
+  const fb=readRefugeFallback().find(x=>x.id===id)||null;
+  const rec=chooseNewest(idbRec,fb);
+  if(rec&&idbWorked){
+    try{const db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readwrite');tx.objectStore(REFUGE_STORE).put(withRecordIntegrity(rec));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}catch(e){}
+  }
+  return rec||null;
 }
 async function refugeListAll(){
+  let idb=[],idbWorked=false;
   try{
     const db=await openDB();
-    const records=await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readonly');const r=tx.objectStore(REFUGE_STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
-    if(records.length)writeRefugeFallback(records);
-    return records.length?records:readRefugeFallback();
-  }catch(e){storageMode='Almacenamiento local';return readRefugeFallback()}
+    idb=await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readonly');const r=tx.objectStore(REFUGE_STORE).getAll();r.onsuccess=()=>resolve((r.result||[]).filter(validRecord));r.onerror=()=>reject(r.error)});
+    idbWorked=true;
+  }catch(e){storageMode='Almacenamiento local'}
+  const fb=readRefugeFallback();
+  const map=new Map();
+  [...idb,...fb].forEach(r=>{if(!r?.id)return;map.set(r.id,chooseNewest(map.get(r.id),r))});
+  const records=[...map.values()];
+  if(records.length||idbWorked)writeRefugeFallback(records);
+  if(idbWorked&&fb.length){
+    try{
+      const db=await openDB();const tx=db.transaction(REFUGE_STORE,'readwrite'),st=tx.objectStore(REFUGE_STORE);
+      records.forEach(r=>st.put(withRecordIntegrity(r)));
+    }catch(e){}
+  }
+  return records;
 }
+async function refugeGetAll(){return refugeListAll()}
 async function refugePut(rec){
+  if(!rec?.id)throw new Error('Expediente sin identificador');
+  const prepared=withRecordIntegrity(rec);
   let idbOK=false;
   try{
     const db=await openDB();
-    await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readwrite');tx.objectStore(REFUGE_STORE).put(rec);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+    const existing=await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readonly');const r=tx.objectStore(REFUGE_STORE).get(prepared.id);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)});
+    if(existing && Number(existing._revision||0)>Number(prepared._revision||0))return false;
+    await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readwrite');tx.objectStore(REFUGE_STORE).put(prepared);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
     idbOK=true;
   }catch(e){storageMode='Almacenamiento local'}
-  const fb=readRefugeFallback(), i=fb.findIndex(x=>x.id===rec.id);
-  if(i>=0)fb[i]=rec;else fb.push(rec);
+  const fb=readRefugeFallback(),i=fb.findIndex(x=>x.id===prepared.id);
+  if(i>=0){
+    if(Number(fb[i]._revision||0)<=Number(prepared._revision||0))fb[i]=prepared;
+  }else fb.push(prepared);
   const localOK=writeRefugeFallback(fb);
   if(!idbOK&&!localOK)throw new Error('No hay almacenamiento persistente disponible');
+  return true;
 }
 async function refugeDelete(id){
-  try{
-    const db=await openDB();
-    await new Promise((resolve,reject)=>{const tx=db.transaction(REFUGE_STORE,'readwrite');tx.objectStore(REFUGE_STORE).delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-  }catch(e){storageMode='Almacenamiento local'}
-  writeRefugeFallback(readRefugeFallback().filter(x=>x.id!==id));
+  const rec=await refugeGet(id);if(!rec)return false;
+  rec.deletedAt=new Date().toISOString();rec.updatedAt=rec.deletedAt;rec._revision=Number(rec._revision||0)+1;
+  await refugePut(rec);return true;
+}
+async function refugeRestore(id){
+  const rec=await refugeGet(id);if(!rec)return false;
+  delete rec.deletedAt;rec.updatedAt=new Date().toISOString();rec._revision=Number(rec._revision||0)+1;
+  await refugePut(rec);return true;
 }
 function clonePlain(obj){return JSON.parse(JSON.stringify(obj||{}))}
 function currentRefugeMeta(){
@@ -5315,14 +5469,19 @@ function makeBlankRefugeState(meta,id){
     guideActivityReview:clonePlain(state.guideActivityReview||{})
   };
 }
-async function saveActiveRefugeSnapshot(){
-  const id=state.activeRefugeId;if(!id)return;
-  const old=await refugeGet(id);if(!old)return;
-  const meta=currentRefugeMeta();
+async function saveActiveRefugeSnapshotFrom(captured){
+  const id=captured?.activeRefugeId;if(!id)return;
+  const old=await refugeGet(id);if(!old||old.deletedAt)return;
+  const fd=captured.formData||{};
+  const meta={
+    name:(fd['id:inmueble']||fd['id:verifyShelterName']||old.name||'').trim(),
+    municipio:(fd['id:municipio']||fd['id:verifyMunicipio']||old.municipio||'').trim(),
+    localidad:(fd['id:localidad']||fd['id:verifyLocalidad']||old.localidad||'').trim()
+  };
+  const snap=clonePlain(captured);delete snap.guideProgress;delete snap.guideActivityReview;delete snap.activeRefugeId;
   const rec={...old,name:meta.name||old.name,municipio:meta.municipio||old.municipio,localidad:meta.localidad||old.localidad,
-    updatedAt:new Date().toISOString(),snapshot:refugeSnapshot()};
+    updatedAt:captured.lastSaved||new Date().toISOString(),_revision:Number(captured._saveRevision||0),snapshot:snap};
   await refugePut(rec);
-  if(document.getElementById('mis-refugios')?.matches(':target'))renderRefugeList();
 }
 function verificationSummaryFromSnapshot(snap){
   const vals=snap?.verification?.values||{};
@@ -5360,7 +5519,7 @@ async function openRefugeRecord(id){
 async function createRefugeRecord(meta){
   const id='RT-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const blank=makeBlankRefugeState(meta,id);
-  const rec={id,name:meta.name,municipio:meta.municipio,localidad:meta.localidad,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),snapshot:clonePlain(blank)};
+  const rec={id,name:meta.name,municipio:meta.municipio,localidad:meta.localidad,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),_revision:1,snapshot:clonePlain(blank)};
   await refugePut(rec);
   refillOperationalUI(blank,id);
   await storagePut(state);
@@ -5372,8 +5531,26 @@ function setSaveStatus(kind,text,detail){const dot=$('saveDot'),t=$('saveStateTe
 function controlKey(el){return el.id?('id:'+el.id):el.name?('name:'+el.name):null}
 function captureForms(){const data={};qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset')return;const k=controlKey(el);if(!k)return;if(el.type==='radio'){if(el.checked)data[k]=el.value}else if(el.type==='checkbox'){data[k]=!!el.checked}else data[k]=el.value});state.formData=data}
 function restoreForms(){const data=state.formData||{};qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset')return;const k=controlKey(el);if(!k||!(k in data))return;if(el.type==='radio')el.checked=(el.value===data[k]);else if(el.type==='checkbox')el.checked=!!data[k];else el.value=data[k]??''})}
-let saveTimer=null;
-async function save(silent=true){captureForms();state.lastSaved=new Date().toISOString();setSaveStatus('pending','Guardando…','Conservando cambios en este dispositivo.');try{await storagePut(state);if(state.activeRefugeId)await saveActiveRefugeSnapshot();render();setSaveStatus('ok','Guardado en este dispositivo',new Date(state.lastSaved).toLocaleString('es-MX')+' · '+storageMode);if(!silent)toast('Datos guardados en este dispositivo.')}catch(e){setSaveStatus('error','No fue posible guardar','Use “Respaldar datos” para conservar una copia.')}}
+let saveTimer=null;let saveChain=Promise.resolve();let saveRevision=Number(state._saveRevision||0);
+function save(silent=true){
+  captureForms();
+  saveRevision=Math.max(saveRevision,Number(state._saveRevision||0))+1;
+  state._saveRevision=saveRevision;state.lastSaved=new Date().toISOString();
+  const captured=clonePlain(state),myRevision=saveRevision;
+  setSaveStatus('pending','Guardando…','Conservando cambios en este dispositivo.');
+  saveChain=saveChain.then(async()=>{
+    await storagePut(captured);
+    if(captured.activeRefugeId)await saveActiveRefugeSnapshotFrom(captured);
+    if(myRevision===saveRevision){
+      setSaveStatus('ok','Guardado en este dispositivo',new Date(captured.lastSaved).toLocaleString('es-MX')+' · '+storageMode);
+      if(!silent)toast('Datos guardados en este dispositivo.');
+    }
+  }).catch(e=>{
+    console.error('Error de guardado',e);
+    if(myRevision===saveRevision)setSaveStatus('error','No fue posible guardar','Exporte un respaldo antes de continuar.');
+  });
+  return saveChain;
+}
 function scheduleSave(){setSaveStatus('pending','Cambios pendientes','Se guardarán automáticamente en unos instantes.');clearTimeout(saveTimer);saveTimer=setTimeout(()=>save(true),500)}
 const loaded=await storageGet();if(loaded)state=Object.assign(state,loaded);state.formData=state.formData||{};
 restoreForms();
@@ -5524,7 +5701,18 @@ $('saveShift')?.addEventListener('click',()=>{state.shifts.push({at:now(),out:$(
 $('buildReport')?.addEventListener('click',()=>{renderReport();});
 $('waterPeople')?.addEventListener('input',renderWater);$('waterDays')?.addEventListener('input',renderWater);$('waterStock')?.addEventListener('input',renderWater);
 $('demoBtn')?.addEventListener('click',()=>{state.people=[{id:'SIM-P-001',fam:'SIM-RT-TAB-F001',name:'Persona simulada 1',age:68,sex:'Mujer',need:'Persona adulta mayor 60+',status:'Presente'},{id:'SIM-P-002',fam:'SIM-RT-TAB-F001',name:'Persona simulada 2',age:42,sex:'Hombre',need:'Ninguna registrada',status:'Presente'}];state.inventory=[{at:now(),name:'Agua para beber',move:'Entrada',qty:120,unit:'L',origin:'SIMULACIÓN'}];state.incidents=[{id:'SIM-INC-001',at:now(),cat:'Agua',priority:'Alta',resp:'SIMULACIÓN',desc:'Abastecimiento preventivo requerido',status:'Pendiente'}];state.active=true;save();toast('Datos de demostración cargados con identificación SIM-RT-TAB.');});
-$('resetBtn')?.addEventListener('click',async()=>{if(confirm('¿Borrar todos los datos locales de esta guía en este dispositivo?')){await storageClear();location.reload();}});
+$('resetBtn')?.addEventListener('click',async()=>{
+  const word=prompt('Esta acción borra todos los datos locales de la guía en este dispositivo. Antes se descargará un respaldo. Para continuar escriba BORRAR.');
+  if(word!=='BORRAR')return;
+  try{
+    const records=await refugeListAll();
+    const payload={type:'IPCET-REFUGIOS-BACKUP',version:2,createdAt:new Date().toISOString(),reason:'pre-reset',records};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='Respaldo_ANTES_DE_BORRAR_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800);
+  }catch(e){alert('No fue posible preparar el respaldo. No se borraron los datos.');return}
+  if(!confirm('Respaldo preparado. ¿Confirma borrar los datos locales de esta guía?'))return;
+  await storageClear();location.reload();
+});
 function renderWater(){let p=+$('waterPeople')?.value||state.people.filter(x=>x.status==='Presente').length,d=+$('waterDays')?.value||1,s=+$('waterStock')?.value||0;let daily=p*2;$('waterDaily').textContent=daily.toFixed(0)+' L';$('waterPeriod').textContent=(daily*d).toFixed(0)+' L';$('waterAutonomy').textContent=(daily?s/daily:0).toFixed(1)+' días';}
 function renderReport(){let present=state.people.filter(x=>x.status==='Presente').length, families=new Set(state.people.map(x=>x.fam)).size, open=state.incidents.filter(x=>x.status!=='Resuelta').length, meals=state.meals.reduce((s,x)=>s+x.qty,0);$('reportView').innerHTML='<h3>Reporte diario consolidado</h3><div class="grid3"><p><b>Personas presentes:</b> '+present+'</p><p><b>Familias:</b> '+families+'</p><p><b>Incidencias abiertas:</b> '+open+'</p><p><b>Raciones registradas:</b> '+meals+'</p><p><b>Agua para beber de referencia:</b> '+(present*2)+' L/día</p><p><b>Corte:</b> '+esc($('reportDate').value||now())+'</p></div><p><b>Necesidades:</b> '+esc($('reportNeeds').value||'Sin observaciones capturadas')+'</p>';}
 function render(){let present=state.people.filter(x=>x.status==='Presente').length;let fam=new Set(state.people.map(x=>x.fam)).size;let cap=+$('capacidad')?.value||0;$('presentes').textContent=present;$('familias').textContent=fam;$('ocupacion').textContent=cap?Math.round(present/cap*100)+'%':'0%';$('incAbiertas').textContent=state.incidents.filter(x=>x.status!=='Resuelta').length;$('aguaCalc').textContent=(present*2)+' L/día';$('spaceCalc').textContent=(present*3.5).toFixed(1)+' m²';let women=state.people.filter(x=>x.status==='Presente'&&x.sex==='Mujer').length,men=state.people.filter(x=>x.status==='Presente'&&x.sex==='Hombre').length;$('wcWomen').textContent=Math.ceil(women/25)||0;$('wcMen').textContent=Math.ceil(men/35)||0;$('activeBadge').textContent=state.active?'Refugio activo':'Sin activar';
@@ -5619,17 +5807,25 @@ updateCapacityFactorMeter();
 
 renderVerify();render();setSaveStatus('ok','Respaldo restaurado',new Date().toLocaleString('es-MX'));toast('Respaldo restaurado correctamente.')}catch(err){setSaveStatus('error','No se pudo restaurar','El archivo seleccionado no corresponde a un respaldo válido.')}finally{e.target.value=''}});
 function emergencyFlush(){
-  captureForms();state.lastSaved=new Date().toISOString();
-  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
-  if(state.activeRefugeId){
-    const meta=currentRefugeMeta();
-    refugeGet(state.activeRefugeId).then(old=>{
-      if(!old)return;
-      const rec={...old,name:meta.name||old.name,municipio:meta.municipio||old.municipio,localidad:meta.localidad||old.localidad,updatedAt:new Date().toISOString(),snapshot:refugeSnapshot()};
-      return refugePut(rec);
+  captureForms();saveRevision=Math.max(saveRevision,Number(state._saveRevision||0))+1;state._saveRevision=saveRevision;state.lastSaved=new Date().toISOString();
+  const captured=clonePlain(state);
+  try{
+    const previous=localStorage.getItem(KEY);if(previous)localStorage.setItem(STATE_BACKUP_KEY,previous);
+    localStorage.setItem(KEY,JSON.stringify(captured));
+  }catch(e){}
+  if(captured.activeRefugeId){
+    refugeGet(captured.activeRefugeId).then(old=>{
+      if(!old||old.deletedAt)return;
+      const fd=captured.formData||{};
+      const rec={...old,
+        name:(fd['id:inmueble']||fd['id:verifyShelterName']||old.name||'').trim(),
+        municipio:(fd['id:municipio']||fd['id:verifyMunicipio']||old.municipio||'').trim(),
+        localidad:(fd['id:localidad']||fd['id:verifyLocalidad']||old.localidad||'').trim(),
+        updatedAt:captured.lastSaved,_revision:captured._saveRevision,snapshot:(()=>{const s=clonePlain(captured);delete s.guideProgress;delete s.guideActivityReview;delete s.activeRefugeId;return s})()
+      };return refugePut(rec);
     }).catch(()=>{});
   }
-  storagePut(state).catch(()=>{});
+  storagePut(captured).catch(()=>{});
 }
 window.addEventListener('pagehide',emergencyFlush);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')emergencyFlush()});
@@ -5857,6 +6053,7 @@ async function renderRefugeList(){
   const mf=($('refugeMunicipioFilter')?.value||'').trim();
   let records=[];
   try{records=await refugeListAll()}catch(e){records=[]}
+  records=records.filter(r=>!r.deletedAt);
   records.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
   records=records.filter(r=>(!mf||r.municipio===mf)&&(!q||[r.name,r.localidad,r.municipio].some(x=>String(x||'').toLowerCase().includes(q))));
   list.innerHTML='';
@@ -5915,8 +6112,32 @@ async function printVerificationReport(id){
   let rec=null;if(id)rec=await refugeGet(id);
   const snap=rec?.snapshot||refugeSnapshot();
   if(!snap?.verification)return toast('Primero guarde una verificación para generar el PDF.');
+  const profile=getIdentityProfile();
+  if(!profile?.fullName||!profile?.role||!profile?.area||!profile?.institution){
+    location.hash='#mis-refugios';
+    toast('Configure una sola vez el Perfil del responsable antes de generar el reporte.');
+    document.getElementById('profileFullName')?.focus();
+    return;
+  }
+  const base=JSON.stringify({id:rec?.id||'',meta:rec?.meta||{},snapshot:snap});
+  const hash=await sha256Text(base);
+  const vd=reportValidationData(rec||{id:state.activeRefugeId,meta:currentRefugeMeta()},profile,hash);
+  const qrPayload='IPCET|'+vd.folio+'|'+vd.responsable+'|'+vd.area+'|'+vd.institucion+'|'+vd.identificacion+'|'+vd.generado+'|SHA256:'+hash.slice(0,32);
+  let qrSvg='';try{qrSvg=MiniQR.svg(qrPayload,5)}catch(e){console.warn(e)}
+  let report=verificationReportHTML(rec);
+  const seal='<div class="report-seal" style="margin:18px 0;border:1px solid #bcae9e;border-radius:12px;padding:14px;display:grid;grid-template-columns:1fr 150px;gap:14px;align-items:center">'+
+   '<div><div style="font-size:11px;font-weight:800;color:#741733;letter-spacing:.08em">CONSTANCIA DIGITAL DE GENERACIÓN</div>'+
+   '<h3 style="margin:5px 0 8px;color:#741733">Identificación y validación del expediente</h3>'+
+   '<div><b>Responsable:</b> '+esc(vd.responsable)+'</div><div><b>Cargo:</b> '+esc(vd.cargo)+'</div>'+
+   '<div><b>Área:</b> '+esc(vd.area)+'</div><div><b>Institución:</b> '+esc(vd.institucion)+'</div>'+
+   '<div><b>Identificación:</b> '+esc(vd.identificacion)+'</div><div><b>Folio:</b> '+esc(vd.folio)+'</div>'+
+   '<div><b>Generado:</b> '+new Date(vd.generado).toLocaleString('es-MX')+'</div>'+
+   '<div style="font-size:10px;margin-top:6px"><b>Huella SHA-256:</b> '+hash+'</div>'+
+   '<div style="font-size:9px;margin-top:5px;color:#666">El QR identifica los datos declarados y la huella del expediente; no constituye firma electrónica certificada.</div></div>'+
+   '<div style="width:150px;height:150px">'+qrSvg+'</div></div>';
+  report=report.replace('<div class="foot">',seal+'<div class="foot">');
   const w=window.open('','_blank');if(!w)return toast('El navegador bloqueó la ventana del reporte. Permita ventanas emergentes e intente de nuevo.');
-  w.document.open();w.document.write(verificationReportHTML(rec));w.document.close();
+  w.document.open();w.document.write(report);w.document.close();
 }
 $('createRefugeBtn')?.addEventListener('click',async()=>{
   const meta={name:($('newRefugeName').value||'').trim(),municipio:($('newRefugeMunicipio').value||'').trim(),localidad:($('newRefugeLocalidad').value||'').trim()};
@@ -5940,8 +6161,8 @@ $('refugeList')?.addEventListener('click',async e=>{
   const pdf=e.target.closest('[data-refuge-pdf]');if(pdf)return printVerificationReport(pdf.dataset.refugePdf);
   const del=e.target.closest('[data-refuge-delete]');if(del){
     const id=del.dataset.refugeDelete;const rec=await refugeGet(id);if(!rec)return;
-    if(!confirm('¿Eliminar el expediente "'+rec.name+'"? Esta acción no se puede deshacer.'))return;
-    await refugeDelete(id);if(state.activeRefugeId===id){state.activeRefugeId=null;await storagePut(state)}await renderRefugeList();
+    if(!confirm('¿Enviar el expediente "'+rec.name+'" a la Papelera? Podrá recuperarlo posteriormente.'))return;
+    await refugeDelete(id);if(state.activeRefugeId===id){state.activeRefugeId=null;await storagePut(state)}await renderRefugeList();await renderDeletedRefugeList();toast('Expediente enviado a la Papelera.');
   }
 });
 $('printVerificationPdfBtn')?.addEventListener('click',()=>printVerificationReport(state.activeRefugeId||null));
@@ -5952,10 +6173,53 @@ $('exportRefugesBtn')?.addEventListener('click',async()=>{
 });
 $('importRefugesFile')?.addEventListener('change',async e=>{
   const f=e.target.files?.[0];if(!f)return;
-  try{const data=JSON.parse(await f.text());if(data.type!=='IPCET-REFUGIOS-BACKUP'||!Array.isArray(data.records))throw new Error('Formato no válido');
-    for(const r of data.records){if(r?.id)await refugePut(r)}await renderRefugeList();toast('Expedientes importados correctamente.');
-  }catch(err){toast('No fue posible importar el respaldo de expedientes.')}finally{e.target.value=''}
+  try{
+    const data=JSON.parse(await f.text());
+    if(data.type!=='IPCET-REFUGIOS-BACKUP'||!Array.isArray(data.records))throw new Error('Formato no válido');
+    const existing=await refugeGetAll();
+    const existingIds=new Set(existing.map(x=>x.id));
+    let added=0, copied=0, skipped=0;
+    for(const raw of data.records){
+      if(!raw?.id)continue;
+      const r=clonePlain(raw);
+      if(!existingIds.has(r.id)){
+        await refugePut(r); existingIds.add(r.id); added++; continue;
+      }
+      const choice=await askImportConflict(r);
+      if(choice==='keep'){
+        const oldId=r.id;
+        r.id='rt_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
+        r.importedFromId=oldId;
+        r.importedAt=new Date().toISOString();
+        if(r.meta){
+          r.meta=Object.assign({},r.meta);
+          if(r.meta.name && !/\(copia importada\)$/i.test(r.meta.name)) r.meta.name=r.meta.name+' (copia importada)';
+        }
+        await refugePut(r); existingIds.add(r.id); copied++;
+      }else skipped++;
+    }
+    await renderRefugeList();
+    toast('Importación terminada: '+added+' nuevos, '+copied+' como copia, '+skipped+' sin cambios.');
+  }catch(err){console.error(err);toast('No fue posible importar el archivo. Verifique que sea un respaldo válido de la guía.');}
+  e.target.value='';
 });
+
+function askImportConflict(record){
+  return new Promise(resolve=>{
+    const dlg=$('importConflictDialog'), text=$('importConflictText'), keep=$('importKeepBothBtn'), cancel=$('importCancelConflictBtn');
+    if(!dlg || typeof dlg.showModal!=='function'){
+      resolve(confirm('Este expediente ya existe en este dispositivo. Para evitar sobrescribirlo, pulse Aceptar para conservar ambos como expedientes independientes, o Cancelar para no importar esta copia.')?'keep':'skip');
+      return;
+    }
+    const label=record?.meta?.name||record?.name||'Expediente';
+    text.textContent='“'+label+'” ya existe en este dispositivo. Para evitar pérdida de información, la guía no sobrescribirá el expediente guardado.';
+    const finish=v=>{keep.onclick=null;cancel.onclick=null;try{dlg.close()}catch(e){}resolve(v)};
+    keep.onclick=()=>finish('keep');
+    cancel.onclick=()=>finish('skip');
+    dlg.oncancel=e=>{e.preventDefault();finish('skip')};
+    dlg.showModal();
+  });
+}
 renderRefugeList();
 
 
@@ -6018,6 +6282,218 @@ if(state.lastSaved)setSaveStatus('ok','Guardado en este dispositivo',new Date(st
 (function(){
   const groups=[...document.querySelectorAll('details.verify-group')];
   groups.forEach(d=>d.addEventListener('toggle',()=>{if(d.open){groups.forEach(o=>{if(o!==d)o.open=false;});}}));
+
+// v86 · Historial seguro: almacenamiento separado para no alterar ni sobrescribir el expediente principal.
+const RT_HISTORY_DB='rt_tabasco_historial_v1';
+const RT_HISTORY_STORE='snapshots';
+const RT_HISTORY_MAX_PER_RECORD=12;
+const RT_HISTORY_MIN_INTERVAL=6*60*60*1000; // máximo automático: una copia cada 6 h por expediente
+
+function historyDbOpen(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)) return reject(new Error('IndexedDB no disponible'));
+    const req=indexedDB.open(RT_HISTORY_DB,1);
+    req.onupgradeneeded=()=>{ const db=req.result; if(!db.objectStoreNames.contains(RT_HISTORY_STORE)){ const st=db.createObjectStore(RT_HISTORY_STORE,{keyPath:'snapshotId'}); st.createIndex('recordId','recordId',{unique:false}); st.createIndex('createdAt','createdAt',{unique:false}); } };
+    req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
+  });
+}
+async function historyGetAll(recordId){
+  const db=await historyDbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(RT_HISTORY_STORE,'readonly'), st=tx.objectStore(RT_HISTORY_STORE), idx=st.index('recordId');
+    const req=idx.getAll(IDBKeyRange.only(recordId));
+    req.onsuccess=()=>resolve((req.result||[]).sort((a,b)=>b.createdAt-a.createdAt));
+    req.onerror=()=>reject(req.error);
+    tx.oncomplete=()=>db.close();
+  });
+}
+async function historyPut(snapshot){
+  const db=await historyDbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(RT_HISTORY_STORE,'readwrite');
+    tx.objectStore(RT_HISTORY_STORE).put(snapshot);
+    tx.oncomplete=()=>{db.close();resolve(true)}; tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function historyDelete(snapshotId){
+  const db=await historyDbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(RT_HISTORY_STORE,'readwrite');
+    tx.objectStore(RT_HISTORY_STORE).delete(snapshotId);
+    tx.oncomplete=()=>{db.close();resolve(true)}; tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+function historyActiveRecord(){
+  try{
+    if(!state?.activeRefugeId)return null;
+    const meta=currentRefugeMeta();
+    return {id:state.activeRefugeId,name:meta.name,municipio:meta.municipio,localidad:meta.localidad,updatedAt:new Date().toISOString(),_revision:Number(state._saveRevision||0),snapshot:refugeSnapshot()};
+  }catch(e){return null}
+}
+async function createRecoveryPoint(reason='manual', force=false){
+  const record=historyActiveRecord();
+  if(!record || !record.id){ historySetStatus('Abra primero un expediente para crear su historial.'); return false; }
+  try{
+    const all=await historyGetAll(record.id);
+    const now=Date.now();
+    if(!force && all[0] && (now-all[0].createdAt)<RT_HISTORY_MIN_INTERVAL) return false;
+    const snap={snapshotId:record.id+'__'+now+'__'+Math.random().toString(36).slice(2,8),recordId:record.id,createdAt:now,reason,record:JSON.parse(JSON.stringify(record))};
+    await historyPut(snap);
+    const refreshed=await historyGetAll(record.id);
+    for(const old of refreshed.slice(RT_HISTORY_MAX_PER_RECORD)) await historyDelete(old.snapshotId);
+    historySetStatus('Último punto de recuperación: '+new Date(now).toLocaleString('es-MX'));
+    return true;
+  }catch(e){ console.warn('Historial no disponible',e); historySetStatus('El expediente principal sigue guardado. El historial adicional no está disponible en este navegador.'); return false; }
+}
+function historySetStatus(msg){ const el=document.getElementById('historySafeStatus'); if(el) el.textContent=msg; }
+async function renderRecoveryHistory(){
+  const box=document.getElementById('recoveryHistoryList'); if(!box) return;
+  const record=historyActiveRecord();
+  if(!record){ box.hidden=false; box.innerHTML='<div class="notice">Abra un expediente para consultar su historial.</div>'; return; }
+  try{
+    const all=await historyGetAll(record.id); box.hidden=false;
+    if(!all.length){ box.innerHTML='<div class="notice">Todavía no hay puntos de recuperación para este expediente.</div>'; return; }
+    box.innerHTML=all.map(s=>'<div class="history-safe-item"><div><b>'+new Date(s.createdAt).toLocaleString('es-MX')+'</b><small>'+(s.reason==='before-restore'?'Copia automática antes de restaurar':s.reason==='manual'?'Punto creado manualmente':'Copia automática de continuidad')+'</small></div><button type="button" data-restore-snapshot="'+s.snapshotId+'">Restaurar esta copia</button></div>').join('');
+  }catch(e){ box.hidden=false; box.innerHTML='<div class="notice">No fue posible abrir el historial adicional. El expediente principal no fue modificado.</div>'; }
+}
+async function restoreRecoveryPoint(snapshotId){
+  const current=historyActiveRecord();if(!current)return;
+  if(!confirm('Se restaurará esta copia. Antes se guardará automáticamente el estado actual para que también pueda recuperarlo. ¿Continuar?'))return;
+  try{
+    await createRecoveryPoint('before-restore',true);
+    const all=await historyGetAll(current.id),snap=all.find(x=>x.snapshotId===snapshotId);
+    if(!snap?.record?.snapshot)throw new Error('Copia no encontrada');
+    const old=await refugeGet(current.id);if(!old)throw new Error('Expediente no encontrado');
+    const restored={...old,...clonePlain(snap.record),id:current.id,deletedAt:null,updatedAt:new Date().toISOString(),_revision:Math.max(Number(old._revision||0),Number(state._saveRevision||0))+1};
+    delete restored.deletedAt;
+    await refugePut(restored);
+    refillOperationalUI(restored.snapshot,current.id);state._saveRevision=restored._revision;saveRevision=Math.max(saveRevision,restored._revision);
+    await storagePut(state);
+    historySetStatus('Copia restaurada. El estado anterior quedó protegido en el historial.');
+    await renderRecoveryHistory();await renderRefugeList();
+  }catch(e){console.error(e);alert('No se pudo restaurar la copia. El expediente actual se conserva.');}
+}
+document.addEventListener('click',async e=>{
+  const create=e.target.closest('#createRecoveryPointBtn'); if(create){ await createRecoveryPoint('manual',true); await renderRecoveryHistory(); }
+  const view=e.target.closest('#viewRecoveryHistoryBtn'); if(view){ const box=document.getElementById('recoveryHistoryList'); if(box && !box.hidden){box.hidden=true}else{await renderRecoveryHistory()} }
+  const restore=e.target.closest('[data-restore-snapshot]'); if(restore) await restoreRecoveryPoint(restore.dataset.restoreSnapshot);
+});
+// Crea una copia de continuidad con baja frecuencia; nunca bloquea ni reemplaza el guardado principal.
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') createRecoveryPoint('auto',false); });
+window.addEventListener('pagehide',()=>{ createRecoveryPoint('auto',false); });
+
+
+
+/* Minimal QR encoder (byte mode, versions 1-10, EC=L) for offline report seals. */
+const MiniQR=(()=>{const G=0x11d,EXP=new Array(512),LOG=new Array(256);let x=1;for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&256)x^=G}for(let i=255;i<512;i++)EXP[i]=EXP[i-255];
+const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
+function polyMul(a,b){let r=new Array(a.length+b.length-1).fill(0);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)r[i+j]^=mul(a[i],b[j]);return r}
+function generator(n){let g=[1];for(let i=0;i<n;i++)g=polyMul(g,[1,EXP[i]]);return g}
+const CAP=[0,17,32,53,78,106,134,154,192,230,271], ECC=[0,7,10,15,20,26,18,20,24,30,18];
+function bitsPush(arr,val,n){for(let i=n-1;i>=0;i--)arr.push((val>>i)&1)}
+function encode(text){const bytes=Array.from(new TextEncoder().encode(text));let v=1;while(v<10&&bytes.length>CAP[v])v++;if(bytes.length>CAP[v])throw Error('QR payload too long');
+ const size=17+4*v,m=Array.from({length:size},()=>Array(size).fill(null)),res=Array.from({length:size},()=>Array(size).fill(false));
+ function set(r,c,val,rv=true){if(r>=0&&c>=0&&r<size&&c<size){m[r][c]=!!val;if(rv)res[r][c]=true}}
+ function finder(r,c){for(let y=-1;y<=7;y++)for(let z=-1;z<=7;z++){let rr=r+y,cc=c+z;if(rr<0||cc<0||rr>=size||cc>=size)continue;let on=y>=0&&y<=6&&z>=0&&z<=6&&(y==0||y==6||z==0||z==6||(y>=2&&y<=4&&z>=2&&z<=4));set(rr,cc,on,true)}}
+ finder(0,0);finder(0,size-7);finder(size-7,0);
+ for(let i=8;i<size-8;i++){set(6,i,i%2==0);set(i,6,i%2==0)}
+ // alignment centers for versions 2-10
+ const AC={2:[6,18],3:[6,22],4:[6,26],5:[6,30],6:[6,34],7:[6,22,38],8:[6,24,42],9:[6,26,46],10:[6,28,50]};
+ if(v>1){for(const r of AC[v])for(const c of AC[v]){if(res[r][c])continue;for(let y=-2;y<=2;y++)for(let z=-2;z<=2;z++)set(r+y,c+z,Math.max(Math.abs(y),Math.abs(z))!=1)}}
+ set(size-8,8,true);
+ // reserve format info
+ for(let i=0;i<9;i++){if(i!=6){set(8,i,false);set(i,8,false)}}for(let i=0;i<8;i++){set(8,size-1-i,false);set(size-1-i,8,false)}
+ let bits=[];bitsPush(bits,4,4);bitsPush(bits,bytes.length,v<10?8:16);for(const b of bytes)bitsPush(bits,b,8);
+ const dataCW=CAP[v];bitsPush(bits,0,Math.min(4,dataCW*8-bits.length));while(bits.length%8)bits.push(0);
+ let cw=[];for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|(bits[i+j]||0);cw.push(b)}
+ let pad=0;while(cw.length<dataCW)cw.push((pad++%2)?0x11:0xec);
+ const ecN=ECC[v],gen=generator(ecN),work=cw.concat(new Array(ecN).fill(0));
+ for(let i=0;i<cw.length;i++){let f=work[i];if(!f)continue;for(let j=0;j<gen.length;j++)work[i+j]^=mul(gen[j],f)}
+ const all=cw.concat(work.slice(cw.length));let db=[];for(const b of all)bitsPush(db,b,8);
+ let k=0,up=true;for(let c=size-1;c>0;c-=2){if(c==6)c--;for(let yy=0;yy<size;yy++){let r=up?size-1-yy:yy;for(let dc=0;dc<2;dc++){let cc=c-dc;if(res[r][cc])continue;let bit=db[k++]||0;let mask=((r+cc)%2)==0;m[r][cc]=!!(bit^(mask?1:0))}}up=!up}
+ // format EC=L mask0 => 0x77c4
+ const fmt=0x77c4;for(let i=0;i<15;i++){let b=((fmt>>i)&1)!=0;
+   if(i<6)set(i,8,b);else if(i<8)set(i+1,8,b);else set(size-15+i,8,b);
+   if(i<8)set(8,size-i-1,b);else if(i<9)set(8,15-i,b);else set(8,15-i-1,b);
+ }set(size-8,8,true);
+ return m}
+ function svg(text,scale=5){const m=encode(text),n=m.length,q=4,S=(n+q*2)*scale;let p=`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" viewBox="0 0 ${n+8} ${n+8}"><rect width="100%" height="100%" fill="white"/><path d="`;for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(m[r][c])p+=`M${c+4} ${r+4}h1v1h-1z`;return p+='" fill="black"/></svg>'}
+ return {svg};})();
+
+// v88 · Perfil local del responsable y sello documental del reporte
+const IDENTITY_PROFILE_KEY='rt_tabasco_responsable_v1';
+function getIdentityProfile(){
+ try{return JSON.parse(localStorage.getItem(IDENTITY_PROFILE_KEY)||'null')}catch(e){return null}
+}
+function maskedId(p){
+ const raw=String(p?.idNumber||'').trim(); if(!raw)return 'No registrada';
+ const tail=raw.slice(-6); return '••••'+tail;
+}
+function fillIdentityProfile(){
+ const p=getIdentityProfile(); if(!p)return;
+ const map={profileFullName:p.fullName,profileRole:p.role,profileArea:p.area,profileInstitution:p.institution,profileIdType:p.idType,profileIdNumber:p.idNumber};
+ Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v||''});
+ const st=document.getElementById('identityProfileStatus');if(st)st.textContent='Perfil guardado localmente · '+(p.fullName||'Responsable')+' · '+(p.area||p.institution||'');
+}
+function saveIdentityProfile(){
+ const p={
+  fullName:(document.getElementById('profileFullName')?.value||'').trim(),
+  role:(document.getElementById('profileRole')?.value||'').trim(),
+  area:(document.getElementById('profileArea')?.value||'').trim(),
+  institution:(document.getElementById('profileInstitution')?.value||'').trim(),
+  idType:document.getElementById('profileIdType')?.value||'institucional',
+  idNumber:(document.getElementById('profileIdNumber')?.value||'').trim(),
+  updatedAt:new Date().toISOString()
+ };
+ if(!p.fullName||!p.role||!p.area||!p.institution){toast('Complete nombre, cargo, área e institución.');return}
+ localStorage.setItem(IDENTITY_PROFILE_KEY,JSON.stringify(p)); fillIdentityProfile(); toast('Identificación guardada únicamente en este dispositivo.');
+}
+document.getElementById('saveIdentityProfileBtn')?.addEventListener('click',saveIdentityProfile);
+document.getElementById('editIdentityProfileBtn')?.addEventListener('click',()=>{document.getElementById('profileFullName')?.focus()});
+fillIdentityProfile();
+
+async function sha256Text(text){
+ const bytes=new TextEncoder().encode(text), hash=await crypto.subtle.digest('SHA-256',bytes);
+ return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function reportValidationData(record, profile, hash){
+ const meta=record?.meta||{};
+ return {
+  tipo:'IPCET-REFUGIO-TEMPORAL',
+  folio:record?.id||'',
+  refugio:meta.name||meta.shelterName||'',
+  municipio:meta.municipio||'',
+  localidad:meta.localidad||'',
+  responsable:profile?.fullName||'',
+  cargo:profile?.role||'',
+  area:profile?.area||'',
+  institucion:profile?.institution||'',
+  identificacion:(profile?.idType==='ine'?'INE':'ID institucional')+' '+maskedId(profile),
+  generado:new Date().toISOString(),
+  integridad:hash
+ };
+}
+
+
+async function renderDeletedRefugeList(){
+ const box=$('deletedRefugeList');if(!box)return;
+ const all=await refugeListAll(),del=all.filter(r=>r.deletedAt).sort((a,b)=>String(b.deletedAt).localeCompare(String(a.deletedAt)));
+ if(!del.length){box.innerHTML='<div class="notice">La Papelera está vacía.</div>';return}
+ box.innerHTML=del.map(r=>'<div class="history-safe-item"><div><b>'+esc(r.name||'Refugio sin nombre')+'</b><small>'+esc(r.municipio||'')+' · Eliminado '+new Date(r.deletedAt).toLocaleString('es-MX')+'</small></div><button type="button" data-refuge-restore="'+r.id+'">Recuperar expediente</button></div>').join('');
+}
+$('showDeletedRefugesBtn')?.addEventListener('click',async()=>{const box=$('deletedRefugeList');if(!box)return;if(!box.hidden){box.hidden=true;return}box.hidden=false;await renderDeletedRefugeList()});
+$('deletedRefugeList')?.addEventListener('click',async e=>{const b=e.target.closest('[data-refuge-restore]');if(!b)return;await refugeRestore(b.dataset.refugeRestore);await renderDeletedRefugeList();await renderRefugeList();toast('Expediente recuperado correctamente.')});
+
+async function storageHealthCheck(){
+ try{
+  if(!navigator.storage?.estimate)return;
+  const e=await navigator.storage.estimate(),usage=e.usage||0,quota=e.quota||0,pct=quota?Math.round(usage/quota*100):0;
+  const badge=$('offlineModeBadge');
+  if(badge&&pct>=80){badge.textContent='Almacenamiento local al '+pct+'% · exporte un respaldo';badge.classList.add('warn')}
+ }catch(e){}
+}
+storageHealthCheck();
+
 })();
 </script>
 <script id="v24-route-progress">(function(){
