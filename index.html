@@ -3459,6 +3459,136 @@ body:has(.section.collapsible:target) .section.collapsible:target{
     padding-top:0!important;
   }
 }
+
+/* v80 · Corrección del bloque principal de accesos en escritorio */
+.cover-v33-actions{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:stretch!important;
+}
+.cover-v33-actions > a{
+  position:relative!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:12px!important;
+  row-gap:4px!important;
+  align-items:center!important;
+  padding:18px 18px!important;
+  overflow:hidden!important;
+}
+.cover-v33-actions > a .ico{
+  grid-column:1!important;
+  grid-row:1 / 3!important;
+  align-self:center!important;
+}
+.cover-v33-actions > a > span:not(.ico){
+  grid-column:2!important;
+  grid-row:1 / 3!important;
+  min-width:0!important;
+  padding-right:0!important;
+}
+.cover-v33-actions > a b,
+.cover-v33-actions > a small{
+  display:block!important;
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+}
+.cover-v33-actions > a b{
+  font-size:1rem!important;
+  line-height:1.15!important;
+}
+.cover-v33-actions > a small{
+  margin-top:4px!important;
+  font-size:.82rem!important;
+  line-height:1.25!important;
+}
+
+/* Si existiera una etiqueta ABRIR heredada, que no invada el texto */
+.cover-v33-actions > a .cover-v33-action-open,
+.cover-v33-actions > a .open,
+.cover-v33-actions > a [class*="open"]{
+  position:absolute!important;
+  top:10px!important;
+  right:10px!important;
+  margin:0!important;
+  max-width:64px!important;
+  min-width:auto!important;
+  padding:5px 9px!important;
+  font-size:.72rem!important;
+  line-height:1!important;
+  border-radius:999px!important;
+  z-index:2!important;
+}
+.cover-v33-actions > a:has(.cover-v33-action-open) > span:not(.ico),
+.cover-v33-actions > a:has(.open) > span:not(.ico){
+  padding-right:70px!important;
+}
+
+@media (max-width:1180px){
+  .cover-v33-actions{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .cover-v33-actions > a:last-child{
+    grid-column:1 / -1!important;
+  }
+}
+@media (max-width:760px){
+  .cover-v33-actions{
+    grid-template-columns:1fr!important;
+  }
+  .cover-v33-actions > a:last-child{
+    grid-column:auto!important;
+  }
+}
+
+/* v81 · Revisión global preventiva contra solapamientos */
+.cover-v33-actions > a,
+.module-menu-grid > a,
+.moregrid > a,
+.training-route > a,
+.training-card,
+.guidegrid > a,
+.rolegrid > a,
+.route-simple-step{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.cover-v33-actions > a b,
+.cover-v33-actions > a small,
+.module-menu-grid > a b,
+.module-menu-grid > a small,
+.training-card b,
+.training-card p,
+.guidegrid > a,
+.rolegrid > a,
+.route-simple-step b,
+.route-simple-step small{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
+.module-menu-grid > a .route-check,
+.route-simple-step .route-check{
+  flex:0 0 auto!important;
+}
+@media (min-width:701px) and (max-width:1180px){
+  .cover-v33-actions > a,
+  .module-menu-grid > a,
+  .training-card,
+  .route-simple-step{
+    min-height:84px!important;
+  }
+}
+@media (max-width:700px){
+  .cover-v33-actions > a,
+  .module-menu-grid > a,
+  .training-card,
+  .route-simple-step{
+    width:100%!important;
+  }
+}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
