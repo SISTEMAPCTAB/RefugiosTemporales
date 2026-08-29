@@ -3694,6 +3694,12 @@ a[href],button,[role="button"]{
   .didactic-card{padding:11px}
   .order-card{padding:10px 9px}
 }
+
+/* v94 · actividades visibles aun antes de inicialización JS */
+.didactic-items:empty::before,.didactic-order:empty::before{content:"Cargando actividad…";display:block;padding:12px;border:1px dashed #b9aa9a;border-radius:10px;color:#6d6259}
+.didactic-card>button[data-value]{width:100%;min-height:48px;border:1px solid #cfc2b5;border-radius:11px;background:#fff;padding:11px;text-align:left;font-weight:700;color:#322d29;white-space:normal;overflow-wrap:anywhere}
+.didactic-card>button[data-value].selected{background:#741733;color:#fff;border-color:#741733}
+@media(max-width:560px){.didactic-choices button,.didactic-card>button[data-value]{font-size:16px}.order-controls{display:flex;gap:8px}.order-controls button{min-width:44px;min-height:44px}}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -5049,7 +5055,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Priorizar · Preparación previa</div>
 <h3>Se pronostican lluvias intensas y una comunidad puede requerir evacuación</h3>
 <p>Ordene las acciones desde la primera hasta la última. Use ↑/↓; también puede arrastrar cuando el equipo lo permita.</p>
-<div class="didactic-order" id="prepOrder"></div><div aria-live="polite" class="didactic-result" id="prepResult"></div>
+<div class="didactic-order" id="prepOrder"><div class="order-card" data-key="p1"><span class="order-handle">↕</span><b>Confirmar responsable, inmueble, accesos y condiciones básicas.</b><span class="order-controls"><button aria-label="Subir" data-up="" disabled="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="p2"><span class="order-handle">↕</span><b>Estimar capacidad y revisar servicios e insumos.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="p3"><span class="order-handle">↕</span><b>Corregir o canalizar hallazgos que impidan la activación.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="p4"><span class="order-handle">↕</span><b>Dejar lista la organización para una posible apertura.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" disabled="" type="button">↓</button></span></div></div><div aria-live="polite" class="didactic-result" id="prepResult"></div>
 <div class="didactic-actions"><button id="checkPrepOrder" type="button">Evaluar secuencia</button><button class="secondary" id="resetPrepOrder" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> un inmueble identificado no equivale a un refugio preparado.</span></div><div class="topic-gate" data-topic-gate="1">
 <div class="topic-gate-head">
@@ -5072,7 +5078,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Clasificar · Condición y respuesta</div>
 <h3>¿Qué haría con cada hallazgo antes de utilizar el inmueble?</h3>
 <p>Asigne cada tarjeta a <b>Atender antes de usar</b> o <b>Condición favorable</b>. Las tarjetas se presentan en orden variable.</p>
-<div class="didactic-items" id="riskClassifyItems"></div>
+<div class="didactic-items" id="riskClassifyItems"><div class="didactic-card" data-answer="atender"><b>Grietas nuevas y desprendimientos visibles.</b><div class="didactic-choices"><button data-value="favorable" type="button">Condición favorable</button><button data-value="atender" type="button">Atender antes de usar</button></div></div><div class="didactic-card" data-answer="favorable"><b>Ruta de evacuación señalizada y libre.</b><div class="didactic-choices"><button data-value="favorable" type="button">Condición favorable</button><button data-value="atender" type="button">Atender antes de usar</button></div></div><div class="didactic-card" data-answer="atender"><b>Sanitarios sin suministro de agua.</b><div class="didactic-choices"><button data-value="favorable" type="button">Condición favorable</button><button data-value="atender" type="button">Atender antes de usar</button></div></div><div class="didactic-card" data-answer="favorable"><b>Directorio de responsables actualizado.</b><div class="didactic-choices"><button data-value="favorable" type="button">Condición favorable</button><button data-value="atender" type="button">Atender antes de usar</button></div></div><div class="didactic-card" data-answer="atender"><b>Único acceso con posibilidad de quedar aislado.</b><div class="didactic-choices"><button data-value="favorable" type="button">Condición favorable</button><button data-value="atender" type="button">Atender antes de usar</button></div></div></div>
 <div aria-live="polite" class="didactic-result" id="riskResult"></div>
 <div class="didactic-actions"><button id="checkRisksV91" type="button">Comprobar clasificación</button><button class="secondary" id="resetRisksV91" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> verificar significa observar la condición real del inmueble, no sólo consultar una lista histórica.</span></div><div class="topic-gate" data-topic-gate="2">
@@ -5107,7 +5113,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Diagnosticar · Factor limitante</div>
 <h3>¿Qué componente limita la capacidad en cada escenario?</h3>
 <p>Analice cada situación y seleccione el factor que realmente reduce la capacidad operativa, aunque exista superficie suficiente.</p>
-<div class="didactic-items" id="capacityScenarioItems"></div><div aria-live="polite" class="didactic-result" id="capacityScenarioResult"></div>
+<div class="didactic-items" id="capacityScenarioItems"><div class="didactic-card" data-answer="san"><b>Hay espacio para 120 personas, pero los sanitarios disponibles sólo cubren adecuadamente a 70.</b><div class="didactic-choices"><button data-value="san" type="button">Sanitarios</button><button data-value="desc" type="button">Área de descanso</button><button data-value="agua" type="button">Agua disponible</button><button data-value="acc" type="button">Accesibilidad/circulación</button></div></div><div class="didactic-card" data-answer="desc"><b>Los servicios son suficientes, pero el área útil de descanso sólo permite 55 personas.</b><div class="didactic-choices"><button data-value="agua" type="button">Agua disponible</button><button data-value="desc" type="button">Área de descanso</button><button data-value="acc" type="button">Accesibilidad/circulación</button><button data-value="san" type="button">Sanitarios</button></div></div><div class="didactic-card" data-answer="agua"><b>Existe espacio y sanitarios, pero el agua almacenada no cubre la población prevista.</b><div class="didactic-choices"><button data-value="acc" type="button">Accesibilidad/circulación</button><button data-value="agua" type="button">Agua disponible</button><button data-value="san" type="button">Sanitarios</button><button data-value="desc" type="button">Área de descanso</button></div></div><div class="didactic-card" data-answer="acc"><b>La capacidad física es suficiente, pero una ruta interior impide circulación accesible hacia servicios.</b><div class="didactic-choices"><button data-value="desc" type="button">Área de descanso</button><button data-value="san" type="button">Sanitarios</button><button data-value="acc" type="button">Accesibilidad/circulación</button><button data-value="agua" type="button">Agua disponible</button></div></div></div><div aria-live="polite" class="didactic-result" id="capacityScenarioResult"></div>
 <div class="didactic-actions"><button id="checkCapacityScenarios" type="button">Contrastar diagnóstico</button><button class="secondary" id="resetCapacityScenarios" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> capacidad física y capacidad operativa deben analizarse conjuntamente.</span></div><div class="topic-gate" data-topic-gate="3">
 <div class="topic-gate-head">
@@ -5130,7 +5136,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Ordenar · Abastecimiento preventivo</div>
 <h3>La ruta de abastecimiento puede interrumpirse y el inventario cubre sólo un día</h3>
 <p>Construya la secuencia preventiva antes de que falten insumos.</p>
-<div class="didactic-order" id="supplyOrder"></div><div aria-live="polite" class="didactic-result" id="supplyOrderResult"></div>
+<div class="didactic-order" id="supplyOrder"><div class="order-card" data-key="s1"><span class="order-handle">↕</span><b>Calcular consumo y autonomía real del inventario.</b><span class="order-controls"><button aria-label="Subir" data-up="" disabled="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="s2"><span class="order-handle">↕</span><b>Definir el nivel de reposición antes del agotamiento.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="s3"><span class="order-handle">↕</span><b>Gestionar abastecimiento y una alternativa logística.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="s4"><span class="order-handle">↕</span><b>Asignar responsable y dar seguimiento a existencias.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" disabled="" type="button">↓</button></span></div></div><div aria-live="polite" class="didactic-result" id="supplyOrderResult"></div>
 <div class="didactic-actions"><button id="checkSupplyOrder" type="button">Evaluar secuencia</button><button class="secondary" id="resetSupplyOrder" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="activity-lab" id="lab-agua"><div class="lab-type">Desafío de cálculo · Agua para beber</div><h4>Aplicación rápida</h4><p>Un Refugio Temporal tiene <b>126 personas</b>. Con la referencia de 2 litros por persona/día, ¿cuántos litros se requieren para beber durante 24 horas?</p><div class="calc-challenge"><div><label for="waterChallenge"><b>Su respuesta en litros</b></label><input id="waterChallenge" inputmode="numeric" min="0" placeholder="Ej. 250" type="number"/></div><button class="btn primary" id="checkWaterChallenge" type="button">Comprobar</button></div><div class="lab-feedback" id="waterChallengeFeedback"></div></div><div class="lesson-complete"><span><b>Idea clave:</b> el inventario sirve para anticipar faltantes, no sólo para contar existencias.</span></div><div class="topic-gate" data-topic-gate="4">
 <div class="topic-gate-head">
@@ -5155,13 +5161,13 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Coordinar · Lidera y apoya</div>
 <h3>Una familia sale temporalmente y regresa horas después</h3>
 <p>Asigne el papel principal de cada área en el control del movimiento.</p>
-<div class="didactic-items" id="movementRoleItems"></div><div aria-live="polite" class="didactic-result" id="movementRoleResult"></div>
+<div class="didactic-items" id="movementRoleItems"><div class="didactic-card" data-answer="lidera"><b>Actualizar el registro de salida y posterior reingreso de la familia.</b><div class="didactic-choices"><button data-value="lidera" type="button">Registro / trabajo social lidera</button><button data-value="apoya" type="button">Seguridad apoya</button><button data-value="coord" type="button">Alimentación usa el dato</button></div></div><div class="didactic-card" data-answer="apoya"><b>Apoyar el control físico de acceso y comunicar novedades al registro.</b><div class="didactic-choices"><button data-value="coord" type="button">Alimentación usa el dato</button><button data-value="apoya" type="button">Seguridad apoya</button><button data-value="lidera" type="button">Registro / trabajo social lidera</button></div></div><div class="didactic-card" data-answer="coord"><b>Preparar raciones conforme a la población efectivamente presente.</b><div class="didactic-choices"><button data-value="apoya" type="button">Seguridad apoya</button><button data-value="lidera" type="button">Registro / trabajo social lidera</button><button data-value="coord" type="button">Alimentación usa el dato</button></div></div></div><div aria-live="polite" class="didactic-result" id="movementRoleResult"></div>
 <div class="didactic-actions"><button id="checkMovementRoles" type="button">Revisar coordinación</button><button class="secondary" id="resetMovementRoles" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="activity-lab didactic-sort" id="lab-responsables">
 <div class="activity-kicker">Agrupar · Función y responsable</div>
 <h3>Distribuya las funciones entre las áreas responsables</h3>
 <p>Para cada tarjeta elija el área principal. El orden de funciones y de áreas cambia al reiniciar para evitar respuestas por posición.</p>
-<div class="didactic-items" id="roleMatchItems"></div>
+<div class="didactic-items" id="roleMatchItems"><div class="didactic-card" data-answer="social"><b>Registro de familias y movimientos.</b><div class="didactic-choices"><button data-value="social" type="button">Trabajo social</button><button data-value="seguridad" type="button">Seguridad</button><button data-value="salud" type="button">Salud</button><button data-value="servicios" type="button">Servicios y mantenimiento</button><button data-value="alimentos" type="button">Alimentación</button></div></div><div class="didactic-card" data-answer="salud"><b>Valoración y seguimiento médico.</b><div class="didactic-choices"><button data-value="seguridad" type="button">Seguridad</button><button data-value="salud" type="button">Salud</button><button data-value="social" type="button">Trabajo social</button><button data-value="alimentos" type="button">Alimentación</button><button data-value="servicios" type="button">Servicios y mantenimiento</button></div></div><div class="didactic-card" data-answer="seguridad"><b>Control de accesos y vigilancia.</b><div class="didactic-choices"><button data-value="alimentos" type="button">Alimentación</button><button data-value="social" type="button">Trabajo social</button><button data-value="seguridad" type="button">Seguridad</button><button data-value="servicios" type="button">Servicios y mantenimiento</button><button data-value="salud" type="button">Salud</button></div></div><div class="didactic-card" data-answer="alimentos"><b>Preparación y distribución de raciones.</b><div class="didactic-choices"><button data-value="servicios" type="button">Servicios y mantenimiento</button><button data-value="alimentos" type="button">Alimentación</button><button data-value="salud" type="button">Salud</button><button data-value="social" type="button">Trabajo social</button><button data-value="seguridad" type="button">Seguridad</button></div></div><div class="didactic-card" data-answer="servicios"><b>Limpieza, servicios e inmueble.</b><div class="didactic-choices"><button data-value="salud" type="button">Salud</button><button data-value="servicios" type="button">Servicios y mantenimiento</button><button data-value="seguridad" type="button">Seguridad</button><button data-value="alimentos" type="button">Alimentación</button><button data-value="social" type="button">Trabajo social</button></div></div></div>
 <div aria-live="polite" class="didactic-result" id="matchResult"></div>
 <div class="didactic-actions"><button id="checkMatchesV91" type="button">Revisar agrupación</button><button class="secondary" id="resetMatchesV91" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> cada función debe tener responsable y mecanismo de relevo.</span></div><div class="topic-gate" data-topic-gate="5">
@@ -5189,7 +5195,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Decidir · Recepción sin documentación</div>
 <h3>Una familia llega sin documentos oficiales durante una evacuación</h3>
 <p>Seleccione la actuación operativa más adecuada. Las alternativas cambian de posición al reiniciar.</p>
-<div class="didactic-items" id="receptionCaseItems"></div>
+<div class="didactic-items" id="receptionCaseItems"><div class="didactic-card"><button data-value="esperar" type="button">Mantener a la familia en espera hasta que presente identificación oficial.</button></div><div class="didactic-card"><button data-value="continuar" type="button">Registrar la información disponible, identificar necesidades y continuar la atención sin excluir por falta de documento.</button></div><div class="didactic-card"><button data-value="sinregistro" type="button">Permitir el ingreso sin realizar registro para agilizar la recepción.</button></div></div>
 <div aria-live="polite" class="didactic-result" id="receptionCaseResult"></div>
 <div class="didactic-actions"><button id="checkReceptionCase" type="button">Contrastar decisión</button><button class="secondary" id="resetReceptionCase" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="activity-lab" id="lab-secuencia"><div class="lab-type">Ordenar · Secuencia de apertura y recepción</div><h4>Toque las acciones en el orden en que deberían realizarse</h4><p>La actividad usa botones táctiles para funcionar también en iPhone.</p><div class="tap-sequence" id="activationSequence"><button data-seq="3" type="button">Preparar áreas, responsables e insumos</button><button data-seq="1" type="button">Revisar condiciones actuales del inmueble y accesos</button><button data-seq="4" type="button">Abrir el Refugio Temporal conforme a la determinación de la autoridad competente</button><button data-seq="2" type="button">Atender condiciones que requieren corrección o valoración</button><button data-seq="5" type="button">Registrar y orientar a la población que ingresa</button></div><div class="actions"><button class="btn primary" id="checkSequence" type="button">Comprobar orden</button><button class="btn secondary" id="resetSequence" type="button">Reiniciar</button></div><div class="lab-feedback" id="sequenceFeedback"></div></div><div class="lesson-complete"><span><b>Idea clave:</b> registrar sirve para proteger y organizar la atención, no para excluir.</span></div><div class="topic-gate" data-topic-gate="6">
@@ -5213,13 +5219,13 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Clasificar · Inocuidad</div>
 <h3>¿Qué prácticas protegen los alimentos y cuáles generan riesgo?</h3>
 <p>Clasifique cada tarjeta. Las prácticas cambian de orden al reiniciar.</p>
-<div class="didactic-items" id="foodPracticeItems"></div><div aria-live="polite" class="didactic-result" id="foodPracticeResult"></div>
+<div class="didactic-items" id="foodPracticeItems"><div class="didactic-card" data-answer="segura"><b>Almacenar insumos secos elevados del piso y protegidos de humedad.</b><div class="didactic-choices"><button data-value="segura" type="button">Práctica segura</button><button data-value="riesgo" type="button">Genera riesgo</button></div></div><div class="didactic-card" data-answer="riesgo"><b>Colocar alimentos junto a residuos para concentrar servicios.</b><div class="didactic-choices"><button data-value="riesgo" type="button">Genera riesgo</button><button data-value="segura" type="button">Práctica segura</button></div></div><div class="didactic-card" data-answer="segura"><b>Rotar existencias y vigilar caducidades.</b><div class="didactic-choices"><button data-value="riesgo" type="button">Genera riesgo</button><button data-value="segura" type="button">Práctica segura</button></div></div><div class="didactic-card" data-answer="riesgo"><b>Conservar alimentos perecederos sin control de temperatura.</b><div class="didactic-choices"><button data-value="segura" type="button">Práctica segura</button><button data-value="riesgo" type="button">Genera riesgo</button></div></div><div class="didactic-card" data-answer="segura"><b>Separar alimentos de productos de limpieza.</b><div class="didactic-choices"><button data-value="segura" type="button">Práctica segura</button><button data-value="riesgo" type="button">Genera riesgo</button></div></div></div><div aria-live="polite" class="didactic-result" id="foodPracticeResult"></div>
 <div class="didactic-actions"><button id="checkFoodPractices" type="button">Comprobar clasificación</button><button class="secondary" id="resetFoodPractices" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="learning-action reflect reflection-box didactic-sort">
 <div class="activity-kicker">Priorizar · Falla de energía</div>
 <h3>Se interrumpe la energía durante el servicio de alimentación</h3>
 <p>Ordene las acciones para proteger conservación, higiene y continuidad del servicio.</p>
-<div class="didactic-order" id="energyFoodOrder"></div><div aria-live="polite" class="didactic-result" id="energyFoodResult"></div>
+<div class="didactic-order" id="energyFoodOrder"><div class="order-card" data-key="e1"><span class="order-handle">↕</span><b>Identificar qué alimentos y procesos dependen de energía o control de temperatura.</b><span class="order-controls"><button aria-label="Subir" data-up="" disabled="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="e2"><span class="order-handle">↕</span><b>Proteger alimentos comprometidos y evitar su uso si no puede garantizarse inocuidad.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="e3"><span class="order-handle">↕</span><b>Asegurar agua, higiene e iluminación segura para mantener el servicio.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="e4"><span class="order-handle">↕</span><b>Aplicar fuente o alternativa operativa y ajustar temporalmente la distribución.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" disabled="" type="button">↓</button></span></div></div><div aria-live="polite" class="didactic-result" id="energyFoodResult"></div>
 <div class="didactic-actions"><button id="checkEnergyFood" type="button">Evaluar prioridades</button><button class="secondary" id="resetEnergyFood" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> la alimentación es un proceso completo: planear, almacenar, preparar, distribuir y registrar.</span></div><div class="topic-gate" data-topic-gate="7">
 <div class="topic-gate-head">
@@ -5246,7 +5252,7 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Priorizar · Mini simulación</div>
 <h3>21:10 h · Falla parcial de energía</h3>
 <p>Hay 96 personas presentes y una zona queda sin iluminación. Ordene las cuatro acciones desde la <b>primera</b> hasta la <b>última</b>. Use ↑/↓; también puede arrastrar en equipos compatibles.</p>
-<div class="didactic-order" id="incidentOrder"></div>
+<div class="didactic-order" id="incidentOrder"><div class="order-card" data-key="i1"><span class="order-handle">↕</span><b>Registrar la incidencia y verificar rutas, sanitarios y áreas críticas.</b><span class="order-controls"><button aria-label="Subir" data-up="" disabled="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="i2"><span class="order-handle">↕</span><b>Aplicar una medida temporal segura en las áreas sin iluminación.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="i3"><span class="order-handle">↕</span><b>Asignar responsable y prioridad para la corrección.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="i4"><span class="order-handle">↕</span><b>Verificar la solución y cerrar/documentar la incidencia.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" disabled="" type="button">↓</button></span></div></div>
 <div aria-live="polite" class="didactic-result" id="incidentResult"></div>
 <div class="didactic-actions"><button id="checkIncidentScenarioV91" type="button">Evaluar secuencia</button><button class="secondary" id="resetIncidentScenarioV91" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> cada turno debe recibir una situación comprensible, actualizada y trazable.</span></div><div class="topic-gate" data-topic-gate="8">
@@ -5270,13 +5276,13 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Reconocer · Recorrido inicial</div>
 <h3>Una persona usuaria de silla de ruedas llega por primera vez</h3>
 <p>De las siguientes condiciones, seleccione las <b>tres que deben comprobarse primero</b> para asegurar ingreso, orientación y acceso inmediato a servicios esenciales.</p>
-<div class="didactic-items" id="accessRouteItems"></div><div aria-live="polite" class="didactic-result" id="accessRouteResult"></div>
+<div class="didactic-items" id="accessRouteItems"><div class="didactic-card"><button data-value="a1" type="button">Ruta de ingreso sin barreras hasta el área de recepción.</button></div><div class="didactic-card"><button data-value="a4" type="button">Ubicación del almacén de papelería administrativa.</button></div><div class="didactic-card"><button data-value="a3" type="button">Acceso inmediato a sanitario utilizable y servicios esenciales.</button></div><div class="didactic-card"><button data-value="a5" type="button">Decoración del área común.</button></div><div class="didactic-card"><button data-value="a2" type="button">Señalización/orientación comprensible hacia las áreas principales.</button></div></div><div aria-live="polite" class="didactic-result" id="accessRouteResult"></div>
 <div class="didactic-actions"><button id="checkAccessRoute" type="button">Evaluar recorrido</button><button class="secondary" id="resetAccessRoute" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="learning-action reflect reflection-box barrier-activity didactic-sort">
 <div class="activity-kicker">Agrupar · Accesibilidad en cadena</div>
 <h3>¿En qué componente impacta principalmente cada barrera?</h3>
 <p>Agrupe cada hallazgo en <b>Ingreso y circulación</b>, <b>Servicios</b> o <b>Orientación y evacuación</b>. Algunas pueden tener efectos cruzados; elija el impacto principal.</p>
-<div class="didactic-items" id="barrierGroupItems"></div>
+<div class="didactic-items" id="barrierGroupItems"><div class="didactic-card" data-answer="circula"><b>Escalones sin alternativa accesible.</b><div class="didactic-choices"><button data-value="circula" type="button">Ingreso y circulación</button><button data-value="servicios" type="button">Servicios</button><button data-value="orienta" type="button">Orientación y evacuación</button></div></div><div class="didactic-card" data-answer="servicios"><b>Sanitario sin condiciones de accesibilidad.</b><div class="didactic-choices"><button data-value="orienta" type="button">Orientación y evacuación</button><button data-value="servicios" type="button">Servicios</button><button data-value="circula" type="button">Ingreso y circulación</button></div></div><div class="didactic-card" data-answer="orienta"><b>Señalización de salida difícil de identificar.</b><div class="didactic-choices"><button data-value="servicios" type="button">Servicios</button><button data-value="circula" type="button">Ingreso y circulación</button><button data-value="orienta" type="button">Orientación y evacuación</button></div></div><div class="didactic-card" data-answer="circula"><b>Pasillo obstruido y estrecho.</b><div class="didactic-choices"><button data-value="orienta" type="button">Orientación y evacuación</button><button data-value="circula" type="button">Ingreso y circulación</button><button data-value="servicios" type="button">Servicios</button></div></div><div class="didactic-card" data-answer="orienta"><b>Ruta de evacuación sin referencia visual comprensible.</b><div class="didactic-choices"><button data-value="circula" type="button">Ingreso y circulación</button><button data-value="orienta" type="button">Orientación y evacuación</button><button data-value="servicios" type="button">Servicios</button></div></div></div>
 <div aria-live="polite" class="didactic-result" id="barrierResult"></div>
 <div class="didactic-actions"><button id="checkBarriers" type="button">Contrastar agrupación</button><button class="secondary" id="resetBarriers" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> accesibilidad no es un elemento adicional; forma parte de la seguridad y operación del refugio.</span></div><div class="topic-gate" data-topic-gate="9">
@@ -5300,21 +5306,21 @@ a[href],button,[role="button"]{
 <div class="activity-kicker">Decidir · Pendiente de cierre</div>
 <h3>Al preparar la desactivación aparece una incidencia que aún no está resuelta</h3>
 <p>¿Qué tratamiento debe recibir antes de considerar cerrado el proceso? Las alternativas se presentan en orden variable.</p>
-<div class="didactic-items" id="closureCriterionItems"></div>
+<div class="didactic-items" id="closureCriterionItems"><div class="didactic-card"><button data-value="cerrar" type="button">Cerrar el expediente porque la operación del Refugio Temporal ya terminó.</button></div><div class="didactic-card"><button data-value="seguimiento" type="button">Resolverla o dejarla formalmente canalizada, con responsable y seguimiento documentado.</button></div><div class="didactic-card"><button data-value="nota" type="button">Anotarla sólo como observación sin asignar continuidad.</button></div></div>
 <div aria-live="polite" class="didactic-result" id="closureCriterionResult"></div>
 <div class="didactic-actions"><button id="checkClosureCriterion" type="button">Contrastar criterio</button><button class="secondary" id="resetClosureCriterion" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="learning-action interact selfcheck-activity didactic-sort">
 <div class="activity-kicker">Transferir · Evidencia de cierre</div>
 <h3>Separe lo que debe quedar documentado de lo que no demuestra un cierre</h3>
 <p>Clasifique las tarjetas. No basta con “haber terminado”; el cierre debe dejar trazabilidad.</p>
-<div class="didactic-items" id="finalEvidenceItems"></div>
+<div class="didactic-items" id="finalEvidenceItems"><div class="didactic-card" data-answer="evidencia"><b>Censo final y registro de egresos.</b><div class="didactic-choices"><button data-value="evidencia" type="button">Debe documentarse</button><button data-value="no" type="button">No demuestra el cierre</button></div></div><div class="didactic-card" data-answer="no"><b>“Ya no llegó más población”.</b><div class="didactic-choices"><button data-value="no" type="button">No demuestra el cierre</button><button data-value="evidencia" type="button">Debe documentarse</button></div></div><div class="didactic-card" data-answer="evidencia"><b>Inventario final y condición de bienes.</b><div class="didactic-choices"><button data-value="no" type="button">No demuestra el cierre</button><button data-value="evidencia" type="button">Debe documentarse</button></div></div><div class="didactic-card" data-answer="no"><b>“El turno considera que ya terminó”.</b><div class="didactic-choices"><button data-value="evidencia" type="button">Debe documentarse</button><button data-value="no" type="button">No demuestra el cierre</button></div></div><div class="didactic-card" data-answer="evidencia"><b>Incidencias resueltas o formalmente canalizadas.</b><div class="didactic-choices"><button data-value="evidencia" type="button">Debe documentarse</button><button data-value="no" type="button">No demuestra el cierre</button></div></div><div class="didactic-card" data-answer="evidencia"><b>Entrega del inmueble e informe final.</b><div class="didactic-choices"><button data-value="no" type="button">No demuestra el cierre</button><button data-value="evidencia" type="button">Debe documentarse</button></div></div></div>
 <div aria-live="polite" class="didactic-result" id="finalEvidenceResult"></div>
 <div class="didactic-actions"><button id="checkFinalEvidence" type="button">Comprobar evidencia</button><button class="secondary" id="resetFinalEvidence" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="final-score"><div><strong id="guideFinalDone">0/10</strong><span class="source">Temas completados</span></div><div><strong id="guideFinalVisited">0/10</strong><span class="source">Temas visitados</span></div><div><strong id="guideFinalPct">0%</strong><span class="source">Avance</span></div></div><div class="activity-lab activity-cards activity-closure didactic-sort" id="lab-cierre">
 <div class="activity-kicker">Detectar · Condición que impide cerrar</div>
 <h3>¿Qué situación obliga a mantener seguimiento antes de desactivar?</h3>
 <p>Elija la única tarjeta que representa un pendiente crítico. Las tarjetas cambian de posición al reiniciar.</p>
-<div class="didactic-items" id="closureBlockItems"></div><div aria-live="polite" class="didactic-result" id="closureBlockResult"></div>
+<div class="didactic-items" id="closureBlockItems"><div class="didactic-card"><button data-value="cl2" type="button">Egresos y población que permanece están actualizados.</button></div><div class="didactic-card"><button data-value="cl4" type="button">Una familia no puede regresar y no existe alternativa de atención definida.</button></div><div class="didactic-card"><button data-value="cl1" type="button">El riesgo disminuyó y existe valoración para el retorno.</button></div><div class="didactic-card"><button data-value="cl5" type="button">Se prevé limpieza, entrega del inmueble e informe final.</button></div><div class="didactic-card"><button data-value="cl3" type="button">Inventario e incidencias están identificados para cierre.</button></div></div><div aria-live="polite" class="didactic-result" id="closureBlockResult"></div>
 <div class="didactic-actions"><button id="checkClosureBlock" type="button">Valorar escenario</button><button class="secondary" id="resetClosureBlock" type="button">↻ Reiniciar actividad</button></div>
 </div><div class="lesson-complete"><span><b>Idea clave:</b> la operación termina cuando la experiencia queda documentada y se transforma en mejora.</span></div><div class="topic-gate" data-topic-gate="10">
 <div class="topic-gate-head">
@@ -5409,7 +5415,7 @@ const STORE='app';
 const REFUGE_STORE='refugios';
 const REFUGE_FALLBACK_KEY='rt_tabasco_refugios_v1'; const REFUGE_FALLBACK_BACKUP_KEY='rt_tabasco_refugios_v1_backup'; const STATE_BACKUP_KEY='rt_tabasco_v9_backup';
 let state={people:[],actions:[],incidents:[],inventory:[],moves:[],health:[],meals:[],shifts:[],active:false,activation:null,formData:{},lastSaved:null,activeRefugeId:null};
-const $=id=>document.getElementById(id); const qsa=s=>Array.from(document.querySelectorAll(s));
+const $=id=>document.getElementById(id); window.RTSetReviewed=(k,v=true)=>setReviewed(k,v); const qsa=s=>Array.from(document.querySelectorAll(s));
 let storageMode='IndexedDB';
 function openDB(){return new Promise((resolve,reject)=>{try{const req=indexedDB.open(DB_NAME,2);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE);if(!db.objectStoreNames.contains(REFUGE_STORE))db.createObjectStore(REFUGE_STORE,{keyPath:'id'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)}catch(e){reject(e)}})}
 async function storageGet(){
@@ -6619,7 +6625,7 @@ function choiceActivity(boxId,resultId,items,categories,reviewKey){
  const box=$(boxId),res=$(resultId);if(!box)return;
  const stateMap={};
  function render(){
-  box.innerHTML='';
+  box.dataset.enhanced='1';box.innerHTML='';
   dShuffle(items).forEach(it=>{
    const card=document.createElement('div');card.className='didactic-card';card.dataset.key=it.k;
    const title=document.createElement('b');title.textContent=it.t;card.appendChild(title);
@@ -6676,7 +6682,7 @@ const incidentItems=[
 ];
 let incidentOrder=[];
 function renderIncidentOrder(reset=false){
- const box=$('incidentOrder');if(!box)return;if(reset||!incidentOrder.length)incidentOrder=dShuffle(incidentItems.map(x=>x.k));
+ const box=$('incidentOrder');if(!box)return;box.dataset.enhanced='1';if(reset||!incidentOrder.length)incidentOrder=dShuffle(incidentItems.map(x=>x.k));
  box.innerHTML='';
  incidentOrder.forEach((k,i)=>{const it=incidentItems.find(x=>x.k===k),c=document.createElement('div');c.className='order-card';c.draggable=true;c.dataset.key=k;
   c.innerHTML='<span class="order-handle">↕</span><b>'+esc(it.t)+'</b><span class="order-controls"><button type="button" data-up aria-label="Subir">↑</button><button type="button" data-down aria-label="Bajar">↓</button></span>';
@@ -6694,7 +6700,7 @@ renderIncidentOrder(true);$('checkIncidentScenarioV91')?.addEventListener('click
 // v92 · cierre de revisión didáctica integral
 function orderActivity(boxId,resultId,items,correct,reviewKey,okText,badText){
  const box=$(boxId),res=$(resultId);if(!box)return null;let order=[];
- function render(reset=false){if(reset||!order.length)order=dShuffle(items.map(x=>x.k));box.innerHTML='';
+ function render(reset=false){box.dataset.enhanced='1';if(reset||!order.length)order=dShuffle(items.map(x=>x.k));box.innerHTML='';
   order.forEach((k,i)=>{const it=items.find(x=>x.k===k),c=document.createElement('div');c.className='order-card';c.draggable=true;c.dataset.key=k;
    c.innerHTML='<span class="order-handle">↕</span><b>'+esc(it.t)+'</b><span class="order-controls"><button type="button" data-up aria-label="Subir">↑</button><button type="button" data-down aria-label="Bajar">↓</button></span>';
    c.querySelector('[data-up]').disabled=i===0;c.querySelector('[data-down]').disabled=i===order.length-1;
@@ -6755,7 +6761,7 @@ const accessItems=[
  {k:'a4',t:'Ubicación del almacén de papelería administrativa.',ok:false},
  {k:'a5',t:'Decoración del área común.',ok:false}
 ];
-function renderAccess(reset=false){const box=$('accessRouteItems');if(!box)return;if(reset)accessSelected.clear();box.innerHTML='';
+function renderAccess(reset=false){const box=$('accessRouteItems');if(!box)return;box.dataset.enhanced='1';if(reset)accessSelected.clear();box.innerHTML='';
  dShuffle(accessItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className='access-pick'+(accessSelected.has(it.k)?' selected':'');b.textContent=it.t;b.onclick=()=>{accessSelected.has(it.k)?accessSelected.delete(it.k):accessSelected.add(it.k);renderAccess();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
 renderAccess(true);
 $('checkAccessRoute')?.addEventListener('click',()=>{const r=$('accessRouteResult'),correct=accessItems.filter(x=>x.ok).map(x=>x.k),ok=accessSelected.size===3&&correct.every(x=>accessSelected.has(x));r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. El primer recorrido debe confirmar ingreso, orientación y acceso a servicios esenciales.':'Seleccione exactamente tres condiciones y priorice las que permiten a la persona ingresar, orientarse y usar servicios esenciales.';if(ok){setReviewed('t9route');updateAllTopicGates?.()}scheduleSave()});
@@ -6769,7 +6775,7 @@ const closureItems=[
  {k:'cl4',t:'Una familia no puede regresar y no existe alternativa de atención definida.',block:true},
  {k:'cl5',t:'Se prevé limpieza, entrega del inmueble e informe final.',block:false}
 ];
-function renderClosureBlock(reset=false){const box=$('closureBlockItems');if(!box)return;if(reset)closureSelected=null;box.innerHTML='';
+function renderClosureBlock(reset=false){const box=$('closureBlockItems');if(!box)return;box.dataset.enhanced='1';if(reset)closureSelected=null;box.innerHTML='';
  dShuffle(closureItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className=closureSelected===it.k?'selected':'';b.textContent=it.t;b.onclick=()=>{closureSelected=it.k;renderClosureBlock();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
 renderClosureBlock(true);
 $('checkClosureBlock')?.addEventListener('click',()=>{const r=$('closureBlockResult'),it=closureItems.find(x=>x.k===closureSelected),ok=!!it?.block;r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. No debe cerrarse sin definir continuidad de atención para la familia que aún no puede retornar.':'Revise cuál situación deja a una persona o familia sin continuidad de atención.';if(ok){setReviewed('t10closure');updateAllTopicGates?.()}scheduleSave()});
@@ -6805,6 +6811,69 @@ const closureCriterion=choiceActivity('closureCriterionItems','closureCriterionR
 $('checkClosureCriterion')?.addEventListener('click',()=>closureCriterion?.check());
 $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criterion',false);closureCriterion?.reset()});
 
+})();
+</script><script>
+(function(){
+  function review(k,v=true){try{if(typeof window.RTSetReviewed==='function')window.RTSetReviewed(k,v)}catch(e){}}
+  function result(id,ok,good,bad){var r=document.getElementById(id);if(!r)return;r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?good:bad}
+  function enhanceChoices(boxId,checkId,resultId,reviewKey,good,bad){
+    var box=document.getElementById(boxId),check=document.getElementById(checkId);if(!box||!check)return;
+    if(box.dataset.enhanced==='1')return;
+    box.dataset.fallback='1';
+    box.querySelectorAll('.didactic-card').forEach(function(card){
+      card.querySelectorAll('button[data-value]').forEach(function(b){
+        b.addEventListener('click',function(){card.dataset.selected=b.dataset.value;card.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)})});
+      });
+    });
+    check.addEventListener('click',function(){
+      var cards=[].slice.call(box.querySelectorAll('.didactic-card[data-answer]'));
+      var ok=cards.length>0&&cards.every(function(c){return c.dataset.selected===c.dataset.answer});
+      result(resultId,ok,good,bad);review(reviewKey,ok);
+    });
+  }
+  function enhanceOrder(boxId,checkId,resetId,resultId,correct,reviewKey,good,bad){
+    var box=document.getElementById(boxId),check=document.getElementById(checkId),reset=document.getElementById(resetId);if(!box||!check)return;
+    if(box.dataset.enhanced==='1')return; box.dataset.fallback='1';
+    function bind(){
+      var cards=[].slice.call(box.querySelectorAll('.order-card'));
+      cards.forEach(function(c,i){
+        var up=c.querySelector('[data-up]'),dn=c.querySelector('[data-down]');
+        if(up){up.disabled=i===0;up.onclick=function(){if(i>0){box.insertBefore(c,cards[i-1]);bind()}}}
+        if(dn){dn.disabled=i===cards.length-1;dn.onclick=function(){if(i<cards.length-1){box.insertBefore(cards[i+1],c);bind()}}}
+      });
+    }
+    bind();
+    check.addEventListener('click',function(){var order=[].slice.call(box.querySelectorAll('.order-card')).map(function(c){return c.dataset.key}).join(',');var ok=order===correct.join(',');result(resultId,ok,good,bad);review(reviewKey,ok)});
+    if(reset)reset.addEventListener('click',function(){review(reviewKey,false);result(resultId,false,'','Reordene las tarjetas y vuelva a comprobar.');});
+  }
+  function enhanceSingle(boxId,checkId,resultId,correct,reviewKey,good,bad,limit){
+    var box=document.getElementById(boxId),check=document.getElementById(checkId);if(!box||!check)return;
+    if(box.dataset.enhanced==='1')return;box.dataset.fallback='1';var selected=[];
+    box.querySelectorAll('button[data-value]').forEach(function(b){b.addEventListener('click',function(){
+      var v=b.dataset.value;
+      if(limit&&limit>1){var i=selected.indexOf(v);if(i>=0)selected.splice(i,1);else if(selected.length<limit)selected.push(v);b.classList.toggle('selected',selected.indexOf(v)>=0)}
+      else{selected=[v];box.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)})}
+    })});
+    check.addEventListener('click',function(){var want=Array.isArray(correct)?correct:[correct];var ok=selected.length===want.length&&want.every(function(x){return selected.indexOf(x)>=0});result(resultId,ok,good,bad);review(reviewKey,ok)});
+  }
+  function init(){
+    enhanceOrder('prepOrder','checkPrepOrder','resetPrepOrder','prepResult',['p1','p2','p3','p4'],'t1prep','✓ Secuencia adecuada.','Revise qué debe conocerse antes de dimensionar, corregir y preparar la apertura.');
+    enhanceChoices('riskClassifyItems','checkRisksV91','riskResult','t2risks','✓ Clasificación correcta.','Revise qué hallazgos requieren atención antes del uso.');
+    enhanceChoices('capacityScenarioItems','checkCapacityScenarios','capacityScenarioResult','t3capacity','✓ Diagnóstico correcto.','Revise el componente que realmente limita cada escenario.');
+    enhanceOrder('supplyOrder','checkSupplyOrder','resetSupplyOrder','supplyOrderResult',['s1','s2','s3','s4'],'t4supply','✓ Secuencia preventiva adecuada.','Revise qué dato debe conocerse antes de decidir reposición.');
+    enhanceChoices('movementRoleItems','checkMovementRoles','movementRoleResult','t5movement','✓ Coordinación correcta.','Revise quién lidera, quién apoya y quién utiliza el dato.');
+    enhanceChoices('roleMatchItems','checkMatchesV91','matchResult','t5matches','✓ Funciones agrupadas correctamente.','Revise el área principal de cada función.');
+    enhanceSingle('receptionCaseItems','checkReceptionCase','receptionCaseResult','continuar','t6case','✓ Decisión adecuada.','Revise cómo mantener registro y atención sin excluir.');
+    enhanceChoices('foodPracticeItems','checkFoodPractices','foodPracticeResult','t7food','✓ Clasificación correcta.','Revise inocuidad, contaminación y conservación.');
+    enhanceOrder('energyFoodOrder','checkEnergyFood','resetEnergyFood','energyFoodResult',['e1','e2','e3','e4'],'t7energy','✓ Prioridad adecuada.','Revise qué debe evaluarse antes de usar alimentos afectados.');
+    enhanceOrder('incidentOrder','checkIncidentScenarioV91','resetIncidentScenarioV91','incidentResult',['i1','i2','i3','i4'],'t8incident','✓ Secuencia adecuada.','Revise registro, protección temporal, asignación y cierre.');
+    enhanceSingle('accessRouteItems','checkAccessRoute','accessRouteResult',['a1','a2','a3'],'t9route','✓ Recorrido prioritario correcto.','Seleccione exactamente ingreso, orientación y servicio esencial.',3);
+    enhanceChoices('barrierGroupItems','checkBarriers','barrierResult','t9barriers','✓ Agrupación correcta.','Revise el impacto principal de cada barrera.');
+    enhanceSingle('closureCriterionItems','checkClosureCriterion','closureCriterionResult','seguimiento','t10criterion','✓ Criterio correcto.','La incidencia debe resolverse o quedar formalmente canalizada.');
+    enhanceChoices('finalEvidenceItems','checkFinalEvidence','finalEvidenceResult','t10evidence','✓ Evidencias clasificadas correctamente.','Revise qué deja trazabilidad real del cierre.');
+    enhanceSingle('closureBlockItems','checkClosureBlock','closureBlockResult','cl4','t10closure','✓ Correcto: esa condición impide cerrar.','Busque la situación que deja a una familia sin continuidad de atención.');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,250)});else setTimeout(init,250);
 })();
 </script>
 <script id="v24-route-progress">(function(){
