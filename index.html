@@ -3605,6 +3605,25 @@ body:has(.section.collapsible:target) .section.collapsible:target{
 .cover-v33-actions > a > span:not(.ico){
   padding-right:0!important;
 }
+
+/* v83 · Claridad entre información y controles interactivos */
+.visual-badge,
+.eyebrow,
+.step-state,
+[data-step-state],
+.status-pill,
+.badge:not(a):not(button){
+  cursor:default!important;
+}
+.visual-badge:not(a):not(button),
+.badge:not(a):not(button){
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+/* Los controles reales mantienen señal visual de interacción */
+a[href],button,[role="button"]{
+  cursor:pointer;
+}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -3732,7 +3751,7 @@ body:has(.section.collapsible:target) .section.collapsible:target{
 <small>Herramienta de apoyo para preparación, capacitación y operación. La guía organiza criterios y registros; no sustituye dictámenes técnicos ni las determinaciones de la autoridad competente.</small>
 </div>
 <div class="hero-main-actions"><a class="linkbtn primary" href="#consulta">Consultar guía</a><a class="linkbtn outline" href="#capacitacion">Modo capacitación</a><a class="linkbtn outline" href="#verificacion">Iniciar verificación</a></div></section>
-<div class="didactic-visual home-cycle" style="margin-top:0"><div class="visual-head"><div><h3>El Refugio Temporal se gestiona como un ciclo</h3><p>La gestión del Refugio Temporal es un proceso continuo: se prepara antes de abrir, se verifica y activa cuando es necesario, se opera mientras atiende a la población y concluye con un cierre documentado y acciones de mejora.</p></div><span class="visual-badge">Vista general</span></div></div>
+<div class="didactic-visual home-cycle" style="margin-top:0"><div class="visual-head"><div><h3>El Refugio Temporal se gestiona como un ciclo</h3><p>La gestión del Refugio Temporal es un proceso continuo: se prepara antes de abrir, se verifica y activa cuando es necesario, se opera mientras atiende a la población y concluye con un cierre documentado y acciones de mejora.</p></div></div></div>
 <div class="phasegrid">
 <a class="phase" href="#preparacion"><span>01</span><b>Preparación</b><small>Expediente, inmueble, servicios, seguridad e insumos.</small></a>
 <a class="phase" href="#activacion"><span>02</span><b>Activación</b><small>Revisión rápida, apertura y responsables.</small></a>
