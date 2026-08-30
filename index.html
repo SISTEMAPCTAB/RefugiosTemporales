@@ -6057,9 +6057,11 @@ function reviewed(key){
   return !!state.guideActivityReview[key];
 }
 function setReviewed(key,val=true){
+  state.guideActivityReview=state.guideActivityReview||{};
   state.guideActivityReview[key]=!!val;
   updateAllTopicGates();
   scheduleSave();
+  return state.guideActivityReview[key];
 }
 function invalidateReviewed(key){if(reviewed(key))setReviewed(key,false);}
 function sequenceComplete(){return reviewed('t6sequence');}
@@ -6147,6 +6149,13 @@ function updateAllTopicGates(){
 }
 window.RTRefreshGuide=()=>updateAllTopicGates();
 
+window.addEventListener('pageshow',()=>updateAllTopicGates());
+window.addEventListener('hashchange',()=>updateAllTopicGates());
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible')updateAllTopicGates();
+});
+
+
 function validateGuideRuntimeStructure(){
  const required=[
   'checkPrepOrder','checkRisksV91','checkCapacityNumeric','checkCapacityScenarios',
@@ -6218,7 +6227,13 @@ const ACTIVITY_CHECK_IDS=new Set([
 document.addEventListener('click',e=>{
  const b=e.target.closest&&e.target.closest('button[id]');
  if(!b||!ACTIVITY_CHECK_IDS.has(b.id))return;
- queueMicrotask(()=>updateAllTopicGates());
+ queueMicrotask(()=>{
+   updateAllTopicGates();
+   requestAnimationFrame(()=>{
+     updateAllTopicGates();
+     requestAnimationFrame(updateAllTopicGates);
+   });
+ });
 },false);
 
 
@@ -6233,15 +6248,16 @@ $('waterChallenge')?.addEventListener('input',()=>{if(Number(($('waterChallenge'
 
 
 
-// Bloqueo duro del botón Siguiente / Finalizar.
+// Bloqueo duro del botón Siguiente / Finalizar: siempre consulta el estado real.
 document.addEventListener('click',e=>{
   const a=e.target.closest&&e.target.closest('[data-gated-next]');
   if(!a)return;
   const n=+a.dataset.gatedNext;
-  if(!topicActivitiesComplete(n)){
+  const complete=topicActivitiesComplete(n);
+  updateAllTopicGates();
+  if(!complete){
     e.preventDefault();
     e.stopImmediatePropagation();
-    updateTopicGate(n);
     const gate=document.querySelector('[data-topic-gate="'+n+'"]');
     gate?.scrollIntoView({behavior:'smooth',block:'center'});
     toast('Complete las actividades pendientes del Tema '+n+' antes de continuar.');
@@ -6948,7 +6964,7 @@ window.addEventListener('pageshow',()=>{
   const cap=$('capacityNumeric'),res=$('capacityNumericResult');
   if(cap)cap.value='';
   if(res){res.className='didactic-result';res.textContent='';}
-  if(reviewed('t3calc'))setReviewed('t3calc',false);
+  
 });
 
 function evaluateCapacityNumeric(){
@@ -6980,7 +6996,7 @@ $('resetCapacityNumeric')?.addEventListener('click',()=>{
  scheduleSave();
 });
 $('capacityNumeric')?.addEventListener('input',()=>{
- if(reviewed('t3calc'))setReviewed('t3calc',false);
+ 
  const r=$('capacityNumericResult');
  if(r&&r.textContent){r.className='didactic-result';r.textContent='';}
 });
