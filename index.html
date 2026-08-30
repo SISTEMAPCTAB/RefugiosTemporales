@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="es">
-<head>
+<head><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZYC3YCST48"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZYC3YCST48',{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false});</script>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <meta content="#7a1833" name="theme-color"/>
@@ -7027,4 +7027,22 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
   }
 })();
 </script>
-</body></html>
+<script>
+(function(){
+ const safeEvent=(name,params={})=>{try{if(typeof window.gtag!=='function'||!navigator.onLine)return;window.gtag('event',name,{guide:'refugios_temporales',...params})}catch(e){}};
+ const section=()=>{const x=(location.hash||'#inicio').replace(/^#/,'').split('?')[0]||'inicio';return /^guia-\d+$/.test(x)?'tema_'+x.slice(5):x.replace(/[^a-zA-Z0-9_-]/g,'').slice(0,40)||'inicio'};
+ let last='';
+ const view=()=>{const s=section();if(s===last)return;last=s;safeEvent('page_view',{page_title:'Refugios Temporales · '+s,page_location:location.origin+location.pathname+'#'+s,section:s})};
+ addEventListener('hashchange',view);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',view,{once:true});else view();
+ document.addEventListener('click',e=>{const el=e.target.closest('a,button');if(!el)return;const t=(el.textContent||'').trim().toLowerCase(),s=section();
+  if(/encuesta de satisfacción|ayúdanos a mejorar/.test(t))safeEvent('encuesta_satisfaccion_abierta',{section:s});
+  if(/pdf/.test(t)&&/generar|reporte|descargar|verificación|informe/.test(t))safeEvent('reporte_pdf_generado',{section:s});
+  if(/exportar/.test(t)&&/expediente|datos|respaldo/.test(t))safeEvent('respaldo_exportado',{section:s});
+  if(/importar/.test(t)&&/expediente|datos|respaldo/.test(t))safeEvent('respaldo_importacion_iniciada',{section:s});
+  if(/instalar/.test(t)&&/aplicación|app|guía/.test(t))safeEvent('instalacion_pwa_iniciada',{section:s});
+  if(/evaluar|comprobar|contrastar|revisar relaciones/.test(t))safeEvent('actividad_comprobada',{section:s});
+  if(/finalizar recorrido/.test(t))safeEvent('recorrido_formativo_finalizado',{section:s});
+ },true);
+ addEventListener('appinstalled',()=>safeEvent('pwa_instalada'));
+})();
+</script></body></html>
