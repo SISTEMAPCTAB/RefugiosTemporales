@@ -6845,6 +6845,7 @@ function evaluateCapacityNumeric(){
  setReviewed('t3calc',ok);
  return ok;
 }
+$('checkCapacityNumeric')?.setAttribute('data-capacity-main','1');
 $('checkCapacityNumeric')?.addEventListener('click',evaluateCapacityNumeric);
 $('resetCapacityNumeric')?.addEventListener('click',()=>{
  const input=$('capacityNumeric'),r=$('capacityNumericResult');
@@ -6885,64 +6886,124 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
 (function(){
   function review(k,v=true){try{if(typeof window.RTSetReviewed==='function')window.RTSetReviewed(k,v)}catch(e){}}
   function result(id,ok,good,bad){var r=document.getElementById(id);if(!r)return;r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?good:bad}
-  function enhanceChoices(boxId,checkId,resultId,reviewKey,good,bad){
-    var box=document.getElementById(boxId),check=document.getElementById(checkId);if(!box||!check)return;
-    if(box.dataset.enhanced==='1')return;
+  function clearResult(id){var r=document.getElementById(id);if(r){r.className='didactic-result';r.textContent=''}}
+  function shuffled(nodes){
+    var a=[].slice.call(nodes);
+    for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}
+    return a;
+  }
+  function enhanceChoices(boxId,checkId,resetId,resultId,reviewKey,good,bad){
+    var box=document.getElementById(boxId),check=document.getElementById(checkId),reset=document.getElementById(resetId);
+    if(!box||!check||box.dataset.enhanced==='1')return;
     box.dataset.fallback='1';
-    box.querySelectorAll('.didactic-card').forEach(function(card){
-      card.querySelectorAll('button[data-value]').forEach(function(b){
-        b.addEventListener('click',function(){card.dataset.selected=b.dataset.value;card.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)})});
+    function wireCards(){
+      box.querySelectorAll('.didactic-card').forEach(function(card){
+        card.querySelectorAll('button[data-value]').forEach(function(b){
+          if(b.dataset.fbChoice)return;b.dataset.fbChoice='1';
+          b.addEventListener('click',function(){
+            if(box.dataset.enhanced==='1')return;
+            card.dataset.selected=b.dataset.value;
+            card.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)});
+          });
+        });
       });
-    });
+    }
+    wireCards();
     check.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
       var cards=[].slice.call(box.querySelectorAll('.didactic-card[data-answer]'));
       var ok=cards.length>0&&cards.every(function(c){return c.dataset.selected===c.dataset.answer});
       result(resultId,ok,good,bad);review(reviewKey,ok);
     });
+    if(reset)reset.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
+      review(reviewKey,false);clearResult(resultId);
+      box.querySelectorAll('.didactic-card').forEach(function(c){delete c.dataset.selected;c.querySelectorAll('button').forEach(function(b){b.classList.remove('selected')})});
+      shuffled(box.children).forEach(function(n){box.appendChild(n)});
+    });
   }
   function enhanceOrder(boxId,checkId,resetId,resultId,correct,reviewKey,good,bad){
-    var box=document.getElementById(boxId),check=document.getElementById(checkId),reset=document.getElementById(resetId);if(!box||!check)return;
-    if(box.dataset.enhanced==='1')return; box.dataset.fallback='1';
+    var box=document.getElementById(boxId),check=document.getElementById(checkId),reset=document.getElementById(resetId);
+    if(!box||!check||box.dataset.enhanced==='1')return;
+    box.dataset.fallback='1';
     function bind(){
+      if(box.dataset.enhanced==='1')return;
       var cards=[].slice.call(box.querySelectorAll('.order-card'));
       cards.forEach(function(c,i){
         var up=c.querySelector('[data-up]'),dn=c.querySelector('[data-down]');
-        if(up){up.disabled=i===0;up.onclick=function(){if(i>0){box.insertBefore(c,cards[i-1]);bind()}}}
-        if(dn){dn.disabled=i===cards.length-1;dn.onclick=function(){if(i<cards.length-1){box.insertBefore(cards[i+1],c);bind()}}}
+        if(up){up.disabled=i===0;up.onclick=function(){if(box.dataset.enhanced==='1')return;if(i>0){box.insertBefore(c,cards[i-1]);bind()}}}
+        if(dn){dn.disabled=i===cards.length-1;dn.onclick=function(){if(box.dataset.enhanced==='1')return;if(i<cards.length-1){box.insertBefore(cards[i+1],c);bind()}}}
       });
     }
+    function randomizeUnsolved(){
+      var cards=shuffled(box.querySelectorAll('.order-card')),guard=0;
+      while(cards.map(function(c){return c.dataset.key}).join(',')===correct.join(',')&&guard++<12)cards=shuffled(cards);
+      if(cards.length>1&&cards.map(function(c){return c.dataset.key}).join(',')===correct.join(',')){var t=cards[0];cards[0]=cards[1];cards[1]=t}
+      cards.forEach(function(c){box.appendChild(c)});bind();
+    }
     bind();
-    check.addEventListener('click',function(){var order=[].slice.call(box.querySelectorAll('.order-card')).map(function(c){return c.dataset.key}).join(',');var ok=order===correct.join(',');result(resultId,ok,good,bad);review(reviewKey,ok)});
-    if(reset)reset.addEventListener('click',function(){review(reviewKey,false);result(resultId,false,'','Reordene las tarjetas y vuelva a comprobar.');});
+    check.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
+      var order=[].slice.call(box.querySelectorAll('.order-card')).map(function(c){return c.dataset.key}).join(',');
+      var ok=order===correct.join(',');result(resultId,ok,good,bad);review(reviewKey,ok);
+    });
+    if(reset)reset.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
+      review(reviewKey,false);clearResult(resultId);randomizeUnsolved();
+    });
   }
-  function enhanceSingle(boxId,checkId,resultId,correct,reviewKey,good,bad,limit){
-    var box=document.getElementById(boxId),check=document.getElementById(checkId);if(!box||!check)return;
-    if(box.dataset.enhanced==='1')return;box.dataset.fallback='1';var selected=[];
-    box.querySelectorAll('button[data-value]').forEach(function(b){b.addEventListener('click',function(){
-      var v=b.dataset.value;
-      if(limit&&limit>1){var i=selected.indexOf(v);if(i>=0)selected.splice(i,1);else if(selected.length<limit)selected.push(v);b.classList.toggle('selected',selected.indexOf(v)>=0)}
-      else{selected=[v];box.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)})}
-    })});
-    check.addEventListener('click',function(){var want=Array.isArray(correct)?correct:[correct];var ok=selected.length===want.length&&want.every(function(x){return selected.indexOf(x)>=0});result(resultId,ok,good,bad);review(reviewKey,ok)});
+  function enhanceSingle(boxId,checkId,resetId,resultId,correct,reviewKey,good,bad,limit){
+    var box=document.getElementById(boxId),check=document.getElementById(checkId),reset=document.getElementById(resetId);
+    if(!box||!check||box.dataset.enhanced==='1')return;
+    box.dataset.fallback='1';var selected=[];
+    function wire(){
+      box.querySelectorAll('button[data-value]').forEach(function(b){
+        if(b.dataset.fbSingle)return;b.dataset.fbSingle='1';
+        b.addEventListener('click',function(){
+          if(box.dataset.enhanced==='1')return;
+          var v=b.dataset.value;
+          if(limit&&limit>1){
+            var i=selected.indexOf(v);
+            if(i>=0)selected.splice(i,1);else if(selected.length<limit)selected.push(v);
+            b.classList.toggle('selected',selected.indexOf(v)>=0);
+          } else {
+            selected=[v];box.querySelectorAll('button').forEach(function(x){x.classList.toggle('selected',x===b)});
+          }
+        });
+      });
+    }
+    wire();
+    check.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
+      var want=Array.isArray(correct)?correct:[correct];
+      var ok=selected.length===want.length&&want.every(function(x){return selected.indexOf(x)>=0});
+      result(resultId,ok,good,bad);review(reviewKey,ok);
+    });
+    if(reset)reset.addEventListener('click',function(){
+      if(box.dataset.enhanced==='1')return;
+      selected=[];review(reviewKey,false);clearResult(resultId);
+      box.querySelectorAll('button').forEach(function(b){b.classList.remove('selected')});
+      shuffled(box.children).forEach(function(n){box.appendChild(n)});
+    });
   }
   function init(){
     enhanceOrder('prepOrder','checkPrepOrder','resetPrepOrder','prepResult',['p1','p2','p3','p4'],'t1prep','✓ Secuencia adecuada.','Revise qué debe conocerse antes de dimensionar, corregir y preparar la apertura.');
-    enhanceChoices('riskClassifyItems','checkRisksV91','riskResult','t2risks','✓ Clasificación correcta.','Revise qué hallazgos requieren atención antes del uso.');
-    enhanceChoices('capacityScenarioItems','checkCapacityScenarios','capacityScenarioResult','t3capacity','✓ Diagnóstico correcto.','Revise el componente que realmente limita cada escenario.');
+    enhanceChoices('riskClassifyItems','checkRisksV91','resetRisksV91','riskResult','t2risks','✓ Clasificación correcta.','Revise qué hallazgos requieren atención antes del uso.');
+    enhanceChoices('capacityScenarioItems','checkCapacityScenarios','resetCapacityScenarios','capacityScenarioResult','t3capacity','✓ Diagnóstico correcto.','Revise el componente que realmente limita cada escenario.');
     enhanceOrder('supplyOrder','checkSupplyOrder','resetSupplyOrder','supplyOrderResult',['s1','s2','s3','s4'],'t4supply','✓ Secuencia preventiva adecuada.','Revise qué dato debe conocerse antes de decidir reposición.');
-    enhanceChoices('movementRoleItems','checkMovementRoles','movementRoleResult','t5movement','✓ Coordinación correcta.','Revise quién lidera, quién apoya y quién utiliza el dato.');
-    enhanceChoices('roleMatchItems','checkMatchesV91','matchResult','t5matches','✓ Funciones agrupadas correctamente.','Revise el área principal de cada función.');
-    enhanceSingle('receptionCaseItems','checkReceptionCase','receptionCaseResult','continuar','t6case','✓ Decisión adecuada.','Revise cómo mantener registro y atención sin excluir.');
-    enhanceChoices('foodPracticeItems','checkFoodPractices','foodPracticeResult','t7food','✓ Clasificación correcta.','Revise inocuidad, contaminación y conservación.');
+    enhanceChoices('movementRoleItems','checkMovementRoles','resetMovementRoles','movementRoleResult','t5movement','✓ Coordinación correcta.','Revise quién lidera, quién apoya y quién utiliza el dato.');
+    enhanceChoices('roleMatchItems','checkMatchesV91','resetMatchesV91','matchResult','t5matches','✓ Funciones agrupadas correctamente.','Revise el área principal de cada función.');
+    enhanceSingle('receptionCaseItems','checkReceptionCase','resetReceptionCase','receptionCaseResult','continuar','t6case','✓ Decisión adecuada.','Revise cómo mantener registro y atención sin excluir.');
+    enhanceChoices('foodPracticeItems','checkFoodPractices','resetFoodPractices','foodPracticeResult','t7food','✓ Clasificación correcta.','Revise inocuidad, contaminación y conservación.');
     enhanceOrder('energyFoodOrder','checkEnergyFood','resetEnergyFood','energyFoodResult',['e1','e2','e3','e4'],'t7energy','✓ Prioridad adecuada.','Revise qué debe evaluarse antes de usar alimentos afectados.');
     enhanceOrder('incidentOrder','checkIncidentScenarioV91','resetIncidentScenarioV91','incidentResult',['i1','i2','i3','i4'],'t8incident','✓ Secuencia adecuada.','Revise registro, protección temporal, asignación y cierre.');
-    enhanceSingle('accessRouteItems','checkAccessRoute','accessRouteResult',['a1','a2','a3'],'t9route','✓ Recorrido prioritario correcto.','Seleccione exactamente ingreso, orientación y servicio esencial.',3);
-    enhanceChoices('barrierGroupItems','checkBarriers','barrierResult','t9barriers','✓ Agrupación correcta.','Revise el impacto principal de cada barrera.');
-    enhanceSingle('closureCriterionItems','checkClosureCriterion','closureCriterionResult','seguimiento','t10criterion','✓ Criterio correcto.','La incidencia debe resolverse o quedar formalmente canalizada.');
-    enhanceChoices('finalEvidenceItems','checkFinalEvidence','finalEvidenceResult','t10evidence','✓ Evidencias clasificadas correctamente.','Revise qué deja trazabilidad real del cierre.');
-    enhanceSingle('closureBlockItems','checkClosureBlock','closureBlockResult','cl4','t10closure','✓ Correcto: esa condición impide cerrar.','Busque la situación que deja a una familia sin continuidad de atención.');
+    enhanceSingle('accessRouteItems','checkAccessRoute','resetAccessRoute','accessRouteResult',['a1','a2','a3'],'t9route','✓ Recorrido prioritario correcto.','Seleccione exactamente ingreso, orientación y servicio esencial.',3);
+    enhanceChoices('barrierGroupItems','checkBarriers','resetBarriers','barrierResult','t9barriers','✓ Agrupación correcta.','Revise el impacto principal de cada barrera.');
+    enhanceSingle('closureCriterionItems','checkClosureCriterion','resetClosureCriterion','closureCriterionResult','seguimiento','t10criterion','✓ Criterio correcto.','La incidencia debe resolverse o quedar formalmente canalizada.');
+    enhanceChoices('finalEvidenceItems','checkFinalEvidence','resetFinalEvidence','finalEvidenceResult','t10evidence','✓ Evidencias clasificadas correctamente.','Revise qué deja trazabilidad real del cierre.');
+    enhanceSingle('closureBlockItems','checkClosureBlock','resetClosureBlock','closureBlockResult','cl4','t10closure','✓ Correcto: esa condición impide cerrar.','Busque la situación que deja a una familia sin continuidad de atención.');
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,250)});else setTimeout(init,250);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,350)});else setTimeout(init,350);
 })();
 </script>
 <script id="v24-route-progress">(function(){
@@ -7092,6 +7153,7 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
   if(input&&check&&reset&&res&&!check.dataset.capacityFallback){
    check.dataset.capacityFallback='1';
    check.addEventListener('click',function(){
+    if(check.dataset.capacityMain==='1')return;
     setTimeout(function(){
      const raw=(input.value||'').trim(),v=Number(raw);
      if(!raw){res.className='didactic-result bad';res.textContent='Escriba primero el número de personas y después pulse “Comprobar cálculo”.';return;}
@@ -7099,7 +7161,7 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
      else{res.className='didactic-result bad';res.textContent='✕ Resultado incorrecto. Revise la división y vuelva a intentarlo.';}
     },0);
    });
-   reset.addEventListener('click',function(){input.value='';res.className='didactic-result';res.textContent='';});
+   reset.addEventListener('click',function(){if(check.dataset.capacityMain==='1')return;input.value='';res.className='didactic-result';res.textContent='';});
   }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
