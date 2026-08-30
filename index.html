@@ -5117,10 +5117,10 @@ a[href],button,[role="button"]{
 </figure><h3>Criterios de referencia</h3><ul><li>Área de descanso: referencia de <b>3.5 m² por persona</b>.</li><li>Separación: referencia de <b>75 cm entre colchonetas o catres</b>.</li><li>Sanitarios diferenciados y accesibles.</li><li>Espacios para atención de salud, apoyo psicológico, recreación y lactancia.</li><li>Área prevista para animales de compañía, separada de preparación de alimentos y descanso.</li></ul><div class="learning-action interact capacity-calc-activity didactic-sort">
 <div class="activity-kicker">Calcular · Capacidad de referencia</div>
 <h3>Un área útil de descanso tiene 350 m²</h3>
-<p>Con la referencia de <b>3.5 m² por persona</b>, calcule la capacidad por superficie. Escriba el resultado; no hay opciones que revelen la respuesta por posición.</p>
+<p>Con la referencia de 3.5 m² por persona, calcule la capacidad por superficie y escriba el resultado.</p>
 <div class="calc-challenge">
 <label for="capacityNumeric"><b>Personas de referencia</b></label>
-<input id="capacityNumeric" inputmode="numeric" min="0" placeholder="Escriba el resultado" type="number"/>
+<input autocomplete="off" data-lpignore="true" id="capacityNumeric" inputmode="numeric" min="0" placeholder="Escriba el resultado" type="number" value=""/>
 <button class="btn primary" id="checkCapacityNumeric" type="button">Comprobar cálculo</button><button class="secondary" id="resetCapacityNumeric" type="button">↻ Intentar de nuevo</button>
 </div>
 <div aria-live="polite" class="didactic-result" id="capacityNumericResult"></div>
@@ -5668,8 +5668,28 @@ async function createRefugeRecord(meta){
 
 function setSaveStatus(kind,text,detail){const dot=$('saveDot'),t=$('saveStateText'),d=$('saveStateTime');if(dot){dot.className='save-dot'+(kind==='pending'?' pending':kind==='error'?' error':'')}if(t)t.textContent=text;if(d)d.textContent=detail||''}
 function controlKey(el){return el.id?('id:'+el.id):el.name?('name:'+el.name):null}
-function captureForms(){const data={};qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset')return;const k=controlKey(el);if(!k)return;if(el.type==='radio'){if(el.checked)data[k]=el.value}else if(el.type==='checkbox'){data[k]=!!el.checked}else data[k]=el.value});state.formData=data}
-function restoreForms(){const data=state.formData||{};qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset')return;const k=controlKey(el);if(!k||!(k in data))return;if(el.type==='radio')el.checked=(el.value===data[k]);else if(el.type==='checkbox')el.checked=!!data[k];else el.value=data[k]??''})}
+function isGuideActivityControl(el){return !!el.closest('.guide-lesson,[data-topic-gate],#incidentSynthesisActivity');}
+function captureForms(){
+ const data={};
+ qsa('input,select,textarea').forEach(el=>{
+  if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset'||isGuideActivityControl(el))return;
+  const k=controlKey(el);if(!k)return;
+  if(el.type==='radio'){if(el.checked)data[k]=el.value}
+  else if(el.type==='checkbox'){data[k]=!!el.checked}
+  else data[k]=el.value;
+ });
+ state.formData=data;
+}
+function restoreForms(){
+ const data=state.formData||{};
+ qsa('input,select,textarea').forEach(el=>{
+  if(el.type==='file'||el.type==='button'||el.type==='submit'||el.type==='reset'||isGuideActivityControl(el))return;
+  const k=controlKey(el);if(!k||!(k in data))return;
+  if(el.type==='radio')el.checked=(el.value===data[k]);
+  else if(el.type==='checkbox')el.checked=!!data[k];
+  else el.value=data[k]??'';
+ });
+}
 let saveTimer=null;let saveChain=Promise.resolve();let saveRevision=Number(state._saveRevision||0);
 function save(silent=true){
   captureForms();
@@ -5696,8 +5716,26 @@ const loaded=await storageGet();
 if(loaded)state=Object.assign(state,loaded);
 state.guideActivityReview=Object.assign({},state.guideActivityReview||{},preLoadReview);
 state.formData=state.formData||{};
+
+// v103 · migración única: elimina estados didácticos contaminados por versiones anteriores.
+// No elimina expedientes operativos ni datos de verificación.
+const GUIDE_MIGRATION_KEY='rt_guide_v103_migrated';
+let needsGuideMigration=false;
+try{needsGuideMigration=localStorage.getItem(GUIDE_MIGRATION_KEY)!=='1';}catch(e){}
+if(needsGuideMigration){
+  Object.keys(state.formData).forEach(k=>{
+    const id=k.startsWith('id:')?k.slice(3):'';
+    if(id&&document.getElementById(id)?.closest('.guide-lesson,#incidentSynthesisActivity'))delete state.formData[k];
+  });
+  state.guideActivityReview={};
+  state.guideProgress={visited:[],completed:[],last:1};
+  try{localStorage.setItem(GUIDE_MIGRATION_KEY,'1');}catch(e){}
+}
 restoreForms();
-requestAnimationFrame(()=>{try{updateAllTopicGates?.();}catch(e){}});
+requestAnimationFrame(()=>{try{updateAllTopicGates?.();updateGuideUI?.();}catch(e){}});
+if(needsGuideMigration){
+  setTimeout(()=>{resetTransientGuideInputsOnLoad();updateAllTopicGates();save(true);},0);
+}
 
 async function verifyLocalStorageCapability(){
   let idbOK=false, localOK=false;
@@ -5977,8 +6015,10 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 state.guideProgress=state.guideProgress||{visited:[],completed:[],last:1};
 function guideNumFromHash(){const m=(location.hash||'').match(/^#guia-(\d{2})$/);return m?Math.max(1,Math.min(10,+m[1])):null;}
 function updateGuideUI(){
-  const gp=state.guideProgress||{visited:[],completed:[],last:1};
-  const done=[...new Set(gp.completed||[])].filter(n=>n>=1&&n<=10).length;
+  const gp=state.guideProgress=state.guideProgress||{visited:[],completed:[],last:1};
+  gp.completed=[];
+  for(let n=1;n<=10;n++)if(topicActivitiesComplete(n))gp.completed.push(n);
+  const done=gp.completed.length;
   const visited=[...new Set(gp.visited||[])].filter(n=>n>=1&&n<=10).length;
   const pct=Math.round(done/10*100);
   if($('guideDoneCount'))$('guideDoneCount').textContent=done;
@@ -5991,11 +6031,9 @@ function updateGuideUI(){
   if($('guideFinalVisited'))$('guideFinalVisited').textContent=visited+'/10';
   if($('guideFinalPct'))$('guideFinalPct').textContent=pct+'%';
   qsa('[data-guide-link]').forEach(a=>{const n=+a.dataset.guideLink;const isDone=(gp.completed||[]).includes(n);a.classList.toggle('done',isDone);const sm=a.querySelector('small');if(sm)sm.textContent=isDone?'✓':((gp.visited||[]).includes(n)?'•':'○');});
-  qsa('[data-guide-complete]').forEach(b=>{const n=+b.dataset.guideComplete;const isDone=(gp.completed||[]).includes(n);b.textContent=isDone?'✓ Tema completado':(n===10?'Completar recorrido':'Marcar tema como completado');b.classList.toggle('secondary',isDone);});
   const cont=$('guideContinue');if(cont){const n=Math.max(1,Math.min(10,+(gp.last||1)));cont.href='#guia-'+String(n).padStart(2,'0');cont.textContent=visited?'Continuar donde quedé':'Comenzar recorrido';}
 }
-function recordGuideVisit(){const n=guideNumFromHash();if(!n)return;const gp=state.guideProgress;if(!gp.visited.includes(n))gp.visited.push(n);gp.last=n;updateGuideUI();scheduleSave();}
-qsa('[data-guide-complete]').forEach(b=>b.addEventListener('click',()=>{const n=+b.dataset.guideComplete;const gp=state.guideProgress;if(!gp.visited.includes(n))gp.visited.push(n);if(!gp.completed.includes(n))gp.completed.push(n);gp.last=Math.min(10,n+1);updateGuideUI();scheduleSave();if(n!==10)toast('Tema '+n+' registrado como completado.');}));
+function recordGuideVisit(){const n=guideNumFromHash();if(!n)return;const gp=state.guideProgress;if(!gp.visited.includes(n))gp.visited.push(n);gp.last=n;updateAllTopicGates();scheduleSave();}
 
 
 // v59 · No permitir avanzar sin completar las actividades del tema.
@@ -6098,7 +6136,8 @@ function updateGuideRouteLocks(){
 }
 function reconcileGuideProgress(){
   const gp=state.guideProgress=state.guideProgress||{visited:[],completed:[],last:1};
-  gp.completed=(gp.completed||[]).filter(n=>topicActivitiesComplete(n));
+  gp.completed=[];
+  for(let n=1;n<=10;n++)if(topicActivitiesComplete(n))gp.completed.push(n);
 }
 function updateAllTopicGates(){
   for(let n=1;n<=10;n++)updateTopicGate(n);
@@ -6107,6 +6146,22 @@ function updateAllTopicGates(){
   updateGuideUI();
 }
 window.RTRefreshGuide=()=>updateAllTopicGates();
+
+function validateGuideRuntimeStructure(){
+ const required=[
+  'checkPrepOrder','checkRisksV91','checkCapacityNumeric','checkCapacityScenarios',
+  'checkSupplyOrder','checkWaterChallenge','checkMovementRoles','checkMatchesV91',
+  'checkReceptionCase','checkSequence','checkFoodPractices','checkEnergyFood',
+  'checkIncidentScenarioV91','checkAccessRoute','checkBarriers','checkClosureCriterion',
+  'checkFinalEvidence','checkClosureBlock'
+ ];
+ const missing=required.filter(id=>!$(id));
+ const gates=Array.from({length:10},(_,i)=>i+1).filter(n=>!document.querySelector('[data-topic-gate="'+n+'"]'));
+ if(missing.length||gates.length)console.warn('Diagnóstico guía:',{missing,gates});
+ return !missing.length&&!gates.length;
+}
+window.RTGuideIntegrityOK=validateGuideRuntimeStructure();
+
 
 // v102 · Síntesis operativa interactiva. Controlador único; sustituye la respuesta revelada anterior.
 (function initIncidentSynthesis(){
@@ -6878,6 +6933,24 @@ $('resetClosureBlock')?.addEventListener('click',()=>{setReviewed('t10closure',f
 
 
 // v93 · comprobaciones sin respuesta por posición y validación estricta
+
+function resetTransientGuideInputsOnLoad(){
+ const cap=$('capacityNumeric'),res=$('capacityNumericResult');
+ if(cap)cap.value='';
+ if(res){res.className='didactic-result';res.textContent='';}
+}
+resetTransientGuideInputsOnLoad();
+
+let capacityUserTouched=false;
+$('capacityNumeric')?.addEventListener('input',()=>{capacityUserTouched=true;},{capture:true});
+window.addEventListener('pageshow',()=>{
+  if(capacityUserTouched)return;
+  const cap=$('capacityNumeric'),res=$('capacityNumericResult');
+  if(cap)cap.value='';
+  if(res){res.className='didactic-result';res.textContent='';}
+  if(reviewed('t3calc'))setReviewed('t3calc',false);
+});
+
 function evaluateCapacityNumeric(){
  const input=$('capacityNumeric'),r=$('capacityNumericResult');
  if(!input||!r)return false;
