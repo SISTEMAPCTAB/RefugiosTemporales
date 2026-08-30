@@ -3700,6 +3700,12 @@ a[href],button,[role="button"]{
 .didactic-card>button[data-value]{width:100%;min-height:48px;border:1px solid #cfc2b5;border-radius:11px;background:#fff;padding:11px;text-align:left;font-weight:700;color:#322d29;white-space:normal;overflow-wrap:anywhere}
 .didactic-card>button[data-value].selected{background:#741733;color:#fff;border-color:#741733}
 @media(max-width:560px){.didactic-choices button,.didactic-card>button[data-value]{font-size:16px}.order-controls{display:flex;gap:8px}.order-controls button{min-width:44px;min-height:44px}}
+
+/* v98 · corrección de reintentos y retroalimentación */
+#capacityNumericResult{display:block;min-height:0;margin:10px 0 12px}
+#capacityNumericResult:empty{display:none}
+#resetCapacityNumeric{width:100%;margin-top:10px;min-height:48px}
+.didactic-result.good,.didactic-result.bad{display:block}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -5105,7 +5111,7 @@ a[href],button,[role="button"]{
 <div class="calc-challenge">
 <label for="capacityNumeric"><b>Personas de referencia</b></label>
 <input id="capacityNumeric" inputmode="numeric" min="0" placeholder="Escriba el resultado" type="number"/>
-<button class="btn primary" id="checkCapacityNumeric" type="button">Comprobar cálculo</button>
+<button class="btn primary" id="checkCapacityNumeric" type="button">Comprobar cálculo</button><button class="secondary" id="resetCapacityNumeric" type="button">↻ Intentar de nuevo</button>
 </div>
 <div aria-live="polite" class="didactic-result" id="capacityNumericResult"></div>
 <details><summary>Consultar procedimiento después de responder</summary><p>Divida el área útil entre 3.5 m² por persona. La superficie es sólo una referencia; la capacidad final también depende de servicios, distribución y condiciones del inmueble.</p></details>
@@ -6671,7 +6677,15 @@ function choiceActivity(boxId,resultId,items,categories,reviewKey){
    const wrong=items.filter(i=>stateMap[i.k]!==i.a);const ok=!wrong.length;res.className='didactic-result '+(ok?'good':'bad');
    res.textContent=ok?'✓ Correcto. La clasificación responde al criterio operativo, no a la posición de las opciones.':'Revise '+wrong.length+' tarjeta(s). Considere la función principal o la respuesta que exige el hallazgo.';
    if(ok){setReviewed(reviewKey);updateAllTopicGates?.()}scheduleSave();return ok},
-  reset(){Object.keys(stateMap).forEach(k=>delete stateMap[k]);res.className='didactic-result';res.textContent='';render();scheduleSave()}
+  reset(){
+   Object.keys(stateMap).forEach(k=>delete stateMap[k]);
+   setReviewed(reviewKey,false);
+   res.className='didactic-result';
+   res.textContent='';
+   render();
+   updateAllTopicGates?.();
+   scheduleSave();
+  }
  };
 }
 const riskAct=choiceActivity('riskClassifyItems','riskResult',[
@@ -6813,13 +6827,38 @@ $('resetClosureBlock')?.addEventListener('click',()=>{setReviewed('t10closure',f
 
 
 // v93 · comprobaciones sin respuesta por posición y validación estricta
-$('checkCapacityNumeric')?.addEventListener('click',()=>{
- const v=Number($('capacityNumeric')?.value||0),r=$('capacityNumericResult'),ok=v===100;
+function evaluateCapacityNumeric(){
+ const input=$('capacityNumeric'),r=$('capacityNumericResult');
+ if(!input||!r)return false;
+ const raw=(input.value||'').trim();
+ if(!raw){
+   r.className='didactic-result bad';
+   r.textContent='Escriba primero el número de personas y después pulse “Comprobar cálculo”.';
+   setReviewed('t3calc',false);
+   return false;
+ }
+ const v=Number(raw),ok=Number.isFinite(v)&&v===100;
  r.className='didactic-result '+(ok?'good':'bad');
- r.textContent=ok?'✓ Correcto: 350 ÷ 3.5 = 100 personas de referencia.':'Revise el cálculo: divida el área útil entre 3.5 m² por persona.';
+ r.textContent=ok
+   ?'✓ Correcto: 350 m² ÷ 3.5 m² por persona = 100 personas de referencia.'
+   :'✕ Resultado incorrecto. Revise la división y vuelva a intentarlo.';
  setReviewed('t3calc',ok);
+ return ok;
+}
+$('checkCapacityNumeric')?.addEventListener('click',evaluateCapacityNumeric);
+$('resetCapacityNumeric')?.addEventListener('click',()=>{
+ const input=$('capacityNumeric'),r=$('capacityNumericResult');
+ if(input){input.value='';input.focus();}
+ if(r){r.className='didactic-result';r.textContent='';}
+ setReviewed('t3calc',false);
+ updateAllTopicGates?.();
+ scheduleSave();
 });
-$('capacityNumeric')?.addEventListener('input',()=>{if(reviewed('t3calc'))setReviewed('t3calc',false)});
+$('capacityNumeric')?.addEventListener('input',()=>{
+ if(reviewed('t3calc'))setReviewed('t3calc',false);
+ const r=$('capacityNumericResult');
+ if(r&&r.textContent){r.className='didactic-result';r.textContent='';}
+});
 
 const receptionCase=choiceActivity('receptionCaseItems','receptionCaseResult',[
  {k:'rc1',t:'Actuación ante la llegada de la familia',a:'continuar'}
@@ -7044,5 +7083,25 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
   if(/finalizar recorrido/.test(t))safeEvent('recorrido_formativo_finalizado',{section:s});
  },true);
  addEventListener('appinstalled',()=>safeEvent('pwa_instalada'));
+})();
+</script><script>
+(function(){
+ function boot(){
+  const q=id=>document.getElementById(id);
+  const input=q('capacityNumeric'),check=q('checkCapacityNumeric'),reset=q('resetCapacityNumeric'),res=q('capacityNumericResult');
+  if(input&&check&&reset&&res&&!check.dataset.capacityFallback){
+   check.dataset.capacityFallback='1';
+   check.addEventListener('click',function(){
+    setTimeout(function(){
+     const raw=(input.value||'').trim(),v=Number(raw);
+     if(!raw){res.className='didactic-result bad';res.textContent='Escriba primero el número de personas y después pulse “Comprobar cálculo”.';return;}
+     if(v===100){res.className='didactic-result good';res.textContent='✓ Correcto: 350 m² ÷ 3.5 m² por persona = 100 personas de referencia.';}
+     else{res.className='didactic-result bad';res.textContent='✕ Resultado incorrecto. Revise la división y vuelva a intentarlo.';}
+    },0);
+   });
+   reset.addEventListener('click',function(){input.value='';res.className='didactic-result';res.textContent='';});
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script></body></html>
