@@ -3706,6 +3706,10 @@ a[href],button,[role="button"]{
 #capacityNumericResult:empty{display:none}
 #resetCapacityNumeric{width:100%;margin-top:10px;min-height:48px}
 .didactic-result.good,.didactic-result.bad{display:block}
+
+/* v100 · evaluación y liberación inmediata */
+.didactic-result{transition:none}
+#activationSequence{min-width:0}
 </style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
@@ -5069,7 +5073,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus1">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus1">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Completar la priorización de preparación</li></ul>
 <div class="topic-gate-note" id="topicGateNote1">
@@ -5093,7 +5097,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus2">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus2">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span>Seleccionar condiciones</li><li data-gate-item="2"><span>○</span>Comprobar selección</li></ul>
 <div class="topic-gate-note" id="topicGateNote2">
@@ -5127,7 +5131,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus3">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus3">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Resolver correctamente el cálculo</li><li data-gate-item="2"><span>○</span> Diagnosticar factores limitantes</li></ul>
 <div class="topic-gate-note" id="topicGateNote3">
@@ -5150,7 +5154,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus4">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus4">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Ordenar el abastecimiento preventivo</li><li data-gate-item="2"><span>○</span> Resolver y comprobar el cálculo de agua</li></ul>
 <div class="topic-gate-note" id="topicGateNote4">
@@ -5182,7 +5186,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus5">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus5">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Resolver coordinación de movimientos</li><li data-gate-item="2"><span>○</span> Agrupar las cinco funciones por responsable</li></ul>
 <div class="topic-gate-note" id="topicGateNote5">
@@ -5204,13 +5208,13 @@ a[href],button,[role="button"]{
 <div class="didactic-items" id="receptionCaseItems"><div class="didactic-card"><button data-value="esperar" type="button">Mantener a la familia en espera hasta que presente identificación oficial.</button></div><div class="didactic-card"><button data-value="continuar" type="button">Registrar la información disponible, identificar necesidades y continuar la atención sin excluir por falta de documento.</button></div><div class="didactic-card"><button data-value="sinregistro" type="button">Permitir el ingreso sin realizar registro para agilizar la recepción.</button></div></div>
 <div aria-live="polite" class="didactic-result" id="receptionCaseResult"></div>
 <div class="didactic-actions"><button id="checkReceptionCase" type="button">Contrastar decisión</button><button class="secondary" id="resetReceptionCase" type="button">↻ Reiniciar actividad</button></div>
-</div><div class="activity-lab" id="lab-secuencia"><div class="lab-type">Ordenar · Secuencia de apertura y recepción</div><h4>Toque las acciones en el orden en que deberían realizarse</h4><p>La actividad usa botones táctiles para funcionar también en iPhone.</p><div class="tap-sequence" id="activationSequence"><button data-seq="3" type="button">Preparar áreas, responsables e insumos</button><button data-seq="1" type="button">Revisar condiciones actuales del inmueble y accesos</button><button data-seq="5" type="button">Registrar y orientar a la población que ingresa</button><button data-seq="2" type="button">Atender condiciones que requieren corrección o valoración</button><button data-seq="4" type="button">Abrir el Refugio Temporal conforme a la determinación de la autoridad competente</button></div><div class="actions"><button class="btn primary" id="checkSequence" type="button">Comprobar orden</button><button class="btn secondary" id="resetSequence" type="button">Reiniciar</button></div><div class="lab-feedback" id="sequenceFeedback"></div></div><div class="lesson-complete"><span><b>Idea clave:</b> registrar sirve para proteger y organizar la atención, no para excluir.</span></div><div class="topic-gate" data-topic-gate="6">
+</div><div class="activity-lab" id="lab-secuencia"><div class="lab-type">Ordenar · Secuencia de apertura y recepción</div><h4>Toque las acciones en el orden en que deberían realizarse</h4><p>Ordene las acciones con ↑/↓; también puede arrastrarlas cuando el dispositivo lo permita.</p><div class="didactic-order" id="activationSequence"><div class="order-card" data-key="a3"><span class="order-handle">↕</span><b>Preparar áreas, responsables e insumos.</b><span class="order-controls"><button aria-label="Subir" data-up="" disabled="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="a1"><span class="order-handle">↕</span><b>Revisar condiciones actuales del inmueble y accesos.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="a5"><span class="order-handle">↕</span><b>Registrar y orientar a la población que ingresa.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="a2"><span class="order-handle">↕</span><b>Atender condiciones que requieren corrección o valoración.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" type="button">↓</button></span></div><div class="order-card" data-key="a4"><span class="order-handle">↕</span><b>Abrir el Refugio Temporal conforme a la determinación de la autoridad competente.</b><span class="order-controls"><button aria-label="Subir" data-up="" type="button">↑</button><button aria-label="Bajar" data-down="" disabled="" type="button">↓</button></span></div></div><div class="actions"><button class="btn primary" id="checkSequence" type="button">Comprobar orden</button><button class="btn secondary" id="resetSequence" type="button">Reiniciar</button></div><div class="lab-feedback" id="sequenceFeedback"></div></div><div class="lesson-complete"><span><b>Idea clave:</b> registrar sirve para proteger y organizar la atención, no para excluir.</span></div><div class="topic-gate" data-topic-gate="6">
 <div class="topic-gate-head">
 <div>
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus6">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus6">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Resolver el caso de recepción</li><li data-gate-item="2"><span>○</span> Ordenar correctamente apertura y recepción</li></ul>
 <div class="topic-gate-note" id="topicGateNote6">
@@ -5239,7 +5243,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus7">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus7">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Clasificar prácticas de inocuidad</li><li data-gate-item="2"><span>○</span> Priorizar acciones ante falla de energía</li></ul>
 <div class="topic-gate-note" id="topicGateNote7">
@@ -5267,7 +5271,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus8">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus8">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span>Resolver los dos pasos de la incidencia</li><li data-gate-item="2"><span>○</span>Evaluar decisiones</li></ul>
 <div class="topic-gate-note" id="topicGateNote8">
@@ -5297,7 +5301,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus9">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus9">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Resolver recorrido accesible</li><li data-gate-item="2"><span>○</span> Agrupar barreras por componente</li></ul>
 <div class="topic-gate-note" id="topicGateNote9">
@@ -5334,7 +5338,7 @@ a[href],button,[role="button"]{
 <div class="topic-gate-kicker">REQUISITO PARA CONTINUAR</div>
 <b>Complete las actividades de este tema</b>
 </div>
-<span class="topic-gate-status" id="topicGateStatus10">Pendiente</span>
+<span aria-live="polite" class="topic-gate-status" id="topicGateStatus10">Pendiente</span>
 </div>
 <ul><li data-gate-item="1"><span>○</span> Resolver el criterio de pendiente</li><li data-gate-item="2"><span>○</span> Clasificar evidencias de cierre</li><li data-gate-item="3"><span>○</span> Detectar el pendiente crítico del escenario</li></ul>
 <div class="topic-gate-note" id="topicGateNote10">
@@ -5681,7 +5685,11 @@ function save(silent=true){
   return saveChain;
 }
 function scheduleSave(){setSaveStatus('pending','Cambios pendientes','Se guardarán automáticamente en unos instantes.');clearTimeout(saveTimer);saveTimer=setTimeout(()=>save(true),500)}
-const loaded=await storageGet();if(loaded)state=Object.assign(state,loaded);state.formData=state.formData||{};
+const preLoadReview=Object.assign({},state.guideActivityReview||{});
+const loaded=await storageGet();
+if(loaded)state=Object.assign(state,loaded);
+state.guideActivityReview=Object.assign({},state.guideActivityReview||{},preLoadReview);
+state.formData=state.formData||{};
 restoreForms();
 requestAnimationFrame(()=>{try{updateAllTopicGates?.();}catch(e){}});
 
@@ -6006,15 +6014,11 @@ function reviewed(key){
 }
 function setReviewed(key,val=true){
   state.guideActivityReview[key]=!!val;
-  scheduleSave();
   updateAllTopicGates();
+  scheduleSave();
 }
-function sequenceComplete(){
-  const buttons=qsa('#activationSequence button[data-seq]');
-  return buttons.length===5 && buttons.every(b=>b.classList.contains('picked') || b.classList.contains('selected') || b.dataset.order || b.getAttribute('aria-pressed')==='true')
-    || qsa('#activationSequence .chosen, #activationSequence button.done').length>=5
-    || ((document.getElementById('sequenceFeedback')?.textContent||'').trim().length>0 && reviewed('t6sequence'));
-}
+function invalidateReviewed(key){if(reviewed(key))setReviewed(key,false);}
+function sequenceComplete(){return reviewed('t6sequence');}
 function topicActivityStates(n){
   switch(+n){
     case 1:
@@ -6096,49 +6100,32 @@ function updateAllTopicGates(){
   updateGuideRouteLocks();
   updateGuideUI();
 }
+window.RTRefreshGuide=()=>updateAllTopicGates();
+
+const ACTIVITY_CHECK_IDS=new Set([
+ 'checkPrepOrder','checkRisksV91','checkCapacityNumeric','checkCapacityScenarios',
+ 'checkSupplyOrder','checkWaterChallenge','checkMovementRoles','checkMatchesV91',
+ 'checkReceptionCase','checkSequence','checkFoodPractices','checkEnergyFood',
+ 'checkIncidentScenarioV91','checkAccessRoute','checkBarriers','checkClosureCriterion',
+ 'checkFinalEvidence','checkClosureBlock'
+]);
+document.addEventListener('click',e=>{
+ const b=e.target.closest&&e.target.closest('button[id]');
+ if(!b||!ACTIVITY_CHECK_IDS.has(b.id))return;
+ queueMicrotask(()=>updateAllTopicGates());
+},false);
+
 
 // Registrar únicamente actividades heredadas cuya comprobación puede validarse con exactitud.
 [
-  ['checkWaterChallenge','t4water',()=>Number(($('waterChallenge')?.value||0))===252],
-  ['checkSequence','t6sequence',()=>{
-    const ordered=qsa('#activationSequence button[data-seq]')
-      .filter(b=>b.dataset.order)
-      .sort((a,b)=>Number(a.dataset.order)-Number(b.dataset.order))
-      .map(b=>Number(b.dataset.seq));
-    return ordered.length===5 && ordered.every((v,i)=>v===i+1);
-  }]
+  ['checkWaterChallenge','t4water',()=>Number(($('waterChallenge')?.value||0))===252]
 ].forEach(([id,key,ready])=>{
-  $(id)?.addEventListener('click',()=>setTimeout(()=>{
-    setReviewed(key,!!ready());
-  },0));
+  $(id)?.addEventListener('click',()=>setReviewed(key,!!ready()));
 });
+$('waterChallenge')?.addEventListener('input',()=>{if(Number(($('waterChallenge')?.value||0))!==252)invalidateReviewed('t4water');});
 
 
-function shuffleActivationSequence(){
- const box=$('activationSequence');if(!box)return;
- let buttons=qsa('#activationSequence button[data-seq]');
- if(buttons.length!==5)return;
- buttons=dShuffle(buttons);
- if(buttons.map(b=>String(b.dataset.seq)).join(',')==='1,2,3,4,5')[buttons[0],buttons[1]]=[buttons[1],buttons[0]];
- buttons.forEach(b=>box.appendChild(b));
-}
-shuffleActivationSequence();
 
-// Reiniciar la secuencia vuelve a dejar pendiente esa actividad.
-$('resetSequence')?.addEventListener('click',()=>{
-  state.guideActivityReview.t6sequence=false;
-  shuffleActivationSequence();
-  scheduleSave();
-  setTimeout(updateAllTopicGates,0);
-});
-
-// Cualquier cambio de control recalcula inmediatamente el estado.
-qsa('.guide-lesson input, .guide-lesson select, .guide-lesson textarea')
-  .forEach(el=>{
-    el.addEventListener('change',()=>{updateAllTopicGates();scheduleSave();});
-    el.addEventListener('input',()=>{updateAllTopicGates();scheduleSave();});
-  });
-qsa('#activationSequence button[data-seq]').forEach(b=>b.addEventListener('click',()=>setTimeout(updateAllTopicGates,0)));
 
 // Bloqueo duro del botón Siguiente / Finalizar.
 document.addEventListener('click',e=>{
@@ -6667,16 +6654,16 @@ function choiceActivity(boxId,resultId,items,categories,reviewKey){
    const title=document.createElement('b');title.textContent=it.t;card.appendChild(title);
    const choices=document.createElement('div');choices.className='didactic-choices';
    plan.opts.forEach(cat=>{const b=document.createElement('button');b.type='button';b.textContent=cat.label;b.dataset.value=cat.v;
-    b.addEventListener('click',()=>{stateMap[it.k]=cat.v;choices.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b));scheduleSave()});choices.appendChild(b)});
+    b.addEventListener('click',()=>{invalidateReviewed(reviewKey);stateMap[it.k]=cat.v;choices.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b));scheduleSave()});choices.appendChild(b)});
    card.appendChild(choices);box.appendChild(card);
   });
  }
  render();
  return {
-  check(){const missing=items.filter(i=>!stateMap[i.k]);if(missing.length){res.className='didactic-result bad';res.textContent='Clasifique todas las tarjetas antes de comprobar.';return false}
-   const wrong=items.filter(i=>stateMap[i.k]!==i.a);const ok=!wrong.length;res.className='didactic-result '+(ok?'good':'bad');
+  check(){const missing=items.filter(i=>!stateMap[i.k]);if(missing.length){setReviewed(reviewKey,false);res.className='didactic-result bad';res.textContent='Clasifique todas las tarjetas antes de comprobar.';return false}
+   const wrong=items.filter(i=>stateMap[i.k]!==i.a);const ok=!wrong.length;setReviewed(reviewKey,ok);res.className='didactic-result '+(ok?'good':'bad');
    res.textContent=ok?'✓ Correcto. La clasificación responde al criterio operativo, no a la posición de las opciones.':'Revise '+wrong.length+' tarjeta(s). Considere la función principal o la respuesta que exige el hallazgo.';
-   if(ok){setReviewed(reviewKey);updateAllTopicGates?.()}scheduleSave();return ok},
+   scheduleSave();return ok},
   reset(){
    Object.keys(stateMap).forEach(k=>delete stateMap[k]);
    setReviewed(reviewKey,false);
@@ -6732,12 +6719,12 @@ function renderIncidentOrder(reset=false){
   c.innerHTML='<span class="order-handle">↕</span><b>'+esc(it.t)+'</b><span class="order-controls"><button type="button" data-up aria-label="Subir">↑</button><button type="button" data-down aria-label="Bajar">↓</button></span>';
   c.querySelector('[data-up]').disabled=i===0;c.querySelector('[data-down]').disabled=i===incidentOrder.length-1;
   c.querySelector('[data-up]').addEventListener('click',()=>moveIncident(i,-1));c.querySelector('[data-down]').addEventListener('click',()=>moveIncident(i,1));
-  c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',k));c.addEventListener('dragover',e=>e.preventDefault());c.addEventListener('drop',e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain'),fi=incidentOrder.indexOf(from),ti=incidentOrder.indexOf(k);if(fi>=0&&ti>=0){incidentOrder.splice(fi,1);incidentOrder.splice(ti,0,from);renderIncidentOrder();scheduleSave()}});
+  c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',k));c.addEventListener('dragover',e=>e.preventDefault());c.addEventListener('drop',e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain'),fi=incidentOrder.indexOf(from),ti=incidentOrder.indexOf(k);if(fi>=0&&ti>=0){invalidateReviewed('t8incident');incidentOrder.splice(fi,1);incidentOrder.splice(ti,0,from);renderIncidentOrder();scheduleSave()}});
   box.appendChild(c);
  });
 }
-function moveIncident(i,d){const j=i+d;if(j<0||j>=incidentOrder.length)return;[incidentOrder[i],incidentOrder[j]]=[incidentOrder[j],incidentOrder[i]];renderIncidentOrder();scheduleSave()}
-function checkIncidentV91(){const ok=incidentOrder.join(',')==='i1,i2,i3,i4',r=$('incidentResult');r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Secuencia adecuada: registrar/verificar → proteger temporalmente → asignar corrección → verificar y cerrar.':'La secuencia aún no protege y documenta de forma completa. Reordene pensando qué debe ocurrir antes de poder cerrar la incidencia.';if(ok){setReviewed('t8incident');updateAllTopicGates?.()}scheduleSave()}
+function moveIncident(i,d){const j=i+d;if(j<0||j>=incidentOrder.length)return;invalidateReviewed('t8incident');[incidentOrder[i],incidentOrder[j]]=[incidentOrder[j],incidentOrder[i]];renderIncidentOrder();scheduleSave()}
+function checkIncidentV91(){const ok=incidentOrder.join(',')==='i1,i2,i3,i4',r=$('incidentResult');setReviewed('t8incident',ok);r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Secuencia adecuada: registrar/verificar → proteger temporalmente → asignar corrección → verificar y cerrar.':'La secuencia aún no protege y documenta de forma completa. Reordene pensando qué debe ocurrir antes de poder cerrar la incidencia.';scheduleSave()}
 renderIncidentOrder(true);$('checkIncidentScenarioV91')?.addEventListener('click',checkIncidentV91);$('resetIncidentScenarioV91')?.addEventListener('click',()=>{setReviewed('t8incident',false);renderIncidentOrder(true);$('incidentResult').className='didactic-result';$('incidentResult').textContent='';scheduleSave()});
 
 
@@ -6748,14 +6735,14 @@ function orderActivity(boxId,resultId,items,correct,reviewKey,okText,badText){
   order.forEach((k,i)=>{const it=items.find(x=>x.k===k),c=document.createElement('div');c.className='order-card';c.draggable=true;c.dataset.key=k;
    c.innerHTML='<span class="order-handle">↕</span><b>'+esc(it.t)+'</b><span class="order-controls"><button type="button" data-up aria-label="Subir">↑</button><button type="button" data-down aria-label="Bajar">↓</button></span>';
    c.querySelector('[data-up]').disabled=i===0;c.querySelector('[data-down]').disabled=i===order.length-1;
-   const move=d=>{const j=i+d;if(j<0||j>=order.length)return;[order[i],order[j]]=[order[j],order[i]];render();scheduleSave()};
+   const move=d=>{const j=i+d;if(j<0||j>=order.length)return;invalidateReviewed(reviewKey);[order[i],order[j]]=[order[j],order[i]];render();scheduleSave()};
    c.querySelector('[data-up]').onclick=()=>move(-1);c.querySelector('[data-down]').onclick=()=>move(1);
-   c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',k));c.addEventListener('dragover',e=>e.preventDefault());c.addEventListener('drop',e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain'),fi=order.indexOf(from),ti=order.indexOf(k);if(fi>=0&&ti>=0){order.splice(fi,1);order.splice(ti,0,from);render();scheduleSave()}});
+   c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',k));c.addEventListener('dragover',e=>e.preventDefault());c.addEventListener('drop',e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain'),fi=order.indexOf(from),ti=order.indexOf(k);if(fi>=0&&ti>=0){invalidateReviewed(reviewKey);order.splice(fi,1);order.splice(ti,0,from);render();scheduleSave()}});
    box.appendChild(c);
   });
  }
  render(true);
- return {check(){const ok=order.join(',')===correct.join(',');res.className='didactic-result '+(ok?'good':'bad');res.textContent=ok?okText:badText;if(ok){setReviewed(reviewKey);updateAllTopicGates?.()}scheduleSave();return ok},
+ return {check(){const ok=order.join(',')===correct.join(',');setReviewed(reviewKey,ok);res.className='didactic-result '+(ok?'good':'bad');res.textContent=ok?okText:badText;scheduleSave();return ok},
  reset(){setReviewed(reviewKey,false);render(true);res.className='didactic-result';res.textContent='';scheduleSave()}};
 }
 const prepAct=orderActivity('prepOrder','prepResult',[
@@ -6797,6 +6784,19 @@ const energyAct=orderActivity('energyFoodOrder','energyFoodResult',[
 ],['e1','e2','e3','e4'],'t7energy','✓ Prioridad adecuada: evaluar afectación, proteger inocuidad, sostener condiciones esenciales y aplicar la alternativa.','Revise qué debe comprobar antes de decidir qué alimentos pueden utilizarse con seguridad.');
 $('checkEnergyFood')?.addEventListener('click',()=>energyAct?.check());$('resetEnergyFood')?.addEventListener('click',()=>energyAct?.reset());
 
+const activationOrderAct=orderActivity('activationSequence','sequenceFeedback',[
+ {k:'a1',t:'Revisar condiciones actuales del inmueble y accesos.'},
+ {k:'a2',t:'Atender condiciones que requieren corrección o valoración.'},
+ {k:'a3',t:'Preparar áreas, responsables e insumos.'},
+ {k:'a4',t:'Abrir el Refugio Temporal conforme a la determinación de la autoridad competente.'},
+ {k:'a5',t:'Registrar y orientar a la población que ingresa.'}
+],['a1','a2','a3','a4','a5'],'t6sequence',
+'✓ Secuencia correcta: revisar condiciones, atender hallazgos, preparar la operación, realizar la apertura autorizada y finalmente recibir y registrar a la población.',
+'La secuencia puede mejorar. Revise qué debe verificarse y corregirse antes de preparar la apertura y recibir población.');
+$('checkSequence')?.addEventListener('click',()=>activationOrderAct?.check());
+$('resetSequence')?.addEventListener('click',()=>activationOrderAct?.reset());
+
+
 let accessSelected=new Set();
 const accessItems=[
  {k:'a1',t:'Ruta de ingreso sin barreras hasta el área de recepción.',ok:true},
@@ -6806,9 +6806,9 @@ const accessItems=[
  {k:'a5',t:'Decoración del área común.',ok:false}
 ];
 function renderAccess(reset=false){const box=$('accessRouteItems');if(!box)return;box.dataset.enhanced='1';if(reset)accessSelected.clear();box.innerHTML='';
- dShuffle(accessItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className='access-pick'+(accessSelected.has(it.k)?' selected':'');b.textContent=it.t;b.onclick=()=>{accessSelected.has(it.k)?accessSelected.delete(it.k):accessSelected.add(it.k);renderAccess();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
+ dShuffle(accessItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className='access-pick'+(accessSelected.has(it.k)?' selected':'');b.textContent=it.t;b.onclick=()=>{invalidateReviewed('t9route');accessSelected.has(it.k)?accessSelected.delete(it.k):accessSelected.add(it.k);renderAccess();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
 renderAccess(true);
-$('checkAccessRoute')?.addEventListener('click',()=>{const r=$('accessRouteResult'),correct=accessItems.filter(x=>x.ok).map(x=>x.k),ok=accessSelected.size===3&&correct.every(x=>accessSelected.has(x));r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. El primer recorrido debe confirmar ingreso, orientación y acceso a servicios esenciales.':'Seleccione exactamente tres condiciones y priorice las que permiten a la persona ingresar, orientarse y usar servicios esenciales.';if(ok){setReviewed('t9route');updateAllTopicGates?.()}scheduleSave()});
+$('checkAccessRoute')?.addEventListener('click',()=>{const r=$('accessRouteResult'),correct=accessItems.filter(x=>x.ok).map(x=>x.k),ok=accessSelected.size===3&&correct.every(x=>accessSelected.has(x));r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. El primer recorrido debe confirmar ingreso, orientación y acceso a servicios esenciales.':'Seleccione exactamente tres condiciones y priorice las que permiten a la persona ingresar, orientarse y usar servicios esenciales.';setReviewed('t9route',ok);scheduleSave()});
 $('resetAccessRoute')?.addEventListener('click',()=>{setReviewed('t9route',false);renderAccess(true);$('accessRouteResult').className='didactic-result';$('accessRouteResult').textContent='';scheduleSave()});
 
 let closureSelected=null;
@@ -6820,9 +6820,9 @@ const closureItems=[
  {k:'cl5',t:'Se prevé limpieza, entrega del inmueble e informe final.',block:false}
 ];
 function renderClosureBlock(reset=false){const box=$('closureBlockItems');if(!box)return;box.dataset.enhanced='1';if(reset)closureSelected=null;box.innerHTML='';
- dShuffle(closureItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className=closureSelected===it.k?'selected':'';b.textContent=it.t;b.onclick=()=>{closureSelected=it.k;renderClosureBlock();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
+ dShuffle(closureItems).forEach(it=>{const c=document.createElement('div');c.className='didactic-card';const b=document.createElement('button');b.type='button';b.className=closureSelected===it.k?'selected':'';b.textContent=it.t;b.onclick=()=>{invalidateReviewed('t10closure');closureSelected=it.k;renderClosureBlock();scheduleSave()};c.appendChild(b);box.appendChild(c)})}
 renderClosureBlock(true);
-$('checkClosureBlock')?.addEventListener('click',()=>{const r=$('closureBlockResult'),it=closureItems.find(x=>x.k===closureSelected),ok=!!it?.block;r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. No debe cerrarse sin definir continuidad de atención para la familia que aún no puede retornar.':'Revise cuál situación deja a una persona o familia sin continuidad de atención.';if(ok){setReviewed('t10closure');updateAllTopicGates?.()}scheduleSave()});
+$('checkClosureBlock')?.addEventListener('click',()=>{const r=$('closureBlockResult'),it=closureItems.find(x=>x.k===closureSelected),ok=!!it?.block;r.className='didactic-result '+(ok?'good':'bad');r.textContent=ok?'✓ Correcto. No debe cerrarse sin definir continuidad de atención para la familia que aún no puede retornar.':'Revise cuál situación deja a una persona o familia sin continuidad de atención.';setReviewed('t10closure',ok);scheduleSave()});
 $('resetClosureBlock')?.addEventListener('click',()=>{setReviewed('t10closure',false);renderClosureBlock(true);$('closureBlockResult').className='didactic-result';$('closureBlockResult').textContent='';scheduleSave()});
 
 
@@ -6994,6 +6994,7 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
     enhanceChoices('movementRoleItems','checkMovementRoles','resetMovementRoles','movementRoleResult','t5movement','✓ Coordinación correcta.','Revise quién lidera, quién apoya y quién utiliza el dato.');
     enhanceChoices('roleMatchItems','checkMatchesV91','resetMatchesV91','matchResult','t5matches','✓ Funciones agrupadas correctamente.','Revise el área principal de cada función.');
     enhanceSingle('receptionCaseItems','checkReceptionCase','resetReceptionCase','receptionCaseResult','continuar','t6case','✓ Decisión adecuada.','Revise cómo mantener registro y atención sin excluir.');
+    enhanceOrder('activationSequence','checkSequence','resetSequence','sequenceFeedback',['a1','a2','a3','a4','a5'],'t6sequence','✓ Secuencia correcta.','Revise el orden: verificar, corregir, preparar, abrir y recibir.');
     enhanceChoices('foodPracticeItems','checkFoodPractices','resetFoodPractices','foodPracticeResult','t7food','✓ Clasificación correcta.','Revise inocuidad, contaminación y conservación.');
     enhanceOrder('energyFoodOrder','checkEnergyFood','resetEnergyFood','energyFoodResult',['e1','e2','e3','e4'],'t7energy','✓ Prioridad adecuada.','Revise qué debe evaluarse antes de usar alimentos afectados.');
     enhanceOrder('incidentOrder','checkIncidentScenarioV91','resetIncidentScenarioV91','incidentResult',['i1','i2','i3','i4'],'t8incident','✓ Secuencia adecuada.','Revise registro, protección temporal, asignación y cierre.');
@@ -7003,7 +7004,7 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
     enhanceChoices('finalEvidenceItems','checkFinalEvidence','resetFinalEvidence','finalEvidenceResult','t10evidence','✓ Evidencias clasificadas correctamente.','Revise qué deja trazabilidad real del cierre.');
     enhanceSingle('closureBlockItems','checkClosureBlock','resetClosureBlock','closureBlockResult','cl4','t10closure','✓ Correcto: esa condición impide cerrar.','Busque la situación que deja a una familia sin continuidad de atención.');
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,350)});else setTimeout(init,350);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,50)});else setTimeout(init,50);
 })();
 </script>
 <script id="v24-route-progress">(function(){
@@ -7033,9 +7034,6 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
  var br=document.getElementById('checkRisks');if(br)br.addEventListener('click',function(){var xs=[...document.querySelectorAll('#lab-riesgos [data-risk]')];var ok=xs.every(x=>x.checked===(x.dataset.risk==='1'));show('riskFeedback',ok?'<b>✓ Bien identificado.</b> Las grietas/desprendimientos, el riesgo de aislamiento y los sanitarios sin agua requieren atención. El directorio actualizado y una ruta libre son condiciones favorables.':'<b>Revise nuevamente.</b> Distinga entre una condición favorable y una condición que exige corrección, seguimiento o valoración.',ok?'':'warn');});
  var bw=document.getElementById('checkWaterChallenge');if(bw)bw.addEventListener('click',function(){var v=+document.getElementById('waterChallenge').value;show('waterChallengeFeedback',v===252?'<b>✓ Correcto: 252 L.</b> 126 personas × 2 L/persona/día = 252 litros para beber durante 24 horas.':'<b>Recalcule.</b> Multiplique 126 personas × 2 litros por persona/día. Este cálculo es sólo para agua para beber.',v===252?'':'warn');});
  var bm=document.getElementById('checkMatches');if(bm)bm.addEventListener('click',function(){var xs=[...document.querySelectorAll('#lab-responsables [data-match]')];var good=xs.filter(x=>x.value===x.dataset.match).length;show('matchFeedback','<b>'+good+' de '+xs.length+' relaciones correctas.</b> '+(good===xs.length?'✓ La distribución principal de funciones es adecuada.':'Revise las funciones que no coinciden; cada área tiene responsabilidades específicas, aunque la operación requiere coordinación.'),good===xs.length?'':'warn');});
- var seq=[], box=document.getElementById('activationSequence');if(box){box.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){if(b.classList.contains('selected'))return;seq.push(+b.dataset.seq);b.classList.add('selected');b.dataset.order=seq.length;});});}
- var bs=document.getElementById('checkSequence');if(bs)bs.addEventListener('click',function(){var ok=seq.length===5&&seq.every((v,i)=>v===i+1);show('sequenceFeedback',ok?'<b>✓ Secuencia correcta.</b> Primero se revisan las condiciones, después se atienden hallazgos, se preparan áreas y responsables, se realiza la apertura conforme a la autoridad competente y finalmente se registra y orienta a la población.':'<b>La secuencia puede mejorar.</b> Comience por conocer la condición actual del inmueble y termine con la recepción y registro de la población.',ok?'':'warn');});
- var rs=document.getElementById('resetSequence');if(rs)rs.addEventListener('click',function(){seq=[];box.querySelectorAll('button').forEach(b=>{b.classList.remove('selected');b.removeAttribute('data-order')});var f=document.getElementById('sequenceFeedback');if(f)f.className='lab-feedback';});
  var bi=document.getElementById('checkIncidentScenario');if(bi)bi.addEventListener('click',function(){var a=document.getElementById('incidentStep1').value,b=document.getElementById('incidentStep2').value,ok=a==='b'&&b==='b';show('incidentScenarioFeedback',ok?'<b>✓ Decisiones adecuadas.</b> La incidencia debe registrarse, verificarse en campo, priorizarse, asignarse y mantenerse en seguimiento hasta resolverla.':'<b>Revise la secuencia de atención.</b> Detectar una falla no la resuelve: debe registrarse, valorar su impacto, asignar responsable, aplicar una medida y dar seguimiento.',ok?'':'warn');});
  var bc=document.getElementById('checkClosure');if(bc)bc.addEventListener('click',function(){var xs=[...document.querySelectorAll('#lab-cierre [data-close-ok]')];var good=xs.filter(x=>x.checked&&x.dataset.closeOk==='1').length;var bad=xs.some(x=>x.checked&&x.dataset.closeOk==='0');var allGood=good===4&&!bad;show('closureFeedback',allGood?'<b>✓ Identificó las condiciones favorables.</b> Sin embargo, la familia que aún no puede regresar requiere una alternativa de atención antes de considerar concluido su proceso. La desactivación debe ser ordenada y documentada.':'<b>Hay un punto que requiere atención.</b> Una persona o familia sin posibilidad de retorno y sin alternativa definida no debe quedar fuera de la planeación del cierre. Revise además censo, inventario, incidencias, limpieza, entrega e informe.',allGood?'':'warn');});
 })();
