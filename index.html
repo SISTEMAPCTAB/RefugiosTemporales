@@ -5927,7 +5927,13 @@ $('addMeal')?.addEventListener('click',()=>{state.meals.push({at:$('mealDate').v
 $('addInventory')?.addEventListener('click',()=>{let n=$('invName').value.trim();let q=+$('invQty').value||0;if(!n||!q)return toast('Capture insumo y cantidad.');state.inventory.push({at:now(),name:n,move:$('invMove').value,qty:q,unit:$('invUnit').value,origin:$('invOrigin').value,expiry:$('invExpiry').value});commitOperationalChange('Movimiento de inventario registrado');});
 $('addIncident')?.addEventListener('click',()=>{let d=$('incDesc').value.trim();if(!d)return toast('Describa la incidencia.');state.incidents.push({id:'INC-'+Date.now(),at:now(),cat:$('incCat').value,priority:$('incPriority').value,resp:$('incResp').value,desc:d,external:$('incExternal').value,channel:$('incChannel').value,status:'Pendiente'});commitOperationalChange('Incidencia registrada');});
 $('saveShift')?.addEventListener('click',()=>{state.shifts.push({at:now(),out:$('shiftOut').value,inn:$('shiftIn').value,pending:$('shiftPending').value});commitOperationalChange('Entrega-recepción de turno registrada');});
-$('buildReport')?.addEventListener('click',()=>{renderReport();});
+$('buildReport')?.addEventListener('click',()=>{
+  const ok=renderReport();
+  if(ok){
+    toast('Vista de reporte actualizada.');
+    $('reportView')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+});
 $('waterPeople')?.addEventListener('input',renderWater);$('waterDays')?.addEventListener('input',renderWater);$('waterStock')?.addEventListener('input',renderWater);
 $('demoBtn')?.addEventListener('click',()=>{state.people=[{id:'SIM-P-001',fam:'SIM-RT-TAB-F001',name:'Persona simulada 1',age:68,sex:'Mujer',need:'Persona adulta mayor 60+',status:'Presente'},{id:'SIM-P-002',fam:'SIM-RT-TAB-F001',name:'Persona simulada 2',age:42,sex:'Hombre',need:'Ninguna registrada',status:'Presente'}];state.inventory=[{at:now(),name:'Agua para beber',move:'Entrada',qty:120,unit:'L',origin:'SIMULACIÓN'}];state.incidents=[{id:'SIM-INC-001',at:now(),cat:'Agua',priority:'Alta',resp:'SIMULACIÓN',desc:'Abastecimiento preventivo requerido',status:'Pendiente'}];state.active=true;commitOperationalChange('Datos de demostración cargados con identificación SIM-RT-TAB');});
 $('resetBtn')?.addEventListener('click',async()=>{
@@ -5943,7 +5949,34 @@ $('resetBtn')?.addEventListener('click',async()=>{
   await storageClear();location.reload();
 });
 function renderWater(){let p=+$('waterPeople')?.value||state.people.filter(x=>x.status==='Presente').length,d=+$('waterDays')?.value||1,s=+$('waterStock')?.value||0;let daily=p*2;$('waterDaily').textContent=daily.toFixed(0)+' L';$('waterPeriod').textContent=(daily*d).toFixed(0)+' L';$('waterAutonomy').textContent=(daily?s/daily:0).toFixed(1)+' días';}
-function renderReport(){let present=state.people.filter(x=>x.status==='Presente').length, families=new Set(state.people.map(x=>x.fam)).size, open=state.incidents.filter(x=>x.status!=='Resuelta').length, meals=state.meals.reduce((s,x)=>s+x.qty,0);$('reportView').innerHTML='<h3>Reporte diario consolidado</h3><div class="grid3"><p><b>Personas presentes:</b> '+present+'</p><p><b>Familias:</b> '+families+'</p><p><b>Incidencias abiertas:</b> '+open+'</p><p><b>Raciones registradas:</b> '+meals+'</p><p><b>Agua para beber de referencia:</b> '+(present*2)+' L/día</p><p><b>Corte:</b> '+esc($('reportDate').value||now())+'</p></div><p><b>Necesidades:</b> '+esc($('reportNeeds').value||'Sin observaciones capturadas')+'</p>';}
+function renderReport(){
+  captureForms();
+  const present=state.people.filter(x=>x.status==='Presente').length;
+  const families=new Set(state.people.map(x=>x.fam)).size;
+  const open=state.incidents.filter(x=>x.status!=='Resuelta').length;
+  const meals=state.meals.reduce((s,x)=>s+(+x.qty||0),0);
+  const cut=$('reportDate')?.value||now();
+  const needs=$('reportNeeds')?.value||'Sin observaciones capturadas';
+  const meta=currentRefugeMeta();
+  const box=$('reportView');
+  if(!box)return false;
+  box.innerHTML=
+    '<h3>Reporte diario consolidado</h3>'+
+    '<p class="source"><b>Refugio Temporal:</b> '+esc(meta.name||'Sin dato')+
+    ' · <b>Municipio:</b> '+esc(meta.municipio||'Sin dato')+
+    ' · <b>Localidad:</b> '+esc(meta.localidad||'Sin dato')+'</p>'+
+    '<div class="grid3">'+
+      '<p><b>Personas presentes:</b> '+present+'</p>'+
+      '<p><b>Familias:</b> '+families+'</p>'+
+      '<p><b>Incidencias abiertas:</b> '+open+'</p>'+
+      '<p><b>Raciones registradas:</b> '+meals+'</p>'+
+      '<p><b>Agua para beber de referencia:</b> '+(present*2)+' L/día</p>'+
+      '<p><b>Fecha y hora de corte:</b> '+esc(cut)+'</p>'+
+    '</div>'+
+    '<p><b>Necesidades / observaciones:</b> '+esc(needs)+'</p>'+
+    '<p class="source">Vista actualizada: '+esc(new Date().toLocaleString('es-MX'))+'</p>';
+  return true;
+}
 function render(){let present=state.people.filter(x=>x.status==='Presente').length;let fam=new Set(state.people.map(x=>x.fam)).size;let cap=+$('capacidad')?.value||0;$('presentes').textContent=present;$('familias').textContent=fam;$('ocupacion').textContent=cap?Math.round(present/cap*100)+'%':'0%';$('incAbiertas').textContent=state.incidents.filter(x=>x.status!=='Resuelta').length;$('aguaCalc').textContent=(present*2)+' L/día';$('spaceCalc').textContent=(present*3.5).toFixed(1)+' m²';let women=state.people.filter(x=>x.status==='Presente'&&x.sex==='Mujer').length,men=state.people.filter(x=>x.status==='Presente'&&x.sex==='Hombre').length;$('wcWomen').textContent=Math.ceil(women/25)||0;$('wcMen').textContent=Math.ceil(men/35)||0;$('activeBadge').textContent=state.active?'Refugio activo':'Sin activar';
 $('peopleTable').innerHTML=state.people.length?state.people.map(x=>'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.fam)+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.age)+'</td><td>'+esc(x.need)+'</td><td>'+esc(x.status)+'</td></tr>').join(''):'<tr><td colspan="6">Sin registros guardados en este dispositivo.</td></tr>';
 $('actionsList').innerHTML=state.actions.length?'<h3>Acciones registradas</h3>'+state.actions.map((a,i)=>'<div class="notice '+(a.priority==='critical'?'danger':'warn')+'"><b>'+esc(a.id)+'</b> · '+esc(a.problem)+'<br><small>Estado: '+esc(a.status)+' · Responsable: '+esc(a.resp||'Sin asignar')+' · Compromiso: '+esc(a.due||'Sin fecha')+'</small></div>').join(''):'<p class="source">Las acciones generadas en este dispositivo aparecerán aquí.</p>';
@@ -6469,9 +6502,14 @@ function standardReportCss(){return `
 .idgrid,.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px}.seal{display:grid;grid-template-columns:1fr 145px;gap:14px;align-items:center}.seal h3{margin:4px 0 8px;color:#741733}.hash{font-family:monospace;font-size:9px;word-break:break-all}.qr svg{width:135px;height:135px}
 .foot{font-size:9px;color:#666;margin-top:18px;border-top:1px solid #ddd;padding-top:8px}.pdf-actions{position:fixed;right:16px;bottom:16px;z-index:9999}.pdf-actions button{border:0;border-radius:12px;background:#7d1735;color:#fff;font:700 14px Arial;padding:12px 16px;box-shadow:0 3px 14px #0003}
 @media(max-width:620px){.head{display:block}.head img{max-width:100%}.idgrid,.grid,.seal{grid-template-columns:1fr}.qr{text-align:center}}@media print{.pdf-actions{display:none!important}}`;}
+function reportHeaderLogoSrc(){
+  const img=document.querySelector('.topbar img, header img, .brand img');
+  return img?.src||'';
+}
 function standardReportHeaderHTML(title,identity,generatedAt,periodLabel='',periodValue=''){
   const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+maskedId(p);
-  return `<div class="head"><img src="${HEADER_LOGO_SRC}" alt="IPCET"><div class="dir">Dirección Operativa y de Apoyo a la Población</div></div>
+  const logo=reportHeaderLogoSrc();
+  return `<div class="head">${logo?`<img src="${esc(logo)}" alt="IPCET">`:''}<div class="dir">Dirección Operativa y de Apoyo a la Población</div></div>
   <h1 class="title">${esc(title)}</h1>
   <div class="identity"><h2>Identificación del reporte</h2><div class="idgrid">
   <div><b>Refugio Temporal:</b> ${esc(identity.refuge)}</div><div><b>Folio / expediente:</b> ${esc(identity.folio)}</div>
@@ -6499,15 +6537,70 @@ function deliverPrintableReport(report,w){
   try{document.getElementById('rtPdfPrintFrame')?.remove();const f=document.createElement('iframe');f.id='rtPdfPrintFrame';f.title='Reporte PDF';Object.assign(f.style,{position:'fixed',right:'0',bottom:'0',width:'1px',height:'1px',border:'0',opacity:'0.01'});document.body.appendChild(f);const d=f.contentDocument||f.contentWindow?.document;if(!d)throw Error('Sin documento imprimible');d.open();d.write(report);d.close();f.onload=()=>setTimeout(()=>{try{f.contentWindow?.focus();f.contentWindow?.print()}catch(e){}},350);return true}catch(e){console.error(e);toast('No fue posible preparar el reporte.');return false}
 }
 async function printDailyReportPdf(){
-  const w=openPreparedReportWindow(), id=requireReportIdentity();if(!id){try{w?.close()}catch(e){}return}
-  const generatedAt=new Date().toISOString(), cut=$('reportDate')?.value||now(), present=state.people.filter(x=>x.status==='Presente').length, families=new Set(state.people.map(x=>x.fam)).size, openInc=state.incidents.filter(x=>x.status!=='Resuelta').length, meals=state.meals.reduce((s,x)=>s+(+x.qty||0),0);
-  const data={type:'REPORTE_DIARIO',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},cut,generatedAt,present,families,openInc,meals,needs:$('reportNeeds')?.value||'Sin observaciones capturadas'};
-  const hash=await sha256Text(JSON.stringify(data));
-  const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte diario · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
-  ${standardReportHeaderHTML('Reporte diario del Refugio Temporal',id,generatedAt,'Fecha y hora de corte',cut)}${standardReportSealHTML(id,hash,generatedAt)}
-  <div class="section"><h3>Situación al corte</h3><div class="grid"><div><b>Personas presentes:</b> ${present}</div><div><b>Familias:</b> ${families}</div><div><b>Incidencias abiertas:</b> ${openInc}</div><div><b>Raciones registradas:</b> ${meals}</div><div><b>Agua para beber de referencia:</b> ${present*2} L/día</div><div><b>Necesidades / observaciones:</b> ${esc(data.needs)}</div></div></div>
-  <div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div><div class="pdf-actions"><button onclick="window.print()">Imprimir / Guardar PDF</button></div><script>window.addEventListener('load',()=>setTimeout(()=>{try{window.print()}catch(e){}},500))<\/script></body></html>`;
-  deliverPrintableReport(report,w);
+  const w=openPreparedReportWindow();
+  try{
+    const id=requireReportIdentity();
+    if(!id){try{w?.close()}catch(e){}return}
+    captureForms();
+    const generatedAt=new Date().toISOString();
+    const cut=$('reportDate')?.value||now();
+    const present=state.people.filter(x=>x.status==='Presente').length;
+    const families=new Set(state.people.map(x=>x.fam)).size;
+    const openInc=state.incidents.filter(x=>x.status!=='Resuelta').length;
+    const meals=state.meals.reduce((s,x)=>s+(+x.qty||0),0);
+    const needs=$('reportNeeds')?.value||'Sin observaciones capturadas';
+    const extra={
+      families:$('reportFamilies')?.value||'',
+      newEntries:$('reportNew')?.value||'',
+      away:$('reportAway')?.value||'',
+      men:$('reportMen')?.value||'',
+      women:$('reportWomen')?.value||'',
+      children:$('reportChildren')?.value||'',
+      teens:$('reportTeens')?.value||'',
+      women60:$('reportWomen60')?.value||'',
+      men60:$('reportMen60')?.value||'',
+      disability:$('reportDisability')?.value||'',
+      pregnancy:$('reportPregnancy')?.value||'',
+      rations:$('reportRations')?.value||'',
+      animals:$('reportAnimals')?.value||'',
+      incidents:$('reportIncidents')?.value||''
+    };
+    const data={type:'REPORTE_DIARIO',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},cut,generatedAt,present,families,openInc,meals,needs,extra};
+    const hash=await sha256Text(JSON.stringify(data));
+    const header=standardReportHeaderHTML('Reporte diario del Refugio Temporal',id,generatedAt,'Fecha y hora de corte',cut);
+    const seal=standardReportSealHTML(id,hash,generatedAt);
+    const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte diario · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
+      ${header}${seal}
+      <div class="section"><h3>Situación al corte</h3><div class="grid">
+        <div><b>Personas presentes:</b> ${present}</div><div><b>Familias registradas:</b> ${families}</div>
+        <div><b>Incidencias abiertas:</b> ${openInc}</div><div><b>Raciones registradas:</b> ${meals}</div>
+        <div><b>Agua para beber de referencia:</b> ${present*2} L/día</div><div><b>Nuevos ingresos:</b> ${esc(extra.newEntries||'0')}</div>
+        <div><b>Ausentes / salida temporal:</b> ${esc(extra.away||'0')}</div><div><b>Animales de compañía:</b> ${esc(extra.animals||'0')}</div>
+      </div></div>
+      <div class="section"><h3>Desglose reportado</h3><div class="grid">
+        <div><b>Hombres 18–59:</b> ${esc(extra.men||'0')}</div><div><b>Mujeres 18–59:</b> ${esc(extra.women||'0')}</div>
+        <div><b>Niñas/niños 0–11:</b> ${esc(extra.children||'0')}</div><div><b>Adolescentes 12–17:</b> ${esc(extra.teens||'0')}</div>
+        <div><b>Mujeres 60+:</b> ${esc(extra.women60||'0')}</div><div><b>Hombres 60+:</b> ${esc(extra.men60||'0')}</div>
+        <div><b>Personas con discapacidad:</b> ${esc(extra.disability||'0')}</div><div><b>Embarazadas / lactancia:</b> ${esc(extra.pregnancy||'0')}</div>
+        <div><b>Incidencias del periodo:</b> ${esc(extra.incidents||'0')}</div>
+      </div></div>
+      <div class="section"><h3>Necesidades principales / observaciones</h3><p>${esc(needs)}</p></div>
+      <div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div>
+      <div class="pdf-actions"><button onclick="window.print()">Imprimir / Guardar PDF</button></div>
+      <script>window.addEventListener('load',()=>setTimeout(()=>{try{window.print()}catch(e){}},500))<\/script>
+    </body></html>`;
+    if(!deliverPrintableReport(report,w))throw new Error('No se pudo entregar el reporte imprimible');
+  }catch(e){
+    console.error('Error al generar reporte diario PDF',e);
+    if(w){
+      try{
+        w.document.open();
+        w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Error al generar reporte</title></head><body style="font-family:Arial;padding:24px"><h2>No fue posible generar el reporte</h2><p>Regrese a la guía e intente nuevamente. Si el problema continúa, cierre y vuelva a abrir la aplicación.</p></body></html>');
+        w.document.close();
+      }catch(_){}
+    }
+    toast('No fue posible generar el PDF del reporte diario.');
+  }
 }
 async function printFinalReportPdf(){
   const w=openPreparedReportWindow(), id=requireReportIdentity();if(!id){try{w?.close()}catch(e){}return}
@@ -6967,8 +7060,25 @@ document.getElementById('editIdentityProfileBtn')?.addEventListener('click',()=>
 fillIdentityProfile();
 
 async function sha256Text(text){
- const bytes=new TextEncoder().encode(text), hash=await crypto.subtle.digest('SHA-256',bytes);
- return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+ const bytes=new TextEncoder().encode(text);
+ if(globalThis.crypto?.subtle){
+   const hash=await globalThis.crypto.subtle.digest('SHA-256',bytes);
+   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+ }
+ // Respaldo de compatibilidad: huella determinista de 256 bits cuando WebCrypto no está disponible.
+ let h1=0x811c9dc5,h2=0x9e3779b9,h3=0x85ebca6b,h4=0xc2b2ae35;
+ for(const b of bytes){
+   h1=Math.imul(h1^b,0x01000193)>>>0;
+   h2=Math.imul(h2^(b+h1),0x85ebca6b)>>>0;
+   h3=Math.imul(h3^(b+h2),0xc2b2ae35)>>>0;
+   h4=Math.imul(h4^(b+h3),0x27d4eb2f)>>>0;
+ }
+ const parts=[];
+ for(let i=0;i<8;i++){
+   const v=[h1,h2,h3,h4][i%4]^(Math.imul(i+1,0x9e3779b1)>>>0);
+   parts.push((v>>>0).toString(16).padStart(8,'0'));
+ }
+ return parts.join('');
 }
 function reportValidationData(record, profile, hash){
  const meta=record?.meta||{};
