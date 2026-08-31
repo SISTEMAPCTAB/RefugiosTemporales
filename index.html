@@ -5694,6 +5694,9 @@ function restoreForms(){
 let saveTimer=null;let saveChain=Promise.resolve();let saveRevision=Number(state._saveRevision||0);
 function save(silent=true){
   captureForms();
+  // La vista operativa se actualiza inmediatamente desde memoria.
+  // La persistencia ocurre después y nunca debe ser necesaria para ver el registro recién capturado.
+  try{render();}catch(e){console.warn('Actualización visual de guardado',e);}
   saveRevision=Math.max(saveRevision,Number(state._saveRevision||0))+1;
   state._saveRevision=saveRevision;state.lastSaved=new Date().toISOString();
   const captured=clonePlain(state),myRevision=saveRevision;
@@ -5705,13 +5708,28 @@ function save(silent=true){
       setSaveStatus('ok','Guardado en este dispositivo',new Date(captured.lastSaved).toLocaleString('es-MX')+' · '+storageMode);
       if(!silent)toast('Datos guardados en este dispositivo.');
     }
+    return true;
   }).catch(e=>{
     console.error('Error de guardado',e);
     if(myRevision===saveRevision)setSaveStatus('error','No fue posible guardar','Exporte un respaldo antes de continuar.');
+    return false;
   });
   return saveChain;
 }
 function scheduleSave(){setSaveStatus('pending','Cambios pendientes','Se guardarán automáticamente en unos instantes.');clearTimeout(saveTimer);saveTimer=setTimeout(()=>save(true),500)}
+function commitOperationalChange(message='Registro incorporado'){
+  try{render();}catch(e){console.warn('Render operativo',e);}
+  setSaveStatus('pending','Guardando…','El registro ya es visible; se está conservando en este dispositivo.');
+  toast(message+' · guardando en este dispositivo.');
+  return save(true).then(ok=>{
+    if(ok){
+      toast(message+' · guardado.');
+      return true;
+    }
+    toast('El registro es visible, pero no se confirmó su guardado. Exporte un respaldo antes de salir.');
+    return false;
+  });
+}
 const preLoadReview=Object.assign({},state.guideActivityReview||{});
 
 function readStartupLocalFallback(){
@@ -5894,23 +5912,24 @@ $('saveVerify')?.addEventListener('click',()=>{
   state.verificationMeta.startedAt=state.verificationMeta.startedAt||($('verifyInspectorDate').value||now());
   state.verification={at:now(),meta:{...state.verificationMeta},values:{}};
   qsa('.check-row').forEach(r=>{let c=r.dataset.code,x=r.querySelector('input[type=radio]:checked');state.verification.values[c]={value:x?.value||'',obs:$('obs_'+c)?.value||''};});
-  save();updateVerificationIdentityUI();toast('Verificación guardada en este dispositivo.');
+  updateVerificationIdentityUI();
+  commitOperationalChange('Verificación guardada');
 });
-$('makeActions')?.addEventListener('click',()=>{qsa('.check-row').forEach(r=>{let x=r.querySelector('input[type=radio]:checked');if(x?.value==='no'){let code=r.dataset.code,txt=r.querySelector('.check-copy strong').textContent;if(!state.actions.some(a=>a.code===code&&a.status!=='Atendida'))state.actions.push({id:'AC-'+Date.now()+'-'+code,code,problem:txt,priority:r.dataset.priority,status:'Pendiente',created:now(),resp:'',due:'',action:$('obs_'+code)?.value||''});}});save();location.hash='acciones';});
-$('addAction')?.addEventListener('click',()=>{let p=$('acProblem').value.trim();if(!p)return toast('Capture la condición o problema.');state.actions.push({id:'AC-'+Date.now(),problem:p,resp:$('acResp').value,due:$('acDate').value,action:$('acAction').value,status:'Pendiente',created:now(),priority:'important'});save();});
-$('activateBtn')?.addEventListener('click',()=>{state.active=true;state.activation={at:$('fechaAct').value||now(),fenomeno:$('fenomeno').value,situacion:$('situacion').value,resp:$('actResp').value};save();toast('Activación registrada.');location.hash='operacion';});
-$('deactivateBtn')?.addEventListener('click',()=>{state.active=false;state.deactivation={at:now(),note:$('closureNote').value};save();toast('Desactivación registrada.');});
-$('addPerson')?.addEventListener('click',()=>{let n=$('personName').value.trim();if(!n)return toast('Capture el nombre de la persona.');state.people.push({id:'P-'+Date.now(),fam:$('famFolio').value||'FAM-'+String(state.people.length+1).padStart(4,'0'),ref:$('famRef').value,origin:$('famOrigin').value,name:n,age:$('personAge').value,sex:$('personSex').value,need:$('personNeed').value,note:$('personNote').value,status:'Presente'});save();$('personName').value='';});
-$('addMove')?.addEventListener('click',()=>{let p=$('movePerson').value.trim();if(!p)return toast('Indique persona o folio.');state.moves.push({at:now(),person:p,type:$('moveType').value,note:$('moveNote').value});let rec=state.people.find(x=>x.name.toLowerCase()===p.toLowerCase()||x.id===p);if(rec){if($('moveType').value==='Salida temporal')rec.status='Salida temporal';if($('moveType').value==='Regreso')rec.status='Presente';if($('moveType').value==='Egreso definitivo')rec.status='Egreso definitivo';}save();});
-$('addVisitor')?.addEventListener('click',()=>{let n=$('visitorName').value.trim();if(!n)return toast('Capture el nombre del visitante.');state.moves.push({at:$('visitorIn').value||now(),person:n,type:'Visitante',note:'Visita a '+$('visitorTarget').value+' · '+$('visitorReason').value+( $('visitorOut').value?' · salida '+$('visitorOut').value:'')});save();});
-$('addHealth')?.addEventListener('click',()=>{state.health.push({at:now(),person:$('healthPerson').value,type:$('healthType').value,note:$('healthNote').value,status:$('healthStatus').value});save();});
-$('addMeal')?.addEventListener('click',()=>{state.meals.push({at:$('mealDate').value||now(),type:$('mealType').value,qty:+$('mealQty').value||0,special:+$('mealSpecial').value||0,note:$('mealNote').value});save();});
-$('addInventory')?.addEventListener('click',()=>{let n=$('invName').value.trim();let q=+$('invQty').value||0;if(!n||!q)return toast('Capture insumo y cantidad.');state.inventory.push({at:now(),name:n,move:$('invMove').value,qty:q,unit:$('invUnit').value,origin:$('invOrigin').value,expiry:$('invExpiry').value});save();});
-$('addIncident')?.addEventListener('click',()=>{let d=$('incDesc').value.trim();if(!d)return toast('Describa la incidencia.');state.incidents.push({id:'INC-'+Date.now(),at:now(),cat:$('incCat').value,priority:$('incPriority').value,resp:$('incResp').value,desc:d,external:$('incExternal').value,channel:$('incChannel').value,status:'Pendiente'});save();});
-$('saveShift')?.addEventListener('click',()=>{state.shifts.push({at:now(),out:$('shiftOut').value,inn:$('shiftIn').value,pending:$('shiftPending').value});save();});
+$('makeActions')?.addEventListener('click',()=>{qsa('.check-row').forEach(r=>{let x=r.querySelector('input[type=radio]:checked');if(x?.value==='no'){let code=r.dataset.code,txt=r.querySelector('.check-copy strong').textContent;if(!state.actions.some(a=>a.code===code&&a.status!=='Atendida'))state.actions.push({id:'AC-'+Date.now()+'-'+code,code,problem:txt,priority:r.dataset.priority,status:'Pendiente',created:now(),resp:'',due:'',action:$('obs_'+code)?.value||''});}});commitOperationalChange('Acciones correctivas generadas');location.hash='acciones';});
+$('addAction')?.addEventListener('click',()=>{let p=$('acProblem').value.trim();if(!p)return toast('Capture la condición o problema.');state.actions.push({id:'AC-'+Date.now(),problem:p,resp:$('acResp').value,due:$('acDate').value,action:$('acAction').value,status:'Pendiente',created:now(),priority:'important'});commitOperationalChange('Acción correctiva registrada');});
+$('activateBtn')?.addEventListener('click',()=>{state.active=true;state.activation={at:$('fechaAct').value||now(),fenomeno:$('fenomeno').value,situacion:$('situacion').value,resp:$('actResp').value};commitOperationalChange('Activación registrada');location.hash='operacion';});
+$('deactivateBtn')?.addEventListener('click',()=>{state.active=false;state.deactivation={at:now(),note:$('closureNote').value};commitOperationalChange('Desactivación registrada');});
+$('addPerson')?.addEventListener('click',()=>{let n=$('personName').value.trim();if(!n)return toast('Capture el nombre de la persona.');state.people.push({id:'P-'+Date.now(),fam:$('famFolio').value||'FAM-'+String(state.people.length+1).padStart(4,'0'),ref:$('famRef').value,origin:$('famOrigin').value,name:n,age:$('personAge').value,sex:$('personSex').value,need:$('personNeed').value,note:$('personNote').value,status:'Presente'});$('personName').value='';commitOperationalChange('Persona incorporada al censo');});
+$('addMove')?.addEventListener('click',()=>{let p=$('movePerson').value.trim();if(!p)return toast('Indique persona o folio.');state.moves.push({at:now(),person:p,type:$('moveType').value,note:$('moveNote').value});let rec=state.people.find(x=>x.name.toLowerCase()===p.toLowerCase()||x.id===p);if(rec){if($('moveType').value==='Salida temporal')rec.status='Salida temporal';if($('moveType').value==='Regreso')rec.status='Presente';if($('moveType').value==='Egreso definitivo')rec.status='Egreso definitivo';}commitOperationalChange('Movimiento de población registrado');});
+$('addVisitor')?.addEventListener('click',()=>{let n=$('visitorName').value.trim();if(!n)return toast('Capture el nombre del visitante.');state.moves.push({at:$('visitorIn').value||now(),person:n,type:'Visitante',note:'Visita a '+$('visitorTarget').value+' · '+$('visitorReason').value+( $('visitorOut').value?' · salida '+$('visitorOut').value:'')});commitOperationalChange('Visitante registrado');});
+$('addHealth')?.addEventListener('click',()=>{state.health.push({at:now(),person:$('healthPerson').value,type:$('healthType').value,note:$('healthNote').value,status:$('healthStatus').value});commitOperationalChange('Seguimiento de salud registrado');});
+$('addMeal')?.addEventListener('click',()=>{state.meals.push({at:$('mealDate').value||now(),type:$('mealType').value,qty:+$('mealQty').value||0,special:+$('mealSpecial').value||0,note:$('mealNote').value});commitOperationalChange('Servicio de alimentación registrado');});
+$('addInventory')?.addEventListener('click',()=>{let n=$('invName').value.trim();let q=+$('invQty').value||0;if(!n||!q)return toast('Capture insumo y cantidad.');state.inventory.push({at:now(),name:n,move:$('invMove').value,qty:q,unit:$('invUnit').value,origin:$('invOrigin').value,expiry:$('invExpiry').value});commitOperationalChange('Movimiento de inventario registrado');});
+$('addIncident')?.addEventListener('click',()=>{let d=$('incDesc').value.trim();if(!d)return toast('Describa la incidencia.');state.incidents.push({id:'INC-'+Date.now(),at:now(),cat:$('incCat').value,priority:$('incPriority').value,resp:$('incResp').value,desc:d,external:$('incExternal').value,channel:$('incChannel').value,status:'Pendiente'});commitOperationalChange('Incidencia registrada');});
+$('saveShift')?.addEventListener('click',()=>{state.shifts.push({at:now(),out:$('shiftOut').value,inn:$('shiftIn').value,pending:$('shiftPending').value});commitOperationalChange('Entrega-recepción de turno registrada');});
 $('buildReport')?.addEventListener('click',()=>{renderReport();});
 $('waterPeople')?.addEventListener('input',renderWater);$('waterDays')?.addEventListener('input',renderWater);$('waterStock')?.addEventListener('input',renderWater);
-$('demoBtn')?.addEventListener('click',()=>{state.people=[{id:'SIM-P-001',fam:'SIM-RT-TAB-F001',name:'Persona simulada 1',age:68,sex:'Mujer',need:'Persona adulta mayor 60+',status:'Presente'},{id:'SIM-P-002',fam:'SIM-RT-TAB-F001',name:'Persona simulada 2',age:42,sex:'Hombre',need:'Ninguna registrada',status:'Presente'}];state.inventory=[{at:now(),name:'Agua para beber',move:'Entrada',qty:120,unit:'L',origin:'SIMULACIÓN'}];state.incidents=[{id:'SIM-INC-001',at:now(),cat:'Agua',priority:'Alta',resp:'SIMULACIÓN',desc:'Abastecimiento preventivo requerido',status:'Pendiente'}];state.active=true;save();toast('Datos de demostración cargados con identificación SIM-RT-TAB.');});
+$('demoBtn')?.addEventListener('click',()=>{state.people=[{id:'SIM-P-001',fam:'SIM-RT-TAB-F001',name:'Persona simulada 1',age:68,sex:'Mujer',need:'Persona adulta mayor 60+',status:'Presente'},{id:'SIM-P-002',fam:'SIM-RT-TAB-F001',name:'Persona simulada 2',age:42,sex:'Hombre',need:'Ninguna registrada',status:'Presente'}];state.inventory=[{at:now(),name:'Agua para beber',move:'Entrada',qty:120,unit:'L',origin:'SIMULACIÓN'}];state.incidents=[{id:'SIM-INC-001',at:now(),cat:'Agua',priority:'Alta',resp:'SIMULACIÓN',desc:'Abastecimiento preventivo requerido',status:'Pendiente'}];state.active=true;commitOperationalChange('Datos de demostración cargados con identificación SIM-RT-TAB');});
 $('resetBtn')?.addEventListener('click',async()=>{
   const word=prompt('Esta acción borra todos los datos locales de la guía en este dispositivo. Antes se descargará un respaldo. Para continuar escriba BORRAR.');
   if(word!=='BORRAR')return;
@@ -5928,13 +5947,19 @@ function renderReport(){let present=state.people.filter(x=>x.status==='Presente'
 function render(){let present=state.people.filter(x=>x.status==='Presente').length;let fam=new Set(state.people.map(x=>x.fam)).size;let cap=+$('capacidad')?.value||0;$('presentes').textContent=present;$('familias').textContent=fam;$('ocupacion').textContent=cap?Math.round(present/cap*100)+'%':'0%';$('incAbiertas').textContent=state.incidents.filter(x=>x.status!=='Resuelta').length;$('aguaCalc').textContent=(present*2)+' L/día';$('spaceCalc').textContent=(present*3.5).toFixed(1)+' m²';let women=state.people.filter(x=>x.status==='Presente'&&x.sex==='Mujer').length,men=state.people.filter(x=>x.status==='Presente'&&x.sex==='Hombre').length;$('wcWomen').textContent=Math.ceil(women/25)||0;$('wcMen').textContent=Math.ceil(men/35)||0;$('activeBadge').textContent=state.active?'Refugio activo':'Sin activar';
 $('peopleTable').innerHTML=state.people.length?state.people.map(x=>'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.fam)+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.age)+'</td><td>'+esc(x.need)+'</td><td>'+esc(x.status)+'</td></tr>').join(''):'<tr><td colspan="6">Sin registros guardados en este dispositivo.</td></tr>';
 $('actionsList').innerHTML=state.actions.length?'<h3>Acciones registradas</h3>'+state.actions.map((a,i)=>'<div class="notice '+(a.priority==='critical'?'danger':'warn')+'"><b>'+esc(a.id)+'</b> · '+esc(a.problem)+'<br><small>Estado: '+esc(a.status)+' · Responsable: '+esc(a.resp||'Sin asignar')+' · Compromiso: '+esc(a.due||'Sin fecha')+'</small></div>').join(''):'<p class="source">Las acciones generadas en este dispositivo aparecerán aquí.</p>';
-$('incidentList').innerHTML=state.incidents.length?'<h3>Incidencias registradas</h3>'+state.incidents.map((x,i)=>'<div class="notice '+(x.priority==='Prioritaria'?'danger':x.priority==='Alta'?'warn':'')+'"><b>'+esc(x.id)+'</b> · '+esc(x.cat)+' · '+esc(x.status)+'<br>'+esc(x.desc)+'<br><small>'+esc(x.at)+' · '+esc(x.resp||'Sin responsable')+'</small> <button type="button" data-closeinc="'+i+'">Marcar resuelta</button></div>').join(''):'<p class="source">Las incidencias guardadas aparecerán aquí con fecha, estado y seguimiento.</p>';
+$('incidentList').innerHTML=state.incidents.length?'<h3>Incidencias registradas</h3>'+state.incidents.map((x,i)=>'<div class="notice '+(x.priority==='Prioritaria'?'danger':x.priority==='Alta'?'warn':'')+'"><b>'+esc(x.id)+'</b> · '+esc(x.cat)+' · '+esc(x.status)+'<br>'+esc(x.desc)+'<br><small>'+esc(x.at)+' · '+esc(x.resp||'Sin responsable')+'</small> '+(x.status==='Resuelta'?'<span class="pill">✓ Resuelta</span>':'<button type="button" data-closeinc="'+i+'">Marcar resuelta</button>')+'</div>').join(''):'<p class="source">Las incidencias guardadas aparecerán aquí con fecha, estado y seguimiento.</p>';
 $('inventoryTable').innerHTML=(()=>{let map={};state.inventory.forEach(x=>{let k=x.name.toLowerCase();if(!map[k])map[k]={name:x.name,qty:0,unit:x.unit,last:x.at,note:x.origin};map[k].qty+=(x.move==='Entrada'?1:-1)*x.qty;map[k].last=x.at;map[k].note=x.origin;});let arr=Object.values(map);return arr.length?arr.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+x.qty.toFixed(1)+'</td><td>'+esc(x.unit)+'</td><td>'+esc(x.last)+'</td><td>'+esc(x.note||'')+'</td></tr>').join(''):'<tr><td colspan="5">Sin movimientos guardados.</td></tr>';})();
 $('movesList').innerHTML=state.moves.length?'<h3>Movimientos / visitantes</h3>'+state.moves.slice().reverse().map(x=>'<p><b>'+esc(x.type)+'</b> · '+esc(x.person)+' · '+esc(x.at)+'<br><small>'+esc(x.note||'')+'</small></p>').join(''):'<p class="source">Los movimientos guardados aparecerán aquí.</p>';
 $('healthList').innerHTML=state.health.length?'<h3>Seguimiento de atención</h3>'+state.health.slice().reverse().map(x=>'<p><b>'+esc(x.person||'Sin nombre')+'</b> · '+esc(x.type)+' · '+esc(x.status)+'<br><small>'+esc(x.note||'')+'</small></p>').join(''):'<p class="source">Los seguimientos guardados aparecerán aquí.</p>';
 $('mealList').innerHTML=state.meals.length?'<h3>Servicios de alimentación</h3>'+state.meals.slice().reverse().map(x=>'<p><b>'+esc(x.type)+'</b> · '+x.qty+' raciones · '+esc(x.at)+'<br><small>'+esc(x.note||'')+'</small></p>').join(''):'<p class="source">Los servicios registrados aparecerán aquí.</p>';
 $('shiftList').innerHTML=state.shifts.length?'<h3>Historial de turnos</h3>'+state.shifts.slice().reverse().map(x=>'<p><b>'+esc(x.out||'')+' → '+esc(x.inn||'')+'</b> · '+esc(x.at)+'<br><small>'+esc(x.pending||'Sin pendientes capturados')+'</small></p>').join(''):'<p class="source">El historial de turnos guardados aparecerá aquí.</p>';
-qsa('[data-closeinc]').forEach(b=>b.onclick=()=>{state.incidents[+b.dataset.closeinc].status='Resuelta';save();});renderWater();}
+qsa('[data-closeinc]').forEach(b=>b.onclick=()=>{
+  const i=+b.dataset.closeinc,inc=state.incidents[i];
+  if(!inc)return;
+  inc.status='Resuelta';
+  inc.resolvedAt=now();
+  commitOperationalChange('Incidencia marcada como resuelta');
+});renderWater();}
 
 // v10 · Autoguardado de todos los campos, checklist y controles (excepto archivos/fotografías).
 qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.id==='restoreBackupFile')return;const evt=(el.type==='radio'||el.type==='checkbox'||el.tagName==='SELECT')?'change':'input';el.addEventListener(evt,()=>{if(el.closest('.check-row'))renderVerify();scheduleSave()})});
@@ -6411,14 +6436,32 @@ function verificationReportHTML(rec){
     '<div class="summary"><div><small>Resultado</small><b>'+esc(summary.status)+'</b></div><div><small>Revisados</small><b>'+summary.answered+'</b></div><div><small>No cumple</small><b>'+summary.no+'</b></div><div><small>Prioritarios</small><b>'+summary.critical+'</b></div></div>'+
     '<table><thead><tr><th>Código</th><th>Criterio</th><th>Resultado</th><th>Observaciones</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>'+
     '<div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · '+new Date().toLocaleString('es-MX')+'</div>'+
-    '<script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script></body></html>';
+    '<div class="pdf-actions" style="position:fixed;right:16px;bottom:16px;z-index:9999"><button onclick="window.print()" style="border:0;border-radius:12px;background:#7d1735;color:#fff;font:700 14px Arial;padding:12px 16px;box-shadow:0 3px 14px #0003">Imprimir / Guardar PDF</button></div>'+
+    '<style>@media print{.pdf-actions{display:none!important}}</style>'+
+    '<script>window.addEventListener("load",function(){setTimeout(function(){try{window.print()}catch(e){}},500)})<\/script></body></html>';
 }
 async function printVerificationReport(id){
+  // Abrir la ventana inmediatamente durante el clic del usuario.
+  // Si se espera a IndexedDB/SHA-256, Chrome/Safari pueden bloquearla como popup.
+  let reportWindow=null;
+  try{
+    reportWindow=window.open('about:blank','_blank');
+    if(reportWindow){
+      reportWindow.document.open();
+      reportWindow.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando reporte...</title></head><body style="font-family:Arial,sans-serif;padding:24px"><p>Preparando reporte PDF...</p></body></html>');
+      reportWindow.document.close();
+    }
+  }catch(e){reportWindow=null}
+
   let rec=null;if(id)rec=await refugeGet(id);
   const snap=rec?.snapshot||refugeSnapshot();
-  if(!snap?.verification)return toast('Primero guarde una verificación para generar el PDF.');
+  if(!snap?.verification){
+    try{reportWindow?.close()}catch(e){}
+    return toast('Primero guarde una verificación para generar el PDF.');
+  }
   const profile=getIdentityProfile();
   if(!profile?.fullName||!profile?.role||!profile?.area||!profile?.institution){
+    try{reportWindow?.close()}catch(e){}
     location.hash='#mis-refugios';
     toast('Configure una sola vez el Perfil del responsable antes de generar el reporte.');
     document.getElementById('profileFullName')?.focus();
@@ -6440,9 +6483,61 @@ async function printVerificationReport(id){
    '<div style="font-size:10px;margin-top:6px"><b>Huella SHA-256:</b> '+hash+'</div>'+
    '<div style="font-size:9px;margin-top:5px;color:#666">El QR identifica los datos declarados y la huella del expediente; no constituye firma electrónica certificada.</div></div>'+
    '<div style="width:150px;height:150px">'+qrSvg+'</div></div>';
-  report=report.replace('<div class="foot">',seal+'<div class="foot">');
-  const w=window.open('','_blank');if(!w)return toast('El navegador bloqueó la ventana del reporte. Permita ventanas emergentes e intente de nuevo.');
-  w.document.open();w.document.write(report);w.document.close();
+  // La constancia de identificación y validación debe aparecer al inicio del PDF,
+  // inmediatamente después del encabezado institucional y antes del contenido operativo.
+  const firstReportSection='<div class="grid">';
+  if(report.includes(firstReportSection)){
+    report=report.replace(firstReportSection,seal+firstReportSection);
+  }else{
+    // Respaldo: insertar después de <body> si cambia la plantilla.
+    report=report.replace('<body>', '<body>'+seal);
+  }
+
+  if(reportWindow){
+    try{
+      reportWindow.document.open();
+      reportWindow.document.write(report);
+      reportWindow.document.close();
+      try{reportWindow.focus()}catch(e){}
+      return;
+    }catch(e){
+      try{reportWindow.close()}catch(_){}
+    }
+  }
+
+  // Respaldo sin popup: iframe temporal. Funciona en PC y evita depender
+  // exclusivamente de ventanas emergentes en navegadores móviles.
+  try{
+    const old=document.getElementById('rtPdfPrintFrame');
+    if(old)old.remove();
+    const frame=document.createElement('iframe');
+    frame.id='rtPdfPrintFrame';
+    frame.setAttribute('title','Reporte PDF');
+    frame.style.position='fixed';
+    frame.style.right='0';
+    frame.style.bottom='0';
+    frame.style.width='1px';
+    frame.style.height='1px';
+    frame.style.border='0';
+    frame.style.opacity='0.01';
+    document.body.appendChild(frame);
+    const doc=frame.contentDocument||frame.contentWindow?.document;
+    if(!doc)throw new Error('Sin documento imprimible');
+    doc.open();doc.write(report);doc.close();
+    frame.onload=()=>{
+      setTimeout(()=>{
+        try{
+          frame.contentWindow?.focus();
+          frame.contentWindow?.print();
+        }catch(e){
+          toast('No fue posible abrir la impresión automática. Use un navegador actualizado.');
+        }
+      },350);
+    };
+  }catch(e){
+    console.error('PDF/print error',e);
+    toast('No fue posible preparar el reporte. Actualice el navegador e intente nuevamente.');
+  }
 }
 $('createRefugeBtn')?.addEventListener('click',async()=>{
   const meta={name:($('newRefugeName').value||'').trim(),municipio:($('newRefugeMunicipio').value||'').trim(),localidad:($('newRefugeLocalidad').value||'').trim()};
@@ -6598,6 +6693,7 @@ try{
   window.invalidateReviewed=invalidateReviewed;
   window.refugeGet=refugeGet;
   window.refugeListAll=refugeListAll;
+  window.RTPrintVerificationReport=printVerificationReport;
   window.refugeRestore=refugeRestore;
   window.refugePut=refugePut;
   window.renderRefugeList=renderRefugeList;
