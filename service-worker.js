@@ -1,4 +1,4 @@
-const CACHE='refugios-ipcet-v130';
+const CACHE='refugios-ipcet-v132';
 const APP_SHELL=["./", "./index.html", "./manifest.webmanifest", "./validar.html", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 self.addEventListener('install',event=>{
   self.skipWaiting();

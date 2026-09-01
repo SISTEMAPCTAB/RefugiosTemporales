@@ -7807,7 +7807,7 @@ async function renderRefugeList(){
     if(activeRec){$('activeRefugeName').textContent=activeRec.name||'Refugio Temporal';$('activeRefugeLocation').textContent=(activeRec.municipio||'')+' · '+(activeRec.localidad||'');}
   }
 }
-function verificationReportHTML(rec){
+window.verificationReportHTML=function(rec){
   const snap=rec?.snapshot||refugeSnapshot();
   const meta=snap.verificationMeta||snap.verification?.meta||{};
   const fd=snap.formData||{};
@@ -7886,7 +7886,7 @@ function standardReportHeaderHTML(title,identity,generatedAt,periodLabel='',peri
   <div><b>Área:</b> ${esc(p.area||'Sin dato')}</div><div><b>Institución:</b> ${esc(p.institution||'Sin dato')}</div>
   <div><b>Identificación:</b> ${esc(ident)}</div></div></div>`;
 }
-function reportValidationUrl(hash,identity,type='reporte'){
+window.reportValidationUrl=function(hash,identity,type='reporte'){
   const base='https://sistemapctab.github.io/RefugiosTemporales/validar.html';
   const u=new URL(base);
   u.searchParams.set('sha',hash);
@@ -7896,7 +7896,7 @@ function reportValidationUrl(hash,identity,type='reporte'){
 }
 function standardReportSealHTML(identity,hash,generatedAt){
   const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+window.maskedId?.(p)||'No registrada';
-  const payload=reportValidationUrl(hash,identity,'reporte');
+  const payload=window.reportValidationUrl(hash,identity,'reporte');
   let qr='';try{qr=window.IPCETQR?.svg(payload,5)}catch(e){console.warn(e)}
   return `<div class="seal"><div><div style="font-size:10px;font-weight:800;color:#741733;letter-spacing:.08em">CONSTANCIA DIGITAL DE GENERACIÓN</div>
   <h3>Identificación y validación del expediente</h3><div><b>Responsable:</b> ${esc(p.fullName||'')}</div><div><b>Identificación:</b> ${esc(ident)}</div>
@@ -8139,13 +8139,13 @@ async function printVerificationReport(id){
     const hash=window.sha256TextSync(base);
     if(!hash||hash.length!==64)throw new Error('No se pudo calcular la huella SHA-256');
 
-    const vd=reportValidationData(rec||{id:state.activeRefugeId,meta:currentRefugeMeta()},profile,hash);
-    const qrPayload=reportValidationUrl(hash,{folio:vd.folio},'verificacion');
+    const vd=window.reportValidationData(rec||{id:state.activeRefugeId,meta:currentRefugeMeta()},profile,hash);
+    const qrPayload=window.reportValidationUrl(hash,{folio:vd.folio},'verificacion');
     let qrSvg='';
     try{qrSvg=window.IPCETQR?.svg(qrPayload,5)||''}catch(e){console.warn('QR verificación',e)}
     if(!qrSvg)throw new Error('No se pudo generar el QR de validación');
 
-    let report=verificationReportHTML(rec);
+    let report=window.verificationReportHTML(rec);
     const seal='<div class="report-seal">'+
       '<div class="report-seal-data">'+
         '<div class="report-seal-kicker">CONSTANCIA DIGITAL DE GENERACIÓN</div>'+
@@ -8733,7 +8733,7 @@ async function sha256Text(text){
 }
 window.sha256Text=sha256Text;
 
-function reportValidationData(record, profile, hash){
+window.reportValidationData=function(record, profile, hash){
  const meta=record?.meta||{};
  return {
   tipo:'IPCET-REFUGIO-TEMPORAL',
@@ -9075,7 +9075,7 @@ $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criter
 
 
 
-async function enforceCurrentServiceWorkerV130(){
+async function enforceCurrentServiceWorkerV132(){
   if(!('serviceWorker' in navigator))return;
   try{
     const regs=await navigator.serviceWorker.getRegistrations();
@@ -9083,12 +9083,12 @@ async function enforceCurrentServiceWorkerV130(){
       try{await reg.update()}catch(e){}
       if(reg.waiting)try{reg.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}
     }
-    const reg=await navigator.serviceWorker.register('./service-worker.js?v=130',{updateViaCache:'none'});
+    const reg=await navigator.serviceWorker.register('./service-worker.js?v=132',{updateViaCache:'none'});
     try{await reg.update()}catch(e){}
     if(reg.waiting)try{reg.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}
-  }catch(e){console.warn('Actualización SW v130',e)}
+  }catch(e){console.warn('Actualización SW v132',e)}
 }
-window.addEventListener('load',()=>setTimeout(enforceCurrentServiceWorkerV130,300));
+window.addEventListener('load',()=>setTimeout(enforceCurrentServiceWorkerV132,300));
 
   window.RT_MAIN_READY=true;
 window.RT_MAIN_READY_AT=Date.now();
@@ -9385,4 +9385,4 @@ try{updateAllTopicGates();recordGuideVisit();}catch(e){console.warn('Revisión f
 </div>
 <div class="rt-report-document" id="rtReportDocument" role="document"></div>
 </div>
-<div id="buildVersionBadge" style="font-size:11px;color:#777;text-align:center;margin:6px 0 10px">Versión operativa v130</div></body></html>
+<div id="buildVersionBadge" style="font-size:11px;color:#777;text-align:center;margin:6px 0 10px">Versión operativa v132</div></body></html>
