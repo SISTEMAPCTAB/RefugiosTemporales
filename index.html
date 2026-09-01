@@ -3811,6 +3811,30 @@ body.rt-report-open{overflow:hidden}
  body.rt-report-open .rt-report-toolbar{display:none!important}
  body.rt-report-open #rtReportDocument{width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important;background:#fff!important}
 }
+</style><style>
+#rtReportDocument .qr{width:190px!important;max-width:190px!important;margin-left:auto!important}
+#rtReportDocument .qr svg{display:block!important;width:170px!important;height:170px!important;max-width:170px!important;max-height:170px!important;margin:0 auto!important}
+@media(max-width:700px){
+  #rtReportDocument .qr{width:160px!important;max-width:160px!important}
+  #rtReportDocument .qr svg{width:145px!important;height:145px!important;max-width:145px!important;max-height:145px!important}
+}
+@media print{
+  #rtReportDocument .qr{width:38mm!important;max-width:38mm!important}
+  #rtReportDocument .qr svg{width:34mm!important;height:34mm!important;max-width:34mm!important;max-height:34mm!important}
+}
+</style><style>
+/* v130 · tamaño uniforme de QR en todos los reportes */
+#rtReportDocument .qr{width:38mm!important;max-width:38mm!important;text-align:center;margin-left:auto}
+#rtReportDocument .qr svg{display:block;width:34mm!important;height:34mm!important;max-width:34mm!important;max-height:34mm!important;margin:0 auto}
+#rtReportDocument .qr img{display:block;width:34mm!important;height:34mm!important;max-width:34mm!important;max-height:34mm!important;margin:0 auto}
+@media(max-width:700px){
+  #rtReportDocument .qr{width:150px!important;max-width:150px!important;margin:8px auto!important}
+  #rtReportDocument .qr svg,#rtReportDocument .qr img{width:140px!important;height:140px!important;max-width:140px!important;max-height:140px!important}
+}
+@media print{
+  #rtReportDocument .qr{width:38mm!important;max-width:38mm!important}
+  #rtReportDocument .qr svg,#rtReportDocument .qr img{width:34mm!important;height:34mm!important;max-width:34mm!important;max-height:34mm!important}
+}
 </style></head>
 <body>
 <a class="skip" href="#contenido">Ir al contenido</a>
@@ -7887,10 +7911,12 @@ function openPreparedReportWindow(){
 function extractPrintableBody(report){
   try{
     const doc=new DOMParser().parseFromString(String(report||''),'text/html');
-    return doc.body?.innerHTML||String(report||'');
+    const styles=[...doc.querySelectorAll('head style')].map(s=>'<style>'+s.textContent+'</style>').join('');
+    return styles+(doc.body?.innerHTML||String(report||''));
   }catch(e){
+    const styles=(String(report||'').match(/<style[\s\S]*?<\/style>/gi)||[]).join('');
     const m=String(report||'').match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    return m?m[1]:String(report||'');
+    return styles+(m?m[1]:String(report||''));
   }
 }
 function closeInlineReport(){
@@ -8092,102 +8118,77 @@ window.addEventListener('load',function(){
 }
 
 async function printVerificationReport(id){
-  // Abrir la ventana inmediatamente durante el clic del usuario.
-  // Si se espera a IndexedDB/SHA-256, Chrome/Safari pueden bloquearla como popup.
-  let reportWindow=null;
   try{
-    reportWindow=window.open('about:blank','_blank');
-    if(reportWindow){
-      reportWindow.document.open();
-      reportWindow.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando reporte...</title></head><body style="font-family:Arial,sans-serif;padding:24px"><p>Preparando reporte PDF...</p></body></html>');
-      reportWindow.document.close();
-    }
-  }catch(e){reportWindow=null}
-
-  let rec=null;if(id)rec=await refugeGet(id);
-  const snap=rec?.snapshot||refugeSnapshot();
-  if(!snap?.verification){
-    try{reportWindow?.close()}catch(e){}
-    return toast('Primero guarde una verificación para generar el PDF.');
-  }
-  const profile=getIdentityProfile();
-  if(!profile?.fullName||!profile?.role||!profile?.area||!profile?.institution){
-    try{reportWindow?.close()}catch(e){}
-    location.hash='#mis-refugios';
-    toast('Configure una sola vez el Perfil del responsable antes de generar el reporte.');
-    document.getElementById('profileFullName')?.focus();
-    return;
-  }
-  const base=JSON.stringify({id:rec?.id||'',meta:rec?.meta||{},snapshot:snap});
-  const hash=await sha256Text(base);
-  const vd=reportValidationData(rec||{id:state.activeRefugeId,meta:currentRefugeMeta()},profile,hash);
-  const qrPayload=reportValidationUrl(hash,{folio:vd.folio},'verificacion');
-  let qrSvg='';try{qrSvg=window.IPCETQR?.svg(qrPayload,5)}catch(e){console.warn(e)}
-  let report=verificationReportHTML(rec);
-  const seal='<div class="report-seal" style="margin:18px 0;border:1px solid #bcae9e;border-radius:12px;padding:14px;display:grid;grid-template-columns:1fr 150px;gap:14px;align-items:center">'+
-   '<div><div style="font-size:11px;font-weight:800;color:#741733;letter-spacing:.08em">CONSTANCIA DIGITAL DE GENERACIÓN</div>'+
-   '<h3 style="margin:5px 0 8px;color:#741733">Identificación y validación del expediente</h3>'+
-   '<div><b>Responsable:</b> '+esc(vd.responsable)+'</div><div><b>Cargo:</b> '+esc(vd.cargo)+'</div>'+
-   '<div><b>Área:</b> '+esc(vd.area)+'</div><div><b>Institución:</b> '+esc(vd.institucion)+'</div>'+
-   '<div><b>Identificación:</b> '+esc(vd.identificacion)+'</div><div><b>Folio:</b> '+esc(vd.folio)+'</div>'+
-   '<div><b>Generado:</b> '+new Date(vd.generado).toLocaleString('es-MX')+'</div>'+
-   '<div style="font-size:10px;margin-top:6px"><b>Huella SHA-256:</b> '+hash+'</div>'+
-   '<div style="font-size:9px;margin-top:5px;color:#666">El QR identifica los datos declarados y la huella del expediente; no constituye firma electrónica certificada.</div></div>'+
-   '<div style="width:150px;height:150px">'+qrSvg+'</div></div>';
-  // La constancia de identificación y validación debe aparecer al inicio del PDF,
-  // inmediatamente después del encabezado institucional y antes del contenido operativo.
-  const firstReportSection='<div class="grid">';
-  if(report.includes(firstReportSection)){
-    report=report.replace(firstReportSection,seal+firstReportSection);
-  }else{
-    // Respaldo: insertar después de <body> si cambia la plantilla.
-    report=report.replace('<body>', '<body>'+seal);
-  }
-
-  if(reportWindow){
-    try{
-      reportWindow.document.open();
-      reportWindow.document.write(report);
-      reportWindow.document.close();
-      try{reportWindow.focus()}catch(e){}
+    let rec=null;
+    if(id)rec=await refugeGet(id);
+    const snap=rec?.snapshot||refugeSnapshot();
+    if(!snap?.verification){
+      toast('Primero guarde una verificación para generar el PDF.');
       return;
-    }catch(e){
-      try{reportWindow.close()}catch(_){}
     }
-  }
 
-  // Respaldo sin popup: iframe temporal. Funciona en PC y evita depender
-  // exclusivamente de ventanas emergentes en navegadores móviles.
-  try{
-    const old=document.getElementById('rtPdfPrintFrame');
-    if(old)old.remove();
-    const frame=document.createElement('iframe');
-    frame.id='rtPdfPrintFrame';
-    frame.setAttribute('title','Reporte PDF');
-    frame.style.position='fixed';
-    frame.style.right='0';
-    frame.style.bottom='0';
-    frame.style.width='1px';
-    frame.style.height='1px';
-    frame.style.border='0';
-    frame.style.opacity='0.01';
-    document.body.appendChild(frame);
-    const doc=frame.contentDocument||frame.contentWindow?.document;
-    if(!doc)throw new Error('Sin documento imprimible');
-    doc.open();doc.write(report);doc.close();
-    frame.onload=()=>{
-      setTimeout(()=>{
-        try{
-          frame.contentWindow?.focus();
-          frame.contentWindow?.print();
-        }catch(e){
-          toast('No fue posible abrir la impresión automática. Use un navegador actualizado.');
-        }
-      },350);
-    };
+    const profile=window.getIdentityProfile?.()||getIdentityProfile();
+    if(!profile?.fullName||!profile?.role||!profile?.area||!profile?.institution){
+      location.hash='#mis-refugios';
+      toast('Configure una sola vez el Perfil del responsable antes de generar el reporte.');
+      document.getElementById('profileFullName')?.focus();
+      return;
+    }
+
+    const base=JSON.stringify({id:rec?.id||'',meta:rec?.meta||{},snapshot:snap});
+    const hash=window.sha256TextSync(base);
+    if(!hash||hash.length!==64)throw new Error('No se pudo calcular la huella SHA-256');
+
+    const vd=reportValidationData(rec||{id:state.activeRefugeId,meta:currentRefugeMeta()},profile,hash);
+    const qrPayload=reportValidationUrl(hash,{folio:vd.folio},'verificacion');
+    let qrSvg='';
+    try{qrSvg=window.IPCETQR?.svg(qrPayload,5)||''}catch(e){console.warn('QR verificación',e)}
+    if(!qrSvg)throw new Error('No se pudo generar el QR de validación');
+
+    let report=verificationReportHTML(rec);
+    const seal='<div class="report-seal">'+
+      '<div class="report-seal-data">'+
+        '<div class="report-seal-kicker">CONSTANCIA DIGITAL DE GENERACIÓN</div>'+
+        '<h3>Identificación y validación del expediente</h3>'+
+        '<div><b>Responsable:</b> '+esc(vd.responsable)+'</div>'+
+        '<div><b>Cargo:</b> '+esc(vd.cargo)+'</div>'+
+        '<div><b>Área:</b> '+esc(vd.area)+'</div>'+
+        '<div><b>Institución:</b> '+esc(vd.institucion)+'</div>'+
+        '<div><b>Identificación:</b> '+esc(vd.identificacion)+'</div>'+
+        '<div><b>Folio:</b> '+esc(vd.folio)+'</div>'+
+        '<div><b>Generado:</b> '+new Date(vd.generado).toLocaleString('es-MX')+'</div>'+
+        '<div class="report-hash"><b>Huella SHA-256:</b> '+esc(hash)+'</div>'+
+        '<div class="report-note">El QR abre el validador del documento y transporta la huella SHA-256; no constituye firma electrónica certificada.</div>'+
+      '</div>'+
+      '<div class="qr report-qr">'+qrSvg+'<div class="qr-caption">Escanee para abrir el validador</div></div>'+
+    '</div>';
+
+    const reportCss='<style>'+
+      '.report-seal{margin:14px 0;border:1px solid #bcae9e;border-radius:10px;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) 38mm;gap:12px;align-items:start;page-break-inside:avoid}'+
+      '.report-seal-kicker{font-size:10px;font-weight:800;color:#741733;letter-spacing:.08em}'+
+      '.report-seal h3{margin:4px 0 7px;color:#741733;font-size:14px}'+
+      '.report-seal-data{font-size:10px;line-height:1.35}'+
+      '.report-hash{font-size:8px;margin-top:5px;word-break:break-all}'+
+      '.report-note{font-size:8px;margin-top:4px;color:#666}'+
+      '.report-qr{width:36mm!important;max-width:36mm!important;text-align:center}'+
+      '.report-qr svg{display:block;width:34mm!important;height:34mm!important;max-width:34mm!important;max-height:34mm!important;margin:0 auto}'+
+      '.qr-caption{font-size:7px;margin-top:3px}'+
+      '@media(max-width:650px){.report-seal{grid-template-columns:1fr}.report-qr{margin:6px auto 0!important}}'+
+      '@media print{.report-seal{grid-template-columns:minmax(0,1fr) 38mm}.report-qr{width:36mm!important}.report-qr svg{width:34mm!important;height:34mm!important}}'+
+    '</style>';
+
+    report=report.replace('</head>',reportCss+'</head>');
+    const firstReportSection='<div class="grid">';
+    if(report.includes(firstReportSection)){
+      report=report.replace(firstReportSection,seal+firstReportSection);
+    }else{
+      report=report.replace('<body>','<body>'+seal);
+    }
+
+    if(!deliverPrintableReport(report,null))throw new Error('No se pudo mostrar el reporte de verificación');
   }catch(e){
-    console.error('PDF/print error',e);
-    toast('No fue posible preparar el reporte. Actualice el navegador e intente nuevamente.');
+    console.error('Reporte de verificación',e);
+    toast('No fue posible generar el reporte de verificación: '+String(e?.message||e));
   }
 }
 $('createRefugeBtn')?.addEventListener('click',async()=>{
@@ -8316,6 +8317,7 @@ $('importRefugesFile')?.addEventListener('change',async e=>{
     if(data.type!=='IPCET-REFUGIOS-BACKUP'||!Array.isArray(data.records))throw new Error('Formato no válido');
 
     const incomingRecords=data.records.filter(r=>r&&r.id);
+    if(!incomingRecords.length)throw new Error('El archivo no contiene expedientes válidos');
     const declaredCount=Number(data.source?.recordCount);
     const actualCount=incomingRecords.length;
     const batchId=data.batchId||data.source?.batchId||'SIN_LOTE';
@@ -9072,7 +9074,23 @@ $('checkClosureCriterion')?.addEventListener('click',()=>closureCriterion?.check
 $('resetClosureCriterion')?.addEventListener('click',()=>{setReviewed('t10criterion',false);closureCriterion?.reset()});
 
 
-window.RT_MAIN_READY=true;
+
+async function enforceCurrentServiceWorkerV130(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    const regs=await navigator.serviceWorker.getRegistrations();
+    for(const reg of regs){
+      try{await reg.update()}catch(e){}
+      if(reg.waiting)try{reg.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}
+    }
+    const reg=await navigator.serviceWorker.register('./service-worker.js?v=130',{updateViaCache:'none'});
+    try{await reg.update()}catch(e){}
+    if(reg.waiting)try{reg.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}
+  }catch(e){console.warn('Actualización SW v130',e)}
+}
+window.addEventListener('load',()=>setTimeout(enforceCurrentServiceWorkerV130,300));
+
+  window.RT_MAIN_READY=true;
 window.RT_MAIN_READY_AT=Date.now();
 try{updateAllTopicGates();recordGuideVisit();}catch(e){console.warn('Revisión final de guía',e);}
 });
@@ -9367,4 +9385,4 @@ try{updateAllTopicGates();recordGuideVisit();}catch(e){console.warn('Revisión f
 </div>
 <div class="rt-report-document" id="rtReportDocument" role="document"></div>
 </div>
-</body></html>
+<div id="buildVersionBadge" style="font-size:11px;color:#777;text-align:center;margin:6px 0 10px">Versión operativa v130</div></body></html>
