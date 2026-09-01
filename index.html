@@ -43,7 +43,7 @@
 /* v10 · Guardado local y respaldo */
 .save-panel{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px 15px;margin:0 0 18px;box-shadow:0 5px 18px rgba(45,33,28,.035)}
 .save-state{display:flex;align-items:center;gap:10px;min-width:0}.save-dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(47,125,91,.10);flex:0 0 auto}.save-dot.pending{background:var(--warn);box-shadow:0 0 0 4px rgba(168,106,18,.10)}.save-dot.error{background:var(--bad);box-shadow:0 0 0 4px rgba(178,60,66,.10)}
-.save-copy b{display:block;font-size:12px}.save-copy small{display:block;color:var(--muted);font-size:10px;margin-top:1px}.save-tools{display:flex;gap:7px;flex-wrap:wrap}.save-tools .btn{padding:9px 11px;font-size:11px;min-height:40px}.filebtn input{display:none}
+.save-copy b{display:block;font-size:12px}.save-copy small{display:block;color:var(--muted);font-size:10px;margin-top:1px}.save-tools{display:flex;gap:7px;flex-wrap:wrap}.save-tools .btn{padding:9px 11px;font-size:11px;min-height:40px}.filebtn input{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:520px){.save-panel{align-items:stretch}.save-state{width:100%}.save-tools{display:grid;grid-template-columns:1fr 1fr;width:100%}.save-tools .btn{width:100%}.save-tools .wide{grid-column:1/-1}}
 
 /* v10 · Navegación por pantallas independientes, compatible sin JavaScript */
@@ -3961,8 +3961,8 @@ body.rt-report-open{overflow:hidden}
 </div>
 <div class="refuge-toolbar-actions">
 <button class="btn secondary" id="exportRefugesBtn" type="button">Exportar expedientes</button>
-<label class="btn secondary filebtn">Importar expedientes
-        <input accept="application/json" id="importRefugesFile" type="file"/>
+<label aria-label="Importar expedientes desde archivo JSON" class="btn secondary filebtn" role="button" tabindex="0">Importar expedientes
+        <input accept=".json,application/json,text/json" id="importRefugesFile" type="file"/>
 </label>
 </div>
 </div>
@@ -7744,6 +7744,10 @@ async function renderRefugeList(){
   let allRecords=[];
   try{allRecords=await refugeListAll()}catch(e){allRecords=[]}
   allRecords=allRecords.filter(r=>!r.deletedAt);
+  if(state.activeRefugeId && !allRecords.some(r=>r.id===state.activeRefugeId)){
+    state.activeRefugeId=null;
+    try{await storagePut(state)}catch(e){}
+  }
   allRecords.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
   const records=allRecords.filter(r=>(!mf||r.municipio===mf)&&(!q||[r.name,r.localidad,r.municipio].some(x=>String(x||'').toLowerCase().includes(q))));
   list.innerHTML='';
@@ -7924,6 +7928,60 @@ function deliverPrintableReport(report,w){
   }
 }
 
+
+function sha256TextSync(ascii){
+  function rightRotate(value,amount){return (value>>>amount)|(value<<(32-amount));}
+  const mathPow=Math.pow,maxWord=mathPow(2,32),lengthProperty='length';
+  let i,j,result='',words=[],asciiBitLength=ascii[lengthProperty]*8;
+  let hash=sha256TextSync.h=sha256TextSync.h||[];
+  const k=sha256TextSync.k=sha256TextSync.k||[];
+  let primeCounter=k[lengthProperty],isComposite={};
+  for(let candidate=2;primeCounter<64;candidate++){
+    if(!isComposite[candidate]){
+      for(i=0;i<313;i+=candidate)isComposite[i]=candidate;
+      hash[primeCounter]=(mathPow(candidate,.5)*maxWord)|0;
+      k[primeCounter++]=(mathPow(candidate,1/3)*maxWord)|0;
+    }
+  }
+  ascii+='\x80';
+  while(ascii[lengthProperty]%64-56)ascii+='\x00';
+  for(i=0;i<ascii[lengthProperty];i++){
+    j=ascii.charCodeAt(i);
+    if(j>>8)return '';
+    words[i>>2]|=j<<((3-i)%4)*8;
+  }
+  words[words[lengthProperty]]=((asciiBitLength/maxWord)|0);
+  words[words[lengthProperty]]=asciiBitLength;
+  for(j=0;j<words[lengthProperty];){
+    const w=words.slice(j,j+=16),oldHash=hash.slice(0);
+    for(i=0;i<64;i++){
+      const i2=i+j;
+      let w15=w[i-15],w2=w[i-2];
+      const a=hash[0],e=hash[4];
+      const temp1=hash[7]+
+        (rightRotate(e,6)^rightRotate(e,11)^rightRotate(e,25))+
+        ((e&hash[5])^((~e)&hash[6]))+
+        k[i]+
+        (w[i]=(i<16)?w[i]:(
+          w[i-16]+
+          (rightRotate(w15,7)^rightRotate(w15,18)^(w15>>>3))+
+          w[i-7]+
+          (rightRotate(w2,17)^rightRotate(w2,19)^(w2>>>10))
+        )|0);
+      const temp2=(rightRotate(a,2)^rightRotate(a,13)^rightRotate(a,22))+
+        ((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
+      hash=[(temp1+temp2)|0].concat(hash);
+      hash[4]=(hash[4]+temp1)|0;
+      hash.pop();
+    }
+    for(i=0;i<8;i++)hash[i]=(hash[i]+oldHash[i])|0;
+  }
+  for(i=0;i<8;i++)for(j=3;j+1;j--){
+    const b=(hash[i]>>(j*8))&255;
+    result+=(b<16?'0':'')+b.toString(16);
+  }
+  return result;
+}
 window.sha256TextSync=sha256TextSync;
 function assertFormalReportRuntime(){
   const missing=[];
@@ -8203,6 +8261,29 @@ $('exportRefugesBtn')?.addEventListener('click',async()=>{
   toast('Exportación generada: '+count+' expediente'+(count===1?'':'s')+' · '+batchId);
 });
 
+
+function readFileTextCompat(file){
+  if(!file)return Promise.reject(new Error('No se seleccionó archivo'));
+  if(typeof file.text==='function'){
+    return file.text().catch(()=>new Promise((resolve,reject)=>{
+      try{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(String(reader.result||''));
+        reader.onerror=()=>reject(reader.error||new Error('No fue posible leer el archivo'));
+        reader.readAsText(file,'UTF-8');
+      }catch(e){reject(e)}
+    }));
+  }
+  return new Promise((resolve,reject)=>{
+    try{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(String(reader.result||''));
+      reader.onerror=()=>reject(reader.error||new Error('No fue posible leer el archivo'));
+      reader.readAsText(file,'UTF-8');
+    }catch(e){reject(e)}
+  });
+}
+
 function normalizedRecordForCompare(record){
   const r=clonePlain(record||{});
   // Campos locales/importación no deben definir si el expediente operativo es el mismo.
@@ -8231,7 +8312,7 @@ function makeImportedIndependentCopy(record,batchId=''){
 $('importRefugesFile')?.addEventListener('change',async e=>{
   const f=e.target.files?.[0];if(!f)return;
   try{
-    const data=JSON.parse(await f.text());
+    const data=JSON.parse(await readFileTextCompat(f));
     if(data.type!=='IPCET-REFUGIOS-BACKUP'||!Array.isArray(data.records))throw new Error('Formato no válido');
 
     const incomingRecords=data.records.filter(r=>r&&r.id);
@@ -8336,7 +8417,7 @@ $('importRefugesFile')?.addEventListener('change',async e=>{
     );
   }catch(err){
     console.error(err);
-    toast('No fue posible importar el archivo. Verifique que sea un respaldo válido de la guía.');
+    toast('No fue posible importar el archivo: '+String(err?.message||err));
   }
   e.target.value='';
 });
