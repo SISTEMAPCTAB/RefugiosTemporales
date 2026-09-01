@@ -7854,22 +7854,77 @@ function standardReportSealHTML(identity,hash,generatedAt){
   <div><b>Huella SHA-256:</b></div><div class="hash">${esc(hash)}</div></div><div class="qr">${qr}<div style="font-size:8px;text-align:center;margin-top:4px">Escanee para abrir el validador del documento</div></div></div>`;
 }
 function openPreparedReportWindow(){
-  let w=null;try{w=window.open('about:blank','_blank');if(w){w.document.open();w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando reporte...</title></head><body style="font-family:Arial;padding:24px">Preparando reporte PDF...</body></html>');w.document.close()}}catch(e){w=null}return w;
+  let w=null;try{w=window.open('about:blank','_blank');if(w){w.document.open();w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Preparando reporte...</title></head><body style="font-family:Arial;padding:24px"><p id="rtPrep">Preparando reporte PDF...</p><script>setTimeout(function(){var p=document.getElementById("rtPrep");if(p)p.innerHTML="<b>La preparación está tardando más de lo esperado.</b><br>Regrese a la guía e intente nuevamente."},5000)<\/script></body></html>');w.document.close()}}catch(e){w=null}return w;
 }
 function deliverPrintableReport(report,w){
   if(w){try{w.document.open();w.document.write(report);w.document.close();try{w.focus()}catch(e){}return true}catch(e){try{w.close()}catch(_){}}}
   try{document.getElementById('rtPdfPrintFrame')?.remove();const f=document.createElement('iframe');f.id='rtPdfPrintFrame';f.title='Reporte PDF';Object.assign(f.style,{position:'fixed',right:'0',bottom:'0',width:'1px',height:'1px',border:'0',opacity:'0.01'});document.body.appendChild(f);const d=f.contentDocument||f.contentWindow?.document;if(!d)throw Error('Sin documento imprimible');d.open();d.write(report);d.close();f.onload=()=>setTimeout(()=>{try{f.contentWindow?.focus();f.contentWindow?.print()}catch(e){}},350);return true}catch(e){console.error(e);toast('No fue posible preparar el reporte.');return false}
 }
+
+function sha256TextSync(ascii){
+  function rightRotate(value,amount){return (value>>>amount)|(value<<(32-amount));}
+  const mathPow=Math.pow,maxWord=mathPow(2,32),lengthProperty='length';
+  let i,j,result='',words=[],asciiBitLength=ascii[lengthProperty]*8;
+  const hash=sha256TextSync.h=sha256TextSync.h||[];
+  const k=sha256TextSync.k=sha256TextSync.k||[];
+  let primeCounter=k[lengthProperty],isComposite={};
+  for(let candidate=2;primeCounter<64;candidate++){
+    if(!isComposite[candidate]){
+      for(i=0;i<313;i+=candidate)isComposite[i]=candidate;
+      hash[primeCounter]=(mathPow(candidate,.5)*maxWord)|0;
+      k[primeCounter++]=(mathPow(candidate,1/3)*maxWord)|0;
+    }
+  }
+  ascii+='\x80';
+  while(ascii[lengthProperty]%64-56)ascii+='\x00';
+  for(i=0;i<ascii[lengthProperty];i++){
+    j=ascii.charCodeAt(i);
+    if(j>>8)return '';
+    words[i>>2]|=j<<((3-i)%4)*8;
+  }
+  words[words[lengthProperty]]=((asciiBitLength/maxWord)|0);
+  words[words[lengthProperty]]=asciiBitLength;
+  for(j=0;j<words[lengthProperty];){
+    const w=words.slice(j,j+=16),oldHash=hash.slice(0);
+    for(i=0;i<64;i++){
+      const i2=i+j;
+      let w15=w[i-15],w2=w[i-2];
+      const a=hash[0],e=hash[4];
+      const temp1=hash[7]+
+        (rightRotate(e,6)^rightRotate(e,11)^rightRotate(e,25))+
+        ((e&hash[5])^((~e)&hash[6]))+
+        k[i]+
+        (w[i]=(i<16)?w[i]:(
+          w[i-16]+
+          (rightRotate(w15,7)^rightRotate(w15,18)^(w15>>>3))+
+          w[i-7]+
+          (rightRotate(w2,17)^rightRotate(w2,19)^(w2>>>10))
+        )|0);
+      const temp2=(rightRotate(a,2)^rightRotate(a,13)^rightRotate(a,22))+
+        ((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
+      hash=[(temp1+temp2)|0].concat(hash);
+      hash[4]=(hash[4]+temp1)|0;
+      hash.pop();
+    }
+    for(i=0;i<8;i++)hash[i]=(hash[i]+oldHash[i])|0;
+  }
+  for(i=0;i<8;i++)for(j=3;j+1;j--){
+    const b=(hash[i]>>(j*8))&255;
+    result+=(b<16?'0':'')+b.toString(16);
+  }
+  return result;
+}
+
 function assertFormalReportRuntime(){
   const missing=[];
   if(typeof window.getIdentityProfile!=='function')missing.push('identidad');
   if(typeof window.maskedId!=='function')missing.push('identificador');
-  if(typeof window.sha256Text!=='function')missing.push('SHA-256');
+  if(typeof sha256TextSync!=='function')missing.push('SHA-256');
   if(!window.IPCETQR||typeof window.IPCETQR.svg!=='function')missing.push('QR');
   if(missing.length)throw new Error('Componentes de reporte no inicializados: '+missing.join(', '));
   return true;
 }
-async function printDailyReportPdf(){
+function printDailyReportPdf(){
   const w=openPreparedReportWindow();
   try{
     assertFormalReportRuntime();
@@ -7900,7 +7955,8 @@ async function printDailyReportPdf(){
       incidents:$('reportIncidents')?.value||''
     };
     const data={type:'REPORTE_DIARIO',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},cut,generatedAt,present,families,openInc,meals,needs,extra};
-    const hash=await window.sha256Text(JSON.stringify(data));
+    const hash=sha256TextSync(JSON.stringify(data));
+    if(!hash||hash.length!==64)throw new Error('No se pudo calcular la huella SHA-256');
     const header=standardReportHeaderHTML('Reporte diario del Refugio Temporal',id,generatedAt,'Fecha y hora de corte',cut);
     const seal=standardReportSealHTML(id,hash,generatedAt);
     const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte diario · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
@@ -7921,7 +7977,12 @@ async function printDailyReportPdf(){
       <div class="section"><h3>Necesidades principales / observaciones</h3><p>${esc(needs)}</p></div>
       <div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div>
       <div class="pdf-actions"><button onclick="window.print()">Imprimir / Guardar PDF</button></div>
-      <script>window.addEventListener('load',()=>setTimeout(()=>{try{window.print()}catch(e){}},500))<\/script>
+      <script>
+window.addEventListener('load',function(){
+  const isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!isiOS)setTimeout(function(){try{window.print()}catch(e){}},650);
+});
+<\/script>
     </body></html>`;
     if(!deliverPrintableReport(report,w))throw new Error('No se pudo entregar el reporte imprimible');
   }catch(e){
@@ -7936,7 +7997,7 @@ async function printDailyReportPdf(){
     toast('No fue posible generar el PDF del reporte diario.');
   }
 }
-async function printFinalReportPdf(){
+function printFinalReportPdf(){
   const w=openPreparedReportWindow();
   try{assertFormalReportRuntime()}catch(e){
     console.error('Error de inicialización del informe final',e);
@@ -7947,12 +8008,18 @@ async function printFinalReportPdf(){
   const id=requireReportIdentity();if(!id){try{w?.close()}catch(e){}return}
   const generatedAt=new Date().toISOString(), closureAt=state.deactivation?.at||generatedAt, lessons=$('lessons')?.value||'Sin lecciones capturadas', nextActions=$('nextActions')?.value||'Sin acciones capturadas', families=new Set(state.people.map(x=>x.fam)).size, resolved=state.incidents.filter(x=>x.status==='Resuelta').length, totalInc=state.incidents.length, meals=state.meals.reduce((s,x)=>s+(+x.qty||0),0);
   const data={type:'INFORME_FINAL',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},generatedAt,closureAt,lessons,nextActions,families,resolved,totalInc,meals};
-  const hash=await window.sha256Text(JSON.stringify(data));
+  const hash=sha256TextSync(JSON.stringify(data));
+  if(!hash||hash.length!==64)throw new Error('No se pudo calcular la huella SHA-256');
   const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe final · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
   ${standardReportHeaderHTML('Informe final de operación y mejora continua',id,generatedAt,'Fecha y hora de cierre',closureAt)}${standardReportSealHTML(id,hash,generatedAt)}
   <div class="section"><h3>Resumen de la operación</h3><div class="grid"><div><b>Personas registradas:</b> ${state.people.length}</div><div><b>Familias registradas:</b> ${families}</div><div><b>Incidencias registradas:</b> ${totalInc}</div><div><b>Incidencias resueltas:</b> ${resolved}</div><div><b>Raciones registradas:</b> ${meals}</div><div><b>Estado:</b> ${state.active?'Activo':'Desactivado'}</div></div></div>
   <div class="section"><h3>Lecciones identificadas</h3><p>${esc(lessons)}</p></div><div class="section"><h3>Acciones para la próxima activación</h3><p>${esc(nextActions)}</p></div>
-  <div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div><div class="pdf-actions"><button onclick="window.print()">Imprimir / Guardar PDF</button></div><script>window.addEventListener('load',()=>setTimeout(()=>{try{window.print()}catch(e){}},500))<\/script></body></html>`;
+  <div class="foot">Documento generado por la Guía Digital Interactiva para la Gestión y Operación de Refugios Temporales · IPCET · ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div><div class="pdf-actions"><button onclick="window.print()">Imprimir / Guardar PDF</button></div><script>
+window.addEventListener('load',function(){
+  const isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!isiOS)setTimeout(function(){try{window.print()}catch(e){}},650);
+});
+<\/script></body></html>`;
   deliverPrintableReport(report,w);
 }
 
