@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Validación documental · IPCET</title>
+<style>
+:root{--vino:#7a1635;--marfil:#f6f2ec;--gris:#2b2b2b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--marfil);color:var(--gris)}
+header{background:var(--vino);color:white;padding:18px 20px;font-weight:800}
+main{max-width:760px;margin:28px auto;padding:0 18px}
+.card{background:white;border:1px solid #ddd2c5;border-radius:16px;padding:22px;box-shadow:0 5px 18px #0001}
+h1{color:var(--vino);font-size:24px;margin-top:0}.ok{border-left:6px solid #2c7c62;background:#eef8f3;padding:13px;border-radius:10px;margin:16px 0}
+.k{font-size:12px;color:#666;text-transform:uppercase;font-weight:800;letter-spacing:.06em}.v{font-family:monospace;word-break:break-all;margin:5px 0 15px}
+.note{font-size:13px;color:#666;line-height:1.5}.btn{display:inline-block;background:var(--vino);color:#fff;text-decoration:none;padding:11px 15px;border-radius:10px;font-weight:700}
+</style></head>
+<body><header>Protección Civil · IPCET</header><main><div class="card">
+<h1>Validación documental</h1>
+<div class="ok"><b>QR leído correctamente.</b><br>Compare la huella mostrada aquí con la huella SHA-256 impresa en el PDF.</div>
+<div class="k">Tipo de documento</div><div class="v" id="tipo">—</div>
+<div class="k">Folio / expediente</div><div class="v" id="folio">—</div>
+<div class="k">Huella SHA-256 contenida en el QR</div><div class="v" id="sha">—</div>
+<p class="note">Esta página no recibe ni almacena el expediente. El QR transporta únicamente datos de validación. La coincidencia de la huella permite comprobar que el QR corresponde a la huella impresa en el documento; no sustituye una firma electrónica avanzada ni una certificación de identidad.</p>
+<a class="btn" href="./">Abrir Guía de Refugios Temporales</a>
+</div></main>
+<script>
+const q=new URLSearchParams(location.search);
+const sha=(q.get('sha')||'').trim(),tipo=(q.get('tipo')||'reporte').trim(),folio=(q.get('folio')||'Sin dato').trim();
+document.getElementById('sha').textContent=/^[0-9a-f]{64}$/i.test(sha)?sha:'Huella no válida o incompleta';
+document.getElementById('tipo').textContent=tipo;
+document.getElementById('folio').textContent=folio;
+if(!/^[0-9a-f]{64}$/i.test(sha))document.querySelector('.ok').innerHTML='<b>QR incompleto.</b><br>No contiene una huella SHA-256 válida.';
+</script></body></html>
