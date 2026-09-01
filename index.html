@@ -3716,7 +3716,7 @@ a[href],button,[role="button"]{
 #incidentSynthesisActivity .choice-btn{width:100%;text-align:left;white-space:normal;min-height:3.25rem}
 #incidentSynthesisActivity .choice-btn.selected{outline:3px solid rgba(128,18,58,.18)}
 #incidentSynthesisActivity .btn{width:100%;margin-top:.65rem}
-</style>
+[hidden]{display:none!important}</style>
 <script>document.documentElement.classList.add('js');</script>
 <style id="v18-justified-text">
 /* v18: lectura institucional con párrafos justificados.
@@ -3977,7 +3977,7 @@ a[href],button,[role="button"]{
 <dialog class="import-safe-dialog" id="importConflictDialog">
 <div class="inner">
 <div class="eyebrow">IMPORTACIÓN PROTEGIDA</div>
-<h3>Este expediente ya existe</h3>
+<h3>Posible expediente duplicado</h3>
 <p id="importConflictText">Para evitar pérdida de información, la guía no sobrescribirá automáticamente el expediente guardado en este dispositivo.</p>
 <div class="import-safe-actions">
 <button class="keep" id="importKeepBothBtn" type="button">Conservar ambos</button>
@@ -7225,7 +7225,7 @@ $('resetBtn')?.addEventListener('click',async()=>{
     const records=await refugeListAll();
     const payload={type:'IPCET-REFUGIOS-BACKUP',version:2,createdAt:new Date().toISOString(),reason:'pre-reset',records};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download='Respaldo_ANTES_DE_BORRAR_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800);
+    a.href=URL.createObjectURL(blob);a.download='Respaldo_ANTES_DE_BORRAR_'+currentExporterLabel()+'_'+newExportBatchId()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800);
   }catch(e){alert('No fue posible preparar el respaldo. No se borraron los datos.');return}
   if(!confirm('Respaldo preparado. ¿Confirma borrar los datos locales de esta guía?'))return;
   await storageClear();location.reload();
@@ -7279,7 +7279,7 @@ qsa('[data-closeinc]').forEach(b=>b.onclick=()=>{
 // v10 · Autoguardado de todos los campos, checklist y controles (excepto archivos/fotografías).
 qsa('input,select,textarea').forEach(el=>{if(el.type==='file'||el.id==='restoreBackupFile')return;const evt=(el.type==='radio'||el.type==='checkbox'||el.tagName==='SELECT')?'change':'input';el.addEventListener(evt,()=>{if(el.closest('.check-row'))renderVerify();scheduleSave()})});
 $('saveNowBtn')?.addEventListener('click',()=>save(false));
-$('backupBtn')?.addEventListener('click',()=>{captureForms();const payload={app:'Refugios Temporales Tabasco',version:12,exportedAt:new Date().toISOString(),state};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Respaldo_Refugios_Temporales_Tabasco_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);setSaveStatus('ok','Respaldo generado','Guarde el archivo en una ubicación segura.');});
+$('backupBtn')?.addEventListener('click',()=>{captureForms();const exportedAt=new Date().toISOString(),batchId=newExportBatchId(),exporter=currentExporterLabel();const payload={app:'Refugios Temporales Tabasco',version:12,exportedAt,batchId,exporter,state};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Respaldo_Guia_Refugios_'+exporter+'_'+batchId+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);setSaveStatus('ok','Respaldo generado','Archivo identificado como '+batchId+'. Guárdelo en una ubicación segura.');});
 $('restoreBackupFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const obj=JSON.parse(await f.text());const incoming=obj.state||obj;if(!incoming||typeof incoming!=='object')throw new Error('Formato inválido');if(!confirm('Esto reemplazará los datos actuales de esta guía en este dispositivo. ¿Continuar?')){e.target.value='';return;}state=Object.assign({people:[],actions:[],incidents:[],inventory:[],moves:[],health:[],meals:[],shifts:[],active:false,activation:null,formData:{},guideProgress:{visited:[],completed:[],last:1}},incoming);await storagePut(state);restoreForms();
 $('beginVerification')?.addEventListener('click',()=>{
   if(!verificationIdentityReady())return toast('Complete Refugio Temporal, Municipio, Localidad, Nombre y Cargo antes de iniciar.');
@@ -7692,17 +7692,51 @@ window.addEventListener('hashchange',recordGuideVisit);
 recordGuideVisit();updateGuideUI();
 
 
+
+function safeFilePart(value,fallback='SIN_DATO'){
+  const s=String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Za-z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,48);
+  return s||fallback;
+}
+function exportStamp(d=new Date()){
+  const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());
+}
+function newExportBatchId(){
+  let r='';
+  try{r=crypto.getRandomValues(new Uint32Array(1))[0].toString(36).toUpperCase()}catch(e){r=Math.random().toString(36).slice(2,8).toUpperCase()}
+  return exportStamp()+'_'+r.slice(0,6);
+}
+function currentExporterLabel(){
+  try{
+    const p=window.getIdentityProfile?.();
+    if(p?.fullName)return safeFilePart(p.fullName,'RESPONSABLE');
+  }catch(e){}
+  return 'RESPONSABLE';
+}
+
 async function renderRefugeList(){
   const list=$('refugeList'),empty=$('refugeListEmpty');if(!list)return;
   const q=($('refugeSearch')?.value||'').trim().toLowerCase();
   const mf=($('refugeMunicipioFilter')?.value||'').trim();
-  let records=[];
-  try{records=await refugeListAll()}catch(e){records=[]}
-  records=records.filter(r=>!r.deletedAt);
-  records.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
-  records=records.filter(r=>(!mf||r.municipio===mf)&&(!q||[r.name,r.localidad,r.municipio].some(x=>String(x||'').toLowerCase().includes(q))));
+  let allRecords=[];
+  try{allRecords=await refugeListAll()}catch(e){allRecords=[]}
+  allRecords=allRecords.filter(r=>!r.deletedAt);
+  allRecords.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+  const records=allRecords.filter(r=>(!mf||r.municipio===mf)&&(!q||[r.name,r.localidad,r.municipio].some(x=>String(x||'').toLowerCase().includes(q))));
   list.innerHTML='';
-  empty.hidden=records.length>0;
+  if(empty){
+    const showEmpty=records.length===0;
+    empty.hidden=!showEmpty;
+    empty.style.display=showEmpty?'block':'none';
+    if(showEmpty){
+      if(allRecords.length===0){
+        empty.innerHTML='<b>Aún no hay expedientes guardados.</b><p>Cree el primer Refugio Temporal o convierta los datos que ya capturó en la guía.</p>';
+      }else{
+        empty.innerHTML='<b>No hay expedientes que coincidan con la búsqueda.</b><p>Quite o modifique los filtros para mostrar los '+allRecords.length+' expediente'+(allRecords.length===1?'':'s')+' guardado'+(allRecords.length===1?'':'s')+'.</p>';
+      }
+    }
+  }
   const active=state.activeRefugeId;
   records.forEach(r=>{
     const s=verificationSummaryFromSnapshot(r.snapshot);
@@ -8051,40 +8085,182 @@ $('printVerificationPdfBtn')?.addEventListener('click',()=>printVerificationRepo
 $('printDailyReportPdfBtn')?.addEventListener('click',printDailyReportPdf);
 $('printFinalReportPdfBtn')?.addEventListener('click',printFinalReportPdf);
 $('exportRefugesBtn')?.addEventListener('click',async()=>{
-  const records=await refugeListAll();const payload={type:'IPCET-REFUGIOS-BACKUP',version:1,createdAt:new Date().toISOString(),records};
+  const records=(await refugeListAll()).filter(r=>!r.deletedAt);
+  if(!records.length){
+    toast('No hay expedientes guardados para exportar.');
+    return;
+  }
+
+  const createdAt=new Date().toISOString();
+  const batchId=newExportBatchId();
+  const exporter=currentExporterLabel();
+  const municipios=[...new Set(records.map(r=>safeFilePart(r.municipio,'')).filter(Boolean))];
+  const scope=municipios.length===1?municipios[0]:(municipios.length>1?'MULTIMUNICIPIO':'SIN_MUNICIPIO');
+  const count=records.length;
+  const fileName='IPCET_Refugios_'+scope+'_'+exporter+'_'+count+'EXP_'+batchId+'.json';
+
+  const ok=confirm(
+    'Se exportarán '+count+' expediente'+(count===1?'':'s')+'.\n\n'+
+    'Archivo:\n'+fileName+'\n\n'+
+    'El JSON incluirá todos los expedientes guardados en este dispositivo y un identificador único de lote.\n\n'+
+    '¿Desea continuar?'
+  );
+  if(!ok)return;
+
+  const payload={
+    type:'IPCET-REFUGIOS-BACKUP',
+    version:2,
+    createdAt,
+    batchId,
+    source:{exporter,scope,recordCount:count,fileName},
+    records
+  };
+
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Respaldo_Refugios_IPCET_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=fileName;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),800);
+
+  toast('Exportación generada: '+count+' expediente'+(count===1?'':'s')+' · '+batchId);
 });
+
+function normalizedRecordForCompare(record){
+  const r=clonePlain(record||{});
+  // Campos locales/importación no deben definir si el expediente operativo es el mismo.
+  ['importedAt','importedFromId','importBatchId','importSourceFile','_revision'].forEach(k=>delete r[k]);
+  return r;
+}
+function stableStringify(value){
+  if(value===null||typeof value!=='object')return JSON.stringify(value);
+  if(Array.isArray(value))return '['+value.map(stableStringify).join(',')+']';
+  return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+stableStringify(value[k])).join(',')+'}';
+}
+function recordsOperationallyEqual(a,b){
+  try{return stableStringify(normalizedRecordForCompare(a))===stableStringify(normalizedRecordForCompare(b));}
+  catch(e){return false}
+}
+function makeImportedIndependentCopy(record,batchId=''){
+  const r=clonePlain(record);
+  const oldId=r.id;
+  r.id='rt_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
+  r.importedFromId=oldId;
+  r.importedAt=new Date().toISOString();
+  r.importBatchId=batchId||'SIN_LOTE';
+  return r;
+}
+
 $('importRefugesFile')?.addEventListener('change',async e=>{
   const f=e.target.files?.[0];if(!f)return;
   try{
     const data=JSON.parse(await f.text());
     if(data.type!=='IPCET-REFUGIOS-BACKUP'||!Array.isArray(data.records))throw new Error('Formato no válido');
+
+    const incomingRecords=data.records.filter(r=>r&&r.id);
+    const declaredCount=Number(data.source?.recordCount);
+    const actualCount=incomingRecords.length;
+    const batchId=data.batchId||data.source?.batchId||'SIN_LOTE';
+
     const existing=await refugeGetAll();
-    const existingIds=new Set(existing.map(x=>x.id));
-    let added=0, copied=0, skipped=0;
-    for(const raw of data.records){
-      if(!raw?.id)continue;
-      const r=clonePlain(raw);
-      if(!existingIds.has(r.id)){
-        await refugePut(r); existingIds.add(r.id); added++; continue;
-      }
-      const choice=await askImportConflict(r);
-      if(choice==='keep'){
-        const oldId=r.id;
-        r.id='rt_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
-        r.importedFromId=oldId;
-        r.importedAt=new Date().toISOString();
-        if(r.meta){
-          r.meta=Object.assign({},r.meta);
-          if(r.meta.name && !/\(copia importada\)$/i.test(r.meta.name)) r.meta.name=r.meta.name+' (copia importada)';
-        }
-        await refugePut(r); existingIds.add(r.id); copied++;
-      }else skipped++;
+    const existingActive=existing.filter(x=>!x.deletedAt);
+    const existingById=new Map(existingActive.map(x=>[x.id,x]));
+
+    let newCount=0, identicalCount=0, collisionCount=0;
+    for(const incoming of incomingRecords){
+      const local=existingById.get(incoming.id);
+      if(!local){newCount++;continue}
+      if(recordsOperationallyEqual(local,incoming))identicalCount++;
+      else collisionCount++;
     }
+
+    const countMismatch=Number.isFinite(declaredCount)&&declaredCount>=0&&declaredCount!==actualCount;
+    let preview=
+      'Este archivo contiene '+actualCount+' expediente'+(actualCount===1?'':'s')+'.\n\n'+
+      'Nuevos: '+newCount+
+      '\nDuplicados idénticos: '+identicalCount+
+      '\nColisiones de ID con contenido diferente: '+collisionCount;
+
+    if(Number.isFinite(declaredCount)&&declaredCount>=0){
+      preview+='\n\nCantidad declarada en el archivo: '+declaredCount;
+      if(countMismatch){
+        preview+='\n⚠ La cantidad declarada no coincide con los '+actualCount+' expedientes realmente contenidos.';
+      }
+    }
+
+    preview+='\n\nArchivo: '+f.name+
+      '\nLote: '+batchId+
+      '\n\nLos expedientes existentes no se sobrescribirán.';
+
+    const ok=confirm('IMPORTACIÓN DE EXPEDIENTES\n\n'+preview+'\n\n¿Desea iniciar la importación?');
+    if(!ok){
+      e.target.value='';
+      toast('Importación cancelada. No se realizó ningún cambio.');
+      return;
+    }
+
+    if(countMismatch){
+      const continueMismatch=confirm(
+        'ADVERTENCIA DE INTEGRIDAD\n\n'+
+        'El archivo declara '+declaredCount+' expediente'+(declaredCount===1?'':'s')+
+        ', pero contiene realmente '+actualCount+'.\n\n'+
+        'Puede continuar; la guía importará únicamente los '+actualCount+' registros realmente presentes.\n\n'+
+        '¿Desea continuar de todos modos?'
+      );
+      if(!continueMismatch){
+        e.target.value='';
+        toast('Importación cancelada por diferencia en el número de expedientes.');
+        return;
+      }
+    }
+
+    const existingAll=await refugeGetAll();
+    const workingById=new Map(existingAll.map(x=>[x.id,x]));
+    let added=0, copied=0, identical=0, skipped=0, collisions=0;
+
+    for(const raw of incomingRecords){
+      const incoming=clonePlain(raw);
+      const local=workingById.get(incoming.id);
+
+      if(!local){
+        incoming.importBatchId=batchId;
+        incoming.importSourceFile=f.name;
+        incoming.importedAt=incoming.importedAt||new Date().toISOString();
+        await refugePut(incoming);
+        workingById.set(incoming.id,incoming);
+        added++;
+        continue;
+      }
+
+      if(recordsOperationallyEqual(local,incoming)){
+        identical++;
+        continue;
+      }
+
+      const copy=makeImportedIndependentCopy(incoming,batchId);
+      copy.importSourceFile=f.name;
+      await refugePut(copy);
+      workingById.set(copy.id,copy);
+      copied++;
+      collisions++;
+    }
+
     await renderRefugeList();
-    toast('Importación terminada: '+added+' nuevos, '+copied+' como copia, '+skipped+' sin cambios.');
-  }catch(err){console.error(err);toast('No fue posible importar el archivo. Verifique que sea un respaldo válido de la guía.');}
+
+    const parts=[];
+    if(added)parts.push(added+' nuevos');
+    if(copied)parts.push(copied+' independientes por colisión de ID');
+    if(identical)parts.push(identical+' duplicados idénticos omitidos');
+    if(skipped)parts.push(skipped+' sin cambios');
+
+    toast(
+      'Importación terminada: '+(parts.join(', ')||'sin registros para incorporar')+
+      '. Total procesado: '+actualCount+'.'
+    );
+  }catch(err){
+    console.error(err);
+    toast('No fue posible importar el archivo. Verifique que sea un respaldo válido de la guía.');
+  }
   e.target.value='';
 });
 
@@ -8092,11 +8268,11 @@ function askImportConflict(record){
   return new Promise(resolve=>{
     const dlg=$('importConflictDialog'), text=$('importConflictText'), keep=$('importKeepBothBtn'), cancel=$('importCancelConflictBtn');
     if(!dlg || typeof dlg.showModal!=='function'){
-      resolve(confirm('Este expediente ya existe en este dispositivo. Para evitar sobrescribirlo, pulse Aceptar para conservar ambos como expedientes independientes, o Cancelar para no importar esta copia.')?'keep':'skip');
+      resolve(confirm('Posible expediente duplicado en este dispositivo. Para evitar sobrescribirlo, pulse Aceptar para conservar ambos como expedientes independientes, o Cancelar para no importar esta copia.')?'keep':'skip');
       return;
     }
     const label=record?.meta?.name||record?.name||'Expediente';
-    text.textContent='“'+label+'” ya existe en este dispositivo. Para evitar pérdida de información, la guía no sobrescribirá el expediente guardado.';
+    text.textContent='“'+label+'” ya existe en este dispositivo. La guía no sobrescribirá ningún expediente guardado.';
     const finish=v=>{keep.onclick=null;cancel.onclick=null;try{dlg.close()}catch(e){}resolve(v)};
     keep.onclick=()=>finish('keep');
     cancel.onclick=()=>finish('skip');
