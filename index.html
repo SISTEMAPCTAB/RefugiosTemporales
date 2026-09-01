@@ -6476,7 +6476,7 @@ function verificationReportHTML(rec){
 
 function reportIdentityMeta(){
   const meta=currentRefugeMeta?.()||{};
-  const profile=getIdentityProfile?.()||null;
+  const profile=window.getIdentityProfile?.()||null;
   return {
     refuge:(meta.name||$('inmueble')?.value||$('verifyShelterName')?.value||'Sin dato').trim(),
     municipio:(meta.municipio||$('municipio')?.value||$('verifyMunicipio')?.value||'Sin dato').trim(),
@@ -6507,7 +6507,7 @@ function reportHeaderLogoSrc(){
   return img?.src||'';
 }
 function standardReportHeaderHTML(title,identity,generatedAt,periodLabel='',periodValue=''){
-  const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+maskedId(p);
+  const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+window.maskedId?.(p)||'No registrada';
   const logo=reportHeaderLogoSrc();
   return `<div class="head">${logo?`<img src="${esc(logo)}" alt="IPCET">`:''}<div class="dir">Dirección Operativa y de Apoyo a la Población</div></div>
   <h1 class="title">${esc(title)}</h1>
@@ -6521,9 +6521,9 @@ function standardReportHeaderHTML(title,identity,generatedAt,periodLabel='',peri
   <div><b>Identificación:</b> ${esc(ident)}</div></div></div>`;
 }
 function standardReportSealHTML(identity,hash,generatedAt){
-  const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+maskedId(p);
+  const p=identity.profile||{}, ident=(p.idType?String(p.idType).toUpperCase()+': ':'')+window.maskedId?.(p)||'No registrada';
   const payload='IPCET|'+identity.folio+'|'+identity.refuge+'|'+p.fullName+'|'+p.area+'|'+generatedAt+'|SHA256:'+hash.slice(0,32);
-  let qr='';try{qr=MiniQR.svg(payload,5)}catch(e){console.warn(e)}
+  let qr='';try{qr=window.MiniQR?.svg(payload,5)}catch(e){console.warn(e)}
   return `<div class="seal"><div><div style="font-size:10px;font-weight:800;color:#741733;letter-spacing:.08em">CONSTANCIA DIGITAL DE GENERACIÓN</div>
   <h3>Identificación y validación del expediente</h3><div><b>Responsable:</b> ${esc(p.fullName||'')}</div><div><b>Identificación:</b> ${esc(ident)}</div>
   <div><b>Folio:</b> ${esc(identity.folio)}</div><div><b>Generado:</b> ${esc(new Date(generatedAt).toLocaleString('es-MX'))}</div>
@@ -6536,9 +6536,19 @@ function deliverPrintableReport(report,w){
   if(w){try{w.document.open();w.document.write(report);w.document.close();try{w.focus()}catch(e){}return true}catch(e){try{w.close()}catch(_){}}}
   try{document.getElementById('rtPdfPrintFrame')?.remove();const f=document.createElement('iframe');f.id='rtPdfPrintFrame';f.title='Reporte PDF';Object.assign(f.style,{position:'fixed',right:'0',bottom:'0',width:'1px',height:'1px',border:'0',opacity:'0.01'});document.body.appendChild(f);const d=f.contentDocument||f.contentWindow?.document;if(!d)throw Error('Sin documento imprimible');d.open();d.write(report);d.close();f.onload=()=>setTimeout(()=>{try{f.contentWindow?.focus();f.contentWindow?.print()}catch(e){}},350);return true}catch(e){console.error(e);toast('No fue posible preparar el reporte.');return false}
 }
+function assertFormalReportRuntime(){
+  const missing=[];
+  if(typeof window.getIdentityProfile!=='function')missing.push('identidad');
+  if(typeof window.maskedId!=='function')missing.push('identificador');
+  if(typeof window.sha256Text!=='function')missing.push('SHA-256');
+  if(!window.MiniQR||typeof window.MiniQR.svg!=='function')missing.push('QR');
+  if(missing.length)throw new Error('Componentes de reporte no inicializados: '+missing.join(', '));
+  return true;
+}
 async function printDailyReportPdf(){
   const w=openPreparedReportWindow();
   try{
+    assertFormalReportRuntime();
     const id=requireReportIdentity();
     if(!id){try{w?.close()}catch(e){}return}
     captureForms();
@@ -6566,7 +6576,7 @@ async function printDailyReportPdf(){
       incidents:$('reportIncidents')?.value||''
     };
     const data={type:'REPORTE_DIARIO',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},cut,generatedAt,present,families,openInc,meals,needs,extra};
-    const hash=await sha256Text(JSON.stringify(data));
+    const hash=await window.sha256Text(JSON.stringify(data));
     const header=standardReportHeaderHTML('Reporte diario del Refugio Temporal',id,generatedAt,'Fecha y hora de corte',cut);
     const seal=standardReportSealHTML(id,hash,generatedAt);
     const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte diario · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
@@ -6595,7 +6605,7 @@ async function printDailyReportPdf(){
     if(w){
       try{
         w.document.open();
-        w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Error al generar reporte</title></head><body style="font-family:Arial;padding:24px"><h2>No fue posible generar el reporte</h2><p>Regrese a la guía e intente nuevamente. Si el problema continúa, cierre y vuelva a abrir la aplicación.</p></body></html>');
+        w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Error al generar reporte</title></head><body style="font-family:Arial;padding:24px"><h2>No fue posible generar el reporte</h2><p>Regrese a la guía e intente nuevamente.</p><p style="color:#666;font-size:12px"><b>Detalle técnico:</b> '+String(e?.message||e)+'</p></body></html>');
         w.document.close();
       }catch(_){}
     }
@@ -6603,10 +6613,17 @@ async function printDailyReportPdf(){
   }
 }
 async function printFinalReportPdf(){
-  const w=openPreparedReportWindow(), id=requireReportIdentity();if(!id){try{w?.close()}catch(e){}return}
+  const w=openPreparedReportWindow();
+  try{assertFormalReportRuntime()}catch(e){
+    console.error('Error de inicialización del informe final',e);
+    try{w?.document.open();w?.document.write('<!doctype html><html lang="es"><body style="font-family:Arial;padding:24px"><h2>No fue posible inicializar el informe final</h2><p>'+String(e.message||e)+'</p></body></html>');w?.document.close()}catch(_){}
+    toast('No fue posible inicializar el informe final.');
+    return;
+  }
+  const id=requireReportIdentity();if(!id){try{w?.close()}catch(e){}return}
   const generatedAt=new Date().toISOString(), closureAt=state.deactivation?.at||generatedAt, lessons=$('lessons')?.value||'Sin lecciones capturadas', nextActions=$('nextActions')?.value||'Sin acciones capturadas', families=new Set(state.people.map(x=>x.fam)).size, resolved=state.incidents.filter(x=>x.status==='Resuelta').length, totalInc=state.incidents.length, meals=state.meals.reduce((s,x)=>s+(+x.qty||0),0);
   const data={type:'INFORME_FINAL',id:{refuge:id.refuge,municipio:id.municipio,localidad:id.localidad,folio:id.folio},generatedAt,closureAt,lessons,nextActions,families,resolved,totalInc,meals};
-  const hash=await sha256Text(JSON.stringify(data));
+  const hash=await window.sha256Text(JSON.stringify(data));
   const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe final · ${esc(id.refuge)}</title><style>${standardReportCss()}</style></head><body>
   ${standardReportHeaderHTML('Informe final de operación y mejora continua',id,generatedAt,'Fecha y hora de cierre',closureAt)}${standardReportSealHTML(id,hash,generatedAt)}
   <div class="section"><h3>Resumen de la operación</h3><div class="grid"><div><b>Personas registradas:</b> ${state.people.length}</div><div><b>Familias registradas:</b> ${families}</div><div><b>Incidencias registradas:</b> ${totalInc}</div><div><b>Incidencias resueltas:</b> ${resolved}</div><div><b>Raciones registradas:</b> ${meals}</div><div><b>Estado:</b> ${state.active?'Activo':'Desactivado'}</div></div></div>
@@ -7059,6 +7076,13 @@ document.getElementById('saveIdentityProfileBtn')?.addEventListener('click',save
 document.getElementById('editIdentityProfileBtn')?.addEventListener('click',()=>{document.getElementById('profileFullName')?.focus()});
 fillIdentityProfile();
 
+// Puente explícito para los generadores de reportes definidos en el núcleo anterior.
+// Estas funciones/objetos viven en este bloque histórico y, sin exportación, el reporte
+// puede lanzar ReferenceError al intentar resolver identidad, QR o huella.
+window.getIdentityProfile=getIdentityProfile;
+window.maskedId=maskedId;
+window.MiniQR=MiniQR;
+
 async function sha256Text(text){
  const bytes=new TextEncoder().encode(text);
  if(globalThis.crypto?.subtle){
@@ -7080,6 +7104,8 @@ async function sha256Text(text){
  }
  return parts.join('');
 }
+window.sha256Text=sha256Text;
+
 function reportValidationData(record, profile, hash){
  const meta=record?.meta||{};
  return {
