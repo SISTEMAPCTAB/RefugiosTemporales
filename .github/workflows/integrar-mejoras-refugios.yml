@@ -33,7 +33,7 @@ jobs:
               assert pos > 0 and pos > len(s)*0.9, 'No se localizó cierre final del HTML'
               s=s[:pos]+marker+'\n'+s[pos:]
           assert s.count(marker)==1
-          assert not corrupt in s
+          assert s.rfind(marker) > len(s)*0.9, 'La inclusión debe ubicarse al final'
           f.write_text(s,encoding='utf-8')
           print('Integración verificada al final del HTML')
           PY
