@@ -1,0 +1,24 @@
+/* Refugios IPCET — ajuste de aprovechamiento horizontal, v134.
+   Solo presentación; sin cambios de estructura, datos ni eventos. */
+@media screen and (min-width: 1280px) {
+  main {
+    box-sizing: border-box !important;
+    width: calc(100% - 64px) !important;
+    max-width: 1600px !important;
+    margin-inline: auto !important;
+  }
+  .topin { max-width: 1600px !important; }
+  /* El material didáctico mantiene márgenes internos y gana espacio utilizable. */
+  .guide-lesson { max-width: min(100%, 1380px) !important; }
+}
+@media screen and (min-width: 900px) and (max-width: 1279.98px) {
+  main {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: clamp(18px, 3vw, 36px) !important;
+    padding-right: clamp(18px, 3vw, 36px) !important;
+  }
+  .topin { max-width: 100% !important; }
+}
+/* Conservar las reglas originales para tabletas verticales y teléfonos. */
