@@ -1,5 +1,5 @@
-const CACHE='refugios-ipcet-v132';
-const APP_SHELL=["./", "./index.html", "./manifest.webmanifest", "./validar.html", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
+const CACHE='refugios-ipcet-v133';
+const APP_SHELL=["./", "./index.html", "./manifest.webmanifest", "./validar.html", "./complemento-operativo-20261105.js", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 self.addEventListener('install',event=>{
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(APP_SHELL)).catch(()=>{}));

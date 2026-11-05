@@ -1,0 +1,40 @@
+name: Validar cambios Refugios
+on:
+  push:
+    branches:
+      - mejora-verificacion-capacidad-20261105
+  pull_request:
+    paths:
+      - index.html
+      - complemento-operativo-20261105.js
+      - service-worker.js
+permissions:
+  contents: read
+jobs:
+  verificar-integridad:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar sintaxis del complemento y cache
+        run: |
+          node --check complemento-operativo-20261105.js
+          node --check service-worker.js
+      - name: Verificar integración sin eliminar módulos
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          index=Path('index.html').read_text(encoding='utf-8')
+          script=Path('complemento-operativo-20261105.js').read_text(encoding='utf-8')
+          sw=Path('service-worker.js').read_text(encoding='utf-8')
+          marker='<script src="./complemento-operativo-20261105.js"></script>'
+          assert index.count(marker)==1, 'Complemento duplicado o ausente'
+          assert index.rfind(marker)>len(index)*0.9, 'La inclusión no está al final'
+          assert index.rstrip().endswith('</html>'), 'El HTML no tiene cierre'
+          for required in ('id="preparacion"','id="verificacion"','id="acciones"','id="rapida"','id="activacion"','id="operacion"','id="capacidad"','id="activeBadge"'):
+              assert required in index, f'Falta módulo original: {required}'
+          for required in ('rtCapacityOperational','rtOperationalReason','rtStatusStages','rtVerificationReminder','rtActivationCaution'):
+              assert required in script, f'Falta componente: {required}'
+          assert 'complemento-operativo-20261105.js' in sw, 'Complemento ausente de caché offline'
+          assert 'refugios-ipcet-v133' in sw, 'No se incrementó versión de caché'
+          print('OK: sintaxis e integración estructural conservadora')
+          PY

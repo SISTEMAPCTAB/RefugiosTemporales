@@ -1,0 +1,48 @@
+name: Integrar mejoras Refugios en rama de revisión
+on:
+  push:
+    branches:
+      - mejora-verificacion-capacidad-20261105
+    paths:
+      - .github/workflows/integrar-mejoras-refugios.yml
+      - complemento-operativo-20261105.js
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener rama de revisión
+        uses: actions/checkout@v4
+      - name: Insertar al final de la página sin afectar reportes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          f=Path('index.html')
+          s=f.read_text(encoding='utf-8')
+          marker='<script src="./complemento-operativo-20261105.js"></script>'
+          # Corregir inserción anterior dentro de una cadena JS de reporte.
+          corrupt=marker+'\n</body>'
+          if corrupt in s:
+              s=s.replace(corrupt,'</body>',1)
+          # La última etiqueta es el cierre real del HTML, no la cadena de reporte.
+          if marker not in s:
+              assert s.rstrip().endswith('</html>'), 'Estructura HTML inesperada'
+              pos=s.rfind('</body>')
+              assert pos > 0 and pos > len(s)*0.9, 'No se localizó cierre final del HTML'
+              s=s[:pos]+marker+'\n'+s[pos:]
+          assert s.count(marker)==1
+          assert s.rfind(marker) > len(s)*0.9, 'La inclusión debe ubicarse al final'
+          f.write_text(s,encoding='utf-8')
+          print('Integración verificada al final del HTML')
+          PY
+      - name: Confirmar modificación solo en rama
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "Corregir integración del complemento fuera del generador de reportes"
+            git push
+          fi
