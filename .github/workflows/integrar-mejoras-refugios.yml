@@ -15,28 +15,34 @@ jobs:
     steps:
       - name: Obtener rama de revisión
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - name: Integrar complemento sin sustituir la aplicación
+      - name: Insertar al final de la página sin afectar reportes
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          file=Path('index.html')
-          html=file.read_text(encoding='utf-8')
+          f=Path('index.html')
+          s=f.read_text(encoding='utf-8')
           marker='<script src="./complemento-operativo-20261105.js"></script>'
-          if marker not in html:
-              assert '</body>' in html, 'No se encontró cierre del documento: no se modifica la app'
-              html=html.replace('</body>',marker+'\n</body>',1)
-              file.write_text(html,encoding='utf-8')
-          assert html.count(marker)==1
-          print('Integración conservadora verificada')
+          # Corregir inserción anterior dentro de una cadena JS de reporte.
+          corrupt=marker+'\n</body>'
+          if corrupt in s:
+              s=s.replace(corrupt,'</body>',1)
+          # La última etiqueta es el cierre real del HTML, no la cadena de reporte.
+          if marker not in s:
+              assert s.rstrip().endswith('</html>'), 'Estructura HTML inesperada'
+              pos=s.rfind('</body>')
+              assert pos > 0 and pos > len(s)*0.9, 'No se localizó cierre final del HTML'
+              s=s[:pos]+marker+'\n'+s[pos:]
+          assert s.count(marker)==1
+          assert not corrupt in s
+          f.write_text(s,encoding='utf-8')
+          print('Integración verificada al final del HTML')
           PY
-      - name: Confirmar modificación en rama, no en producción
+      - name: Confirmar modificación solo en rama
         run: |
           if ! git diff --quiet -- index.html; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add index.html
-            git commit -m "Integrar complemento operativo en la guía sin cambiar funciones existentes"
+            git commit -m "Corregir integración del complemento fuera del generador de reportes"
             git push
           fi
